@@ -7,26 +7,38 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @keyframes powerUp {
-            0% { transform: scale(1); filter: brightness(1); }
-            50% { transform: scale(1.08); filter: brightness(1.4) drop-shadow(0 0 20px rgba(250, 204, 21, 0.9)); }
-            100% { transform: scale(1); filter: brightness(1); }
+        /* Animasi getar dan denyut kuat saat jurus aktif */
+        @keyframes dramaticPower {
+            0% { transform: scale(1) rotate(0deg); filter: brightness(1) contrast(1); }
+            20% { transform: scale(1.15) rotate(-2deg); filter: brightness(1.5) contrast(1.2) drop-shadow(0 0 35px rgba(250, 204, 21, 1)); }
+            40% { transform: scale(1.1) rotate(2deg); filter: brightness(1.3) contrast(1.1); }
+            60% { transform: scale(1.2) rotate(-1deg); filter: brightness(1.6) contrast(1.3) drop-shadow(0 0 50px rgba(255, 255, 255, 0.9)); }
+            80% { transform: scale(1.12) rotate(1deg); filter: brightness(1.4); }
+            100% { transform: scale(1) rotate(0deg); filter: brightness(1); }
         }
-        .animate-power {
-            animation: powerUp 0.6s ease-in-out infinite;
+        .animate-ultimate {
+            animation: dramaticPower 1s ease-in-out infinite;
+        }
+        /* Efek kedip latar belakang sinematik */
+        @keyframes bgFlash {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 0.6; }
+        }
+        .animate-flash {
+            animation: bgFlash 0.5s ease-in-out infinite;
         }
     </style>
 </head>
-<body class="bg-slate-900 text-white min-h-screen flex flex-col items-center justify-between p-4">
+<body class="bg-slate-900 text-white min-h-screen flex flex-col items-center justify-between p-4 relative overflow-x-hidden">
 
     <!-- Header -->
-    <header class="w-full max-w-md text-center py-4">
+    <header class="w-full max-w-md text-center py-2">
         <h1 class="text-2xl font-black tracking-wider text-yellow-400 uppercase drop-shadow-md">BiipBattle Arena</h1>
         <p class="text-xs text-slate-400">Pindai kartu atau pilih karakter untuk melihat kekuatan</p>
     </header>
 
-    <!-- Konten Utama (Dinamis) -->
-    <main id="app-container" class="w-full max-w-md flex flex-col items-center bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-2xl my-2">
+    <!-- Konten Utama (Tampilan Kartu Normal) -->
+    <main id="app-container" class="w-full max-w-md flex flex-col items-center bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-2xl my-2 transition-all duration-300">
         
         <!-- Tampilan Karakter -->
         <div class="relative w-48 h-48 flex items-center justify-center mb-6">
@@ -47,98 +59,141 @@
         </button>
     </main>
 
-    <!-- Panel Navigasi / Pilihan Karakter Cepat (Untuk Tes Pengujian) -->
-    <section class="w-full max-w-md bg-slate-800/50 border border-slate-700/50 rounded-xl p-4 my-2 text-center">
-        <p class="text-xs text-slate-400 mb-3 font-semibold">Ganti Karakter (Simulasi Scan Kartu):</p>
-        <div id="character-list" class="flex flex-wrap justify-center gap-2">
-            <!-- Tombol karakter akan dimuat secara otomatis oleh JavaScript -->
+    <!-- Panel Pilihan 10 Karakter (Simulasi Scan Kartu) -->
+    <section class="w-full max-w-md bg-slate-800/50 border border-slate-700/50 rounded-xl p-3 my-2 text-center">
+        <p class="text-xs text-slate-400 mb-2 font-semibold">Pilih Kartu Karakter (10 Koleksi):</p>
+        <div id="character-list" class="flex flex-wrap justify-center gap-1.5 max-h-32 overflow-y-auto p-1">
+            <!-- Tombol 10 karakter dimuat otomatis -->
         </div>
     </section>
 
+    <!-- MODAL LAYAR PENUH (FULLSCREEN BATTLE CINEMATIC - 10 DETIK) -->
+    <div id="battle-fullscreen" class="fixed inset-0 bg-slate-950/95 z-50 hidden flex flex-col items-center justify-between p-6 backdrop-blur-md transition-opacity duration-500">
+        <!-- Efek Kilatan Latar Belakang -->
+        <div id="cinematic-aura" class="absolute inset-0 bg-yellow-600/20 rounded-full blur-3xl animate-flash pointer-events-none"></div>
+
+        <!-- Header Battle -->
+        <div class="z-10 text-center mt-4">
+            <span class="px-4 py-1 bg-red-600/80 text-white text-xs font-black uppercase tracking-widest rounded-full animate-bounce">⚠️ BATTLE MODE ACTIVE ⚠️</span>
+            <h3 id="battle-title" class="text-3xl font-black text-yellow-400 mt-3 uppercase tracking-wider">MENGELUARKAN JURUS!</h3>
+        </div>
+
+        <!-- Karakter Beraksi Epik di Tengah Layar -->
+        <div class="relative z-10 w-64 h-64 flex items-center justify-center my-auto">
+            <div class="absolute inset-0 bg-white/10 rounded-full blur-2xl animate-ping"></div>
+            <img id="battle-image" src="" alt="Karakter Ultimate" class="w-56 h-56 object-contain animate-ultimate z-20">
+        </div>
+
+        <!-- Indikator Hitung Mundur & Teks Jurus -->
+        <div class="z-10 text-center mb-6 w-full max-w-md">
+            <p id="battle-soundtext" class="text-base font-bold text-yellow-300 mb-4 tracking-wide px-4 drop-shadow-lg">-</p>
+            <div class="w-full bg-slate-800 rounded-full h-3 border border-slate-700 overflow-hidden">
+                <div id="countdown-bar" class="bg-gradient-to-r from-yellow-500 to-red-500 h-full w-full transition-all linear" style="transition-duration: 0.1s;"></div>
+            </div>
+            <p class="text-xs text-slate-400 mt-2">Pertunjukan jurus selesai dalam <span id="countdown-number" class="text-yellow-400 font-bold">10</span> detik...</p>
+        </div>
+    </div>
+
     <!-- Footer -->
-    <footer class="w-full max-w-md text-center py-3 text-xs text-slate-500">
+    <footer class="w-full max-w-md text-center py-2 text-xs text-slate-500">
         Powered by BiipSite Digital &copy; 2026
     </footer>
 
     <!-- Logika JavaScript -->
     <script>
-        // Database Diperluas: Berisi Berbagai Macam Karakter & Atributnya
+        // Database 10 Karakter Lengkap
         const characters = {
-            "pikachu": {
-                name: "Pikachu",
-                element: "Tipe: Petir (Electric)",
-                desc: "Mengumpulkan energi listrik di kantong pipinya untuk melepaskan sengatan dahsyat.",
-                image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png",
-                color: "bg-yellow-500/20",
-                soundText: "⚡ PIKACHU MENGELUARKAN THUNDERBOLT!"
-            },
-            "charizard": {
-                name: "Charizard",
-                element: "Tipe: Api/Naga (Fire/Dragon)",
-                desc: "Menghembuskan api pijar bersuhu tinggi yang mampu melelehkan batu besar di medan laga.",
-                image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/6.png",
-                color: "bg-red-500/20",
-                soundText: "🔥 CHARIZARD MENGGUNAKAN FLAMETHROWER!"
-            },
-            "greninja": {
-                name: "Greninja",
-                element: "Tipe: Air/Ninja (Water/Dark)",
-                desc: "Bergerak secepat bayangan dan melempar shuriken air bertekanan tinggi yang tajam.",
-                image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/658.png",
-                color: "bg-blue-500/20",
-                soundText: "💧 GRENINJA MELUNCURKAN WATER SHURIKEN!"
-            },
-            "mewtwo": {
-                name: "Mewtwo",
-                element: "Tipe: Psikis (Psychic)",
-                desc: "Memanfaatkan kekuatan psikokinesis tingkat tinggi untuk melumpuhkan musuh seketika.",
-                image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/150.png",
-                color: "bg-purple-500/20",
-                soundText: "🔮 MEWTWO MELEPASKAN PSYSTRIKE!"
-            }
+            "pikachu": { name: "Pikachu", element: "Tipe: Petir", desc: "Mengumpulkan energi listrik di kantong pipinya untuk melepaskan sengatan dahsyat.", image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png", color: "bg-yellow-500/20", soundText: "⚡ PIKACHU MELEPASKAN THUNDERBOLT DAHSYAT!" },
+            "charizard": { name: "Charizard", element: "Tipe: Api/Naga", desc: "Menghembuskan api pijar bersuhu tinggi yang mampu melelehkan batu besar.", image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/6.png", color: "bg-red-500/20", soundText: "🔥 CHARIZARD MEMBAKAR ARENA DENGAN FLAMETHROWER!" },
+            "greninja": { name: "Greninja", element: "Tipe: Air/Ninja", desc: "Bergerak secepat bayangan dan melempar shuriken air bertekanan tinggi.", image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/658.png", color: "bg-blue-500/20", soundText: "💧 GRENINJA MELUNCURKAN WATER SHURIKEN BERKECEPATAN TINGGI!" },
+            "mewtwo": { name: "Mewtwo", element: "Tipe: Psikis", desc: "Memanfaatkan kekuatan psikokinesis tingkat tinggi untuk melumpuhkan musuh.", image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/150.png", color: "bg-purple-500/20", soundText: "🔮 MEWTWO MENGGONCANG DIMENSI DENGAN PSYSTRIKE!" },
+            "bulbasaur": { name: "Bulbasaur", element: "Tipe: Rumput/Racun", desc: "Menggunakan cambuk tanaman dan menyerap energi matahari untuk menyerang.", image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png", color: "bg-green-500/20", soundText: "🌿 BULBASAUR MENGELUARKAN SOLAR BEAM YANG MEMATIKAN!" },
+            "squirtle": { name: "Squirtle", element: "Tipe: Air", desc: "Menyemburkan air bertekanan tinggi dari dalam cangkangnya ke arah lawan.", image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/7.png", color: "bg-cyan-500/20", soundText: "🌊 SQUIRTLE MENYEMBURKAN HYDRO PUMP BERDAYA LEDAK!" },
+            "lucario": { name: "Lucario", element: "Tipe: Bertarung/Baja", desc: "Mendeteksi aura makhluk hidup dan melepaskan gelombang energi bola aura.", image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/448.png", color: "bg-blue-600/20", soundText: "🌀 LUCARIO MELEPASKAN AURA SPHERE MAKSIMAL!" },
+            "gengar": { name: "Gengar", element: "Tipe: Hantu/Racun", desc: "Bersembunyi di dalam bayangan dan menebar teror malam kepada musuhnya.", image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/94.png", color: "bg-indigo-500/20", soundText: "👻 GENGAR MEMBERIKAN KUTUKAN SHADOW BALL KEGELAPAN!" },
+            "rayquaza": { name: "Rayquaza", element: "Tipe: Naga/Penerbang", desc: "Penguasa langit yang hidup di lapisan ozon dan mengamuk dengan kekuatan naga.", image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/384.png", color: "bg-emerald-500/20", soundText: "🐉 RAYQUAZA MENURUNKAN HUJAN METEOR DRAGON ASCENT!" },
+            "eevee": { name: "Eevee", element: "Tipe: Normal", desc: "Memiliki kode genetik tidak stabil yang memungkinkannya beradaptasi dengan cepat.", image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/133.png", color: "bg-amber-500/20", soundText: "✨ EEVEE MENGUMPULKAN ENERGI CAHAYA ULTIMATE EEVO-BOOST!" }
         };
 
-        // Fungsi untuk Memuat Data Karakter ke Halaman
+        let activeData = characters["pikachu"];
+
+        // Fungsi Memuat Karakter
         function loadCharacter(key) {
-            const data = characters[key] || characters["pikachu"];
+            activeData = characters[key] || characters["pikachu"];
             
-            document.getElementById('char-name').innerText = data.name;
-            document.getElementById('char-element').innerText = data.element;
-            document.getElementById('char-desc').innerText = data.desc;
-            document.getElementById('char-image').src = data.image;
-            document.getElementById('aura-bg').className = `absolute inset-0 ${data.color} rounded-full blur-xl animate-pulse transition-all duration-300`;
-            
-            // Simpan state aktif sementara di memori tombol
-            window.currentActiveChar = data;
+            document.getElementById('char-name').innerText = activeData.name;
+            document.getElementById('char-element').innerText = activeData.element;
+            document.getElementById('char-desc').innerText = activeData.desc;
+            document.getElementById('char-image').src = activeData.image;
+            document.getElementById('aura-bg').className = `absolute inset-0 ${activeData.color} rounded-full blur-xl animate-pulse transition-all duration-300`;
         }
 
-        // Render tombol pilihan karakter secara otomatis di bawah
+        // Render Tombol 10 Karakter Otomatis
         const charListContainer = document.getElementById('character-list');
         for (let key in characters) {
             const btn = document.createElement('a');
-            // Membuat link parameter dinamis (misal: ?char=charizard)
             btn.href = `?char=${key}`;
-            btn.className = "px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-xs font-medium rounded-lg transition-colors border border-slate-600 capitalize";
+            btn.className = "px-2.5 py-1 bg-slate-700 hover:bg-slate-600 text-xs font-medium rounded-lg transition-colors border border-slate-600 capitalize";
             btn.innerText = characters[key].name;
             charListContainer.appendChild(btn);
         }
 
-        // Cek URL saat halaman dibuka apakah membawa parameter karakter tertentu
+        // Cek Parameter URL
         const urlParams = new URLSearchParams(window.location.search);
         const charKey = urlParams.get('char') || 'pikachu'; 
         loadCharacter(charKey);
 
-        // Fungsi interaktif saat tombol kekuatan ditekan
-        function triggerUltimate() {
-            const imgElement = document.getElementById('char-image');
-            const activeData = window.currentActiveChar;
-            
-            imgElement.classList.add('animate-power');
-            alert(activeData.soundText);
+        // Variabel untuk Mengatur Timer Hitung Mundur 10 Detik
+        let countdownTimer = null;
+        let progressTimer = null;
 
-            setTimeout(() => {
-                imgElement.classList.remove('animate-power');
-            }, 600);
+        // Fungsi Tombol Kekuatan Fullscreen (10 Detik)
+        function triggerUltimate() {
+            const modal = document.getElementById('battle-fullscreen');
+            const battleImg = document.getElementById('battle-image');
+            const battleSound = document.getElementById('battle-soundtext');
+            const countdownNum = document.getElementById('countdown-number');
+            const countdownBar = document.getElementById('countdown-bar');
+            
+            // Set data ke mode fullscreen
+            battleImg.src = activeData.image;
+            battleSound.innerText = activeData.soundText;
+            
+            // Tampilkan modal fullscreen
+            modal.classList.remove('hidden');
+            
+            let timeLeft = 10; // Durasi 10 detik
+            let totalTime = 10;
+            countdownNum.innerText = timeLeft;
+            countdownBar.style.width = "100%";
+
+            // Hentikan timer sebelumnya jika ada
+            clearInterval(countdownTimer);
+            clearInterval(progressTimer);
+
+            // Progress bar smooth tiap 100ms
+            let currentWidth = 100;
+            const decrementPerStep = 100 / (totalTime * 10);
+
+            progressTimer = setInterval(() => {
+                currentWidth -= decrementPerStep;
+                if(currentWidth >= 0) {
+                    countdownBar.style.width = currentWidth + "%";
+                }
+            }, 100);
+
+            // Hitung mundur per 1 detik
+            countdownTimer = setInterval(() => {
+                timeLeft--;
+                countdownNum.innerText = timeLeft;
+
+                if (timeLeft <= 0) {
+                    clearInterval(countdownTimer);
+                    clearInterval(progressTimer);
+                    // Tutup modal kembali ke profil kartu normal
+                    modal.classList.add('hidden');
+                }
+            }, 1000);
         }
     </script>
 </body>
