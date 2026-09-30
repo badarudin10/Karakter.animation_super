@@ -6,6 +6,8 @@
     <title>BiipBattle - Karakter Arena</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lottie Web Player Engine (Bodymovin) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js"></script>
 </head>
 <body class="bg-slate-900 text-white min-h-screen flex flex-col items-center justify-between p-4 relative overflow-x-hidden">
 
@@ -45,13 +47,13 @@
         </div>
     </section>
 
-    <!-- MODAL LAYAR PENUH (VIDEO TRANSPARAN ALAA GIFT TIKTOK) -->
-    <div id="battle-fullscreen" class="fixed inset-0 bg-slate-950/95 z-50 hidden flex items-center justify-center p-0 backdrop-blur-md">
-        <!-- Elemen Video WebM Transparan -->
-        <video id="battle-video" class="w-full h-full object-contain pointer-events-none" autoplay muted playsinline>
-            <source id="video-source" src="" type="video/webm">
-            Browser Anda tidak mendukung video transparan.
-        </video>
+    <!-- MODAL LAYAR PENUH (ANIMASI GIFT LOTTIE VECTOR TRANSPARAN) -->
+    <div id="battle-fullscreen" onclick="closeModal()" class="fixed inset-0 bg-slate-950/90 z-50 hidden flex flex-col items-center justify-center p-4 backdrop-blur-md cursor-pointer">
+        
+        <!-- Wadah Rendering Animasi Lottie -->
+        <div id="lottie-container" class="w-full max-w-lg h-96 flex items-center justify-center pointer-events-none"></div>
+
+        <p class="text-xs text-slate-400 mt-4 animate-bounce">Ketuk di mana saja untuk menutup</p>
     </div>
 
     <!-- Footer -->
@@ -61,61 +63,62 @@
 
     <!-- Logika JavaScript -->
     <script>
-        // Database 10 Karakter Lengkap dengan Link Video WebM Transparan
+        // Data animasi Lottie lokal (Mendukung panggillan file JSON eksternal atau embed data)
         const characters = {
             "pikachu": { 
-                name: "Pikachu", element: "Tipe: Petir", desc: "Mengumpulkan energi listrik di kantong pipinya untuk melepasaan sengatan dahsyat.", 
+                name: "Pikachu", element: "Tipe: Petir", desc: "Mengumpulkan energi listrik di kantong pipinya untuk melepaskan sengatan dahsyat.", 
                 image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png", color: "bg-yellow-500/20", 
-                videoUrl: "https://www.webmfiles.org/demo/webm-test.webm" /* Ganti dengan URL video webm transparan Anda */
+                lottieUrl: "electric-creature-lottie.json" 
             },
             "charizard": { 
                 name: "Charizard", element: "Tipe: Api/Naga", desc: "Menghembuskan api pijar bersuhu tinggi yang mampu melelehkan batu besar.", 
                 image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/6.png", color: "bg-red-500/20", 
-                videoUrl: "https://www.webmfiles.org/demo/webm-test.webm" 
+                lottieUrl: "electric-creature-lottie.json" 
             },
             "greninja": { 
                 name: "Greninja", element: "Tipe: Air/Ninja", desc: "Bergerak secepat bayangan dan melempar shuriken air bertekanan tinggi.", 
                 image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/658.png", color: "bg-blue-500/20", 
-                videoUrl: "https://www.webmfiles.org/demo/webm-test.webm" 
+                lottieUrl: "electric-creature-lottie.json" 
             },
             "mewtwo": { 
                 name: "Mewtwo", element: "Tipe: Psikis", desc: "Memanfaatkan kekuatan psikokinesis tingkat tinggi untuk melumpuhkan musuh.", 
                 image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/150.png", color: "bg-purple-500/20", 
-                videoUrl: "https://www.webmfiles.org/demo/webm-test.webm" 
+                lottieUrl: "electric-creature-lottie.json" 
             },
             "bulbasaur": { 
                 name: "Bulbasaur", element: "Tipe: Rumput/Racun", desc: "Menggunakan cambuk tanaman dan menyerap energi matahari untuk menyerang.", 
                 image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png", color: "bg-green-500/20", 
-                videoUrl: "https://www.webmfiles.org/demo/webm-test.webm" 
+                lottieUrl: "electric-creature-lottie.json" 
             },
             "squirtle": { 
                 name: "Squirtle", element: "Tipe: Air", desc: "Menyemburkan air bertekanan tinggi dari dalam cangkangnya ke arah lawan.", 
                 image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/7.png", color: "bg-cyan-500/20", 
-                videoUrl: "https://www.webmfiles.org/demo/webm-test.webm" 
+                lottieUrl: "electric-creature-lottie.json" 
             },
             "lucario": { 
                 name: "Lucario", element: "Tipe: Bertarung/Baja", desc: "Mendeteksi aura makhluk hidup dan melepaskan gelombang energi bola aura.", 
                 image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/448.png", color: "bg-blue-600/20", 
-                videoUrl: "https://www.webmfiles.org/demo/webm-test.webm" 
+                lottieUrl: "electric-creature-lottie.json" 
             },
             "gengar": { 
                 name: "Gengar", element: "Tipe: Hantu/Racun", desc: "Bersembunyi di dalam bayangan dan menebar teror malam kepada musuhnya.", 
                 image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/94.png", color: "bg-indigo-500/20", 
-                videoUrl: "https://www.webmfiles.org/demo/webm-test.webm" 
+                lottieUrl: "electric-creature-lottie.json" 
             },
             "rayquaza": { 
                 name: "Rayquaza", element: "Tipe: Naga/Penerbang", desc: "Penguasa langit yang hidup di lapisan ozon dan mengamuk dengan kekuatan naga.", 
                 image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/384.png", color: "bg-emerald-500/20", 
-                videoUrl: "https://www.webmfiles.org/demo/webm-test.webm" 
+                lottieUrl: "electric-creature-lottie.json" 
             },
             "eevee": { 
                 name: "Eevee", element: "Tipe: Normal", desc: "Memiliki kode genetik tidak stabil yang memungkinkannya beradaptasi dengan cepat.", 
                 image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/133.png", color: "bg-amber-500/20", 
-                videoUrl: "https://www.webmfiles.org/demo/webm-test.webm" 
+                lottieUrl: "electric-creature-lottie.json" 
             }
         };
 
         let activeData = characters["pikachu"];
+        let lottieAnimation = null;
 
         function loadCharacter(key) {
             activeData = characters[key] || characters["pikachu"];
@@ -139,26 +142,38 @@
         const charKey = urlParams.get('char') || 'pikachu'; 
         loadCharacter(charKey);
 
-        // Fungsi Memutar Video Animasi Fullscreen (Durasi 10 Detik)
+        // Fungsi Memutar Animasi Lottie Fullscreen
         function triggerUltimate() {
             const modal = document.getElementById('battle-fullscreen');
-            const videoElem = document.getElementById('battle-video');
-            const videoSource = document.getElementById('video-source');
+            const container = document.getElementById('lottie-container');
 
-            // Masukkan source video sesuai karakter aktif
-            videoSource.src = activeData.videoUrl;
-            videoElem.load();
-            
-            // Tampilkan modal dan putar video
+            // Hancurkan instance animasi sebelumnya jika ada
+            if (lottieAnimation) {
+                lottieAnimation.destroy();
+            }
+
             modal.classList.remove('hidden');
-            videoElem.play();
 
-            // Tutup otomatis setelah 10 detik
-            setTimeout(() => {
-                videoElem.pause();
-                modal.classList.add('hidden');
-            }, 10000);
+            // Render animasi Lottie SVG secara instan
+            lottieAnimation = lottie.loadAnimation({
+                container: container,
+                renderer: 'svg',
+                loop: true,
+                autoplay: true,
+                path: activeData.lottieUrl
+            });
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('battle-fullscreen');
+            if (lottieAnimation) {
+                lottieAnimation.stop();
+                lottieAnimation.destroy();
+                lottieAnimation = null;
+            }
+            modal.classList.add('hidden');
         }
     </script>
 </body>
 </html>
+
