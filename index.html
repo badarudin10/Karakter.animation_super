@@ -7,23 +7,55 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @keyframes dramaticPower {
-            0% { transform: scale(1) rotate(0deg); filter: brightness(1) contrast(1); }
-            20% { transform: scale(1.2) rotate(-3deg); filter: brightness(1.6) contrast(1.3) drop-shadow(0 0 50px rgba(250, 204, 21, 1)); }
-            40% { transform: scale(1.15) rotate(3deg); filter: brightness(1.4) contrast(1.2); }
-            60% { transform: scale(1.25) rotate(-2deg); filter: brightness(1.7) contrast(1.4) drop-shadow(0 0 70px rgba(255, 255, 255, 1)); }
-            80% { transform: scale(1.15) rotate(2deg); filter: brightness(1.5); }
-            100% { transform: scale(1) rotate(0deg); filter: brightness(1); }
+        /* Animasi Karakter Bertarung */
+        @keyframes actionMove {
+            0%, 100% { transform: scale(1) translateY(0); }
+            50% { transform: scale(1.15) translateY(-10px); }
+        .animate-action {
+            animation: actionMove 0.5s ease-in-out infinite;
         }
-        .animate-ultimate {
-            animation: dramaticPower 1s ease-in-out infinite;
+
+        /* Efek Partikel Elemen Petir (Pikachu, dll) */
+        @keyframes electricSpark {
+            0% { opacity: 0; transform: scale(0.8); box-shadow: 0 0 10px yellow; }
+            50% { opacity: 1; transform: scale(1.2); box-shadow: 0 0 50px yellow, 0 0 100px orange; }
+            100% { opacity: 0; transform: scale(1.5); }
         }
-        @keyframes bgFlash {
-            0%, 100% { opacity: 0.3; transform: scale(1); }
-            50% { opacity: 0.8; transform: scale(1.1); }
+        .effect-electric {
+            animation: electricSpark 0.4s ease-in-out infinite;
+            background: radial-gradient(circle, rgba(253,224,71,0.8) 0%, rgba(234,179,8,0) 70%);
         }
-        .animate-flash {
-            animation: bgFlash 0.6s ease-in-out infinite;
+
+        /* Efek Partikel Elemen Api (Charizard, dll) */
+        @keyframes fireBurn {
+            0% { opacity: 0.3; transform: scale(0.9) rotate(0deg); }
+            50% { opacity: 0.9; transform: scale(1.3) rotate(5deg); box-shadow: 0 0 60px red, 0 0 100px orange; }
+            100% { opacity: 0.3; transform: scale(0.9) rotate(0deg); }
+        }
+        .effect-fire {
+            animation: fireBurn 0.5s ease-in-out infinite;
+            background: radial-gradient(circle, rgba(239,68,68,0.8) 0%, rgba(249,115,22,0) 70%);
+        }
+
+        /* Efek Partikel Elemen Air (Greninja, Squirtle) */
+        @keyframes waterSplash {
+            0% { opacity: 0.3; transform: scale(0.9); }
+            50% { opacity: 0.9; transform: scale(1.25); box-shadow: 0 0 60px cyan, 0 0 100px blue; }
+            100% { opacity: 0.3; transform: scale(0.9); }
+        }
+        .effect-water {
+            animation: waterSplash 0.6s ease-in-out infinite;
+            background: radial-gradient(circle, rgba(6,182,212,0.8) 0%, rgba(59,130,246,0) 70%);
+        }
+
+        /* Efek Partikel Psikis / Energi Umum (Mewtwo, dll) */
+        @keyframes psychicAura {
+            0%, 100% { opacity: 0.4; transform: scale(1); filter: hue-rotate(0deg); }
+            50% { opacity: 1; transform: scale(1.35); filter: hue-rotate(90deg); box-shadow: 0 0 80px purple, 0 0 120px magenta; }
+        }
+        .effect-psychic {
+            animation: psychicAura 0.7s ease-in-out infinite;
+            background: radial-gradient(circle, rgba(168,85,247,0.8) 0%, rgba(217,70,239,0) 70%);
         }
     </style>
 </head>
@@ -37,21 +69,17 @@
 
     <!-- Konten Utama (Tampilan Kartu Normal) -->
     <main id="app-container" class="w-full max-w-md flex flex-col items-center bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-2xl my-2 transition-all duration-300">
-        
-        <!-- Tampilan Karakter -->
         <div class="relative w-48 h-48 flex items-center justify-center mb-6">
             <div id="aura-bg" class="absolute inset-0 bg-yellow-500/20 rounded-full blur-xl animate-pulse transition-all duration-300"></div>
             <img id="char-image" src="" alt="Karakter" class="w-40 h-40 object-contain z-10 transition-all duration-300">
         </div>
 
-        <!-- Informasi Karakter -->
         <div class="text-center mb-6">
             <h2 id="char-name" class="text-2xl font-bold text-yellow-300">Memuat...</h2>
             <p id="char-element" class="text-sm font-semibold text-cyan-400 uppercase tracking-widest mt-1">-</p>
             <p id="char-desc" class="text-xs text-slate-300 mt-2 px-2">-</p>
         </div>
 
-        <!-- Tombol Aksi -->
         <button onclick="triggerUltimate()" class="w-full py-3 bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-400 hover:to-amber-500 text-slate-950 font-bold rounded-xl shadow-lg transition-transform active:scale-95 uppercase tracking-wider">
             ⚡ Keluarkan Kekuatan!
         </button>
@@ -60,20 +88,17 @@
     <!-- Panel Pilihan 10 Karakter -->
     <section class="w-full max-w-md bg-slate-800/50 border border-slate-700/50 rounded-xl p-3 my-2 text-center">
         <p class="text-xs text-slate-400 mb-2 font-semibold">Pilih Kartu Karakter (10 Koleksi):</p>
-        <div id="character-list" class="flex flex-wrap justify-center gap-1.5 max-h-32 overflow-y-auto p-1">
-            <!-- Tombol 10 karakter dimuat otomatis -->
-        </div>
+        <div id="character-list" class="flex flex-wrap justify-center gap-1.5 max-h-32 overflow-y-auto p-1"></div>
     </section>
 
-    <!-- MODAL LAYAR PENUH (FULLSCREEN BERSIH TANPA TEKS SEPERTI GIFT TIKTOK) -->
+    <!-- MODAL LAYAR PENUH (KOREOGRAFI EFEK KEKUATAN KHUSUS TIAP KARAKTER) -->
     <div id="battle-fullscreen" class="fixed inset-0 bg-slate-950/95 z-50 hidden flex items-center justify-center p-4 backdrop-blur-md transition-opacity duration-500">
-        <!-- Efek Kilatan/Aura Latar Belakang Menyeluruh -->
-        <div id="cinematic-aura" class="absolute inset-0 bg-yellow-600/30 blur-3xl animate-flash pointer-events-none"></div>
+        <!-- Lapisan Efek Spesial Elemen di Belakang Karakter -->
+        <div id="custom-element-effect" class="absolute w-80 h-80 rounded-full blur-2xl pointer-events-none"></div>
 
-        <!-- Karakter Beraksi di Tengah Layar (Full Layar Bersih) -->
+        <!-- Karakter Beraksi Sesuai Kekuatan -->
         <div class="relative z-10 w-full h-full flex items-center justify-center">
-            <div class="absolute w-72 h-72 bg-white/15 rounded-full blur-3xl animate-ping pointer-events-none"></div>
-            <img id="battle-image" src="" alt="Karakter Ultimate" class="w-72 h-72 sm:w-96 sm:h-96 object-contain animate-ultimate z-20 drop-shadow-[0_0_35px_rgba(255,215,0,0.8)]">
+            <img id="battle-image" src="" alt="Karakter Ultimate" class="w-72 h-72 sm:w-96 sm:h-96 object-contain animate-action z-20 drop-shadow-2xl">
         </div>
     </div>
 
@@ -82,26 +107,25 @@
         Powered by BiipSite Digital &copy; 2026
     </footer>
 
-    <!-- Logika JavaScript -->
+    <!-- Logika JavaScript & Web Audio API untuk Suara Karakter -->
     <script>
         const characters = {
-            "pikachu": { name: "Pikachu", element: "Tipe: Petir", desc: "Mengumpulkan energi listrik di kantong pipinya untuk melepaskan sengatan dahsyat.", image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png", color: "bg-yellow-500/20" },
-            "charizard": { name: "Charizard", element: "Tipe: Api/Naga", desc: "Menghembuskan api pijar bersuhu tinggi yang mampu melelehkan batu besar.", image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/6.png", color: "bg-red-500/20" },
-            "greninja": { name: "Greninja", element: "Tipe: Air/Ninja", desc: "Bergerak secepat bayangan dan melempar shuriken air bertekanan tinggi.", image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/658.png", color: "bg-blue-500/20" },
-            "mewtwo": { name: "Mewtwo", element: "Tipe: Psikis", desc: "Memanfaatkan kekuatan psikokinesis tingkat tinggi untuk melumpuhkan musuh.", image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/150.png", color: "bg-purple-500/20" },
-            "bulbasaur": { name: "Bulbasaur", element: "Tipe: Rumput/Racun", desc: "Menggunakan cambuk tanaman dan menyerap energi matahari untuk menyerang.", image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png", color: "bg-green-500/20" },
-            "squirtle": { name: "Squirtle", element: "Tipe: Air", desc: "Menyemburkan air bertekanan tinggi dari dalam cangkangnya ke arah lawan.", image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/7.png", color: "bg-cyan-500/20" },
-            "lucario": { name: "Lucario", element: "Tipe: Bertarung/Baja", desc: "Mendeteksi aura makhluk hidup dan melepaskan gelombang energi bola aura.", image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/448.png", color: "bg-blue-600/20" },
-            "gengar": { name: "Gengar", element: "Tipe: Hantu/Racun", desc: "Bersembunyi di dalam bayangan dan menebar teror malam kepada musuhnya.", image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/94.png", color: "bg-indigo-500/20" },
-            "rayquaza": { name: "Rayquaza", element: "Tipe: Naga/Penerbang", desc: "Penguasa langit yang hidup di lapisan ozon dan mengamuk dengan kekuatan naga.", image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/384.png", color: "bg-emerald-500/20" },
-            "eevee": { name: "Eevee", element: "Tipe: Normal", desc: "Memiliki kode genetik tidak stabil yang memungkinkannya beradaptasi dengan cepat.", image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/133.png", color: "bg-amber-500/20" }
+            "pikachu": { name: "Pikachu", element: "Tipe: Petir", desc: "Mengumpulkan energi listrik di kantong pipinya untuk melepaskan sengatan dahsyat.", image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png", color: "bg-yellow-500/20", effectClass: "effect-electric", soundType: "electric" },
+            "charizard": { name: "Charizard", element: "Tipe: Api/Naga", desc: "Menghembuskan api pijar bersuhu tinggi yang mampu melelehkan batu besar.", image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/6.png", color: "bg-red-500/20", effectClass: "effect-fire", soundType: "fire" },
+            "greninja": { name: "Greninja", element: "Tipe: Air/Ninja", desc: "Bergerak secepat bayangan dan melempar shuriken air bertekanan tinggi.", image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/658.png", color: "bg-blue-500/20", effectClass: "effect-water", soundType: "water" },
+            "mewtwo": { name: "Mewtwo", element: "Tipe: Psikis", desc: "Memanfaatkan kekuatan psikokinesis tingkat tinggi untuk melumpuhkan musuh.", image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/150.png", color: "bg-purple-500/20", effectClass: "effect-psychic", soundType: "psychic" },
+            "bulbasaur": { name: "Bulbasaur", element: "Tipe: Rumput/Racun", desc: "Menggunakan cambuk tanaman dan menyerap energi matahari untuk menyerang.", image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png", color: "bg-green-500/20", effectClass: "effect-fire", soundType: "water" },
+            "squirtle": { name: "Squirtle", element: "Tipe: Air", desc: "Menyemburkan air bertekanan tinggi dari dalam cangkangnya ke arah lawan.", image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/7.png", color: "bg-cyan-500/20", effectClass: "effect-water", soundType: "water" },
+            "lucario": { name: "Lucario", element: "Tipe: Bertarung/Baja", desc: "Mendeteksi aura makhluk hidup dan melepaskan gelombang energi bola aura.", image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/448.png", color: "bg-blue-600/20", effectClass: "effect-psychic", soundType: "electric" },
+            "gengar": { name: "Gengar", element: "Tipe: Hantu/Racun", desc: "Bersembunyi di dalam bayangan dan menebar teror malam kepada musuhnya.", image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/94.png", color: "bg-indigo-500/20", effectClass: "effect-psychic", soundType: "psychic" },
+            "rayquaza": { name: "Rayquaza", element: "Tipe: Naga/Penerbang", desc: "Penguasa langit yang hidup di lapisan ozon dan mengamuk dengan kekuatan naga.", image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/384.png", color: "bg-emerald-500/20", effectClass: "effect-electric", soundType: "fire" },
+            "eevee": { name: "Eevee", element: "Tipe: Normal", desc: "Memiliki kode genetik tidak stabil yang memungkinkannya beradaptasi dengan cepat.", image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/133.png", color: "bg-amber-500/20", effectClass: "effect-psychic", soundType: "electric" }
         };
 
         let activeData = characters["pikachu"];
 
         function loadCharacter(key) {
             activeData = characters[key] || characters["pikachu"];
-            
             document.getElementById('char-name').innerText = activeData.name;
             document.getElementById('char-element').innerText = activeData.element;
             document.getElementById('char-desc').innerText = activeData.desc;
@@ -122,16 +146,68 @@
         const charKey = urlParams.get('char') || 'pikachu'; 
         loadCharacter(charKey);
 
+        // Generator Efek Suara Otomatis Menggunakan Web Audio API (Tanpa File Eksternal)
+        function playBattleSound(type) {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+
+                let now = audioCtx.currentTime;
+
+                if (type === 'electric') {
+                    // Suara Sambaran Petir / Sengatan Listrik
+                    oscillator.type = 'sawtooth';
+                    oscillator.frequency.setValueAtTime(300, now);
+                    oscillator.frequency.exponentialRampToValueAtTime(800, now + 0.1);
+                    oscillator.frequency.exponentialRampToValueAtTime(150, now + 0.3);
+                    gainNode.gain.setValueAtTime(0.3, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
+                    oscillator.start(now);
+                    oscillator.stop(now + 0.8);
+                } else if (type === 'fire') {
+                    // Suara Ledakan Api / Gemuruh Panas
+                    oscillator.type = 'triangle';
+                    oscillator.frequency.setValueAtTime(120, now);
+                    oscillator.frequency.linearRampToValueAtTime(60, now + 0.5);
+                    gainNode.gain.setValueAtTime(0.4, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.9);
+                    oscillator.start(now);
+                    oscillator.stop(now + 0.9);
+                } else {
+                    // Suara Gelombang Psikis / Air
+                    oscillator.type = 'sine';
+                    oscillator.frequency.setValueAtTime(400, now);
+                    oscillator.frequency.exponentialRampToValueAtTime(200, now + 0.6);
+                    gainNode.gain.setValueAtTime(0.3, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
+                    oscillator.start(now);
+                    oscillator.stop(now + 0.8);
+                }
+            } catch(e) {
+                console.log("Audio didukung interaksi pengguna");
+            }
+        }
+
         let countdownTimer = null;
 
         function triggerUltimate() {
             const modal = document.getElementById('battle-fullscreen');
             const battleImg = document.getElementById('battle-image');
+            const elementEffect = document.getElementById('custom-element-effect');
             
             battleImg.src = activeData.image;
+            elementEffect.className = `absolute w-80 h-80 rounded-full blur-2xl pointer-events-none ${activeData.effectClass}`;
+            
+            // Putar efek suara elemen
+            playBattleSound(activeData.soundType);
+
             modal.classList.remove('hidden');
             
-            let timeLeft = 10; // Durasi 10 detik penuh tanpa teks
+            let timeLeft = 10; // Durasi 10 detik penuh efek kekuatan khusus
 
             clearInterval(countdownTimer);
 
@@ -139,7 +215,7 @@
                 timeLeft--;
                 if (timeLeft <= 0) {
                     clearInterval(countdownTimer);
-                    modal.classList.add('hidden'); // Kembali ke tampilan kartu profil semula
+                    modal.classList.add('hidden'); // Kembali ke profil kartu normal
                 }
             }, 1000);
         }
