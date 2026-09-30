@@ -48,16 +48,17 @@
     <!-- MODAL LAYAR PENUH (VIDEO ANIMASI TRANSPARAN) -->
     <div id="battle-fullscreen" onclick="closeUltimate()" class="fixed inset-0 bg-slate-950/80 z-50 hidden flex flex-col items-center justify-center p-4 backdrop-blur-md cursor-pointer">
         
-        <!-- Video dengan mix-blend-screen. Hanya menggunakan format WebM. -->
-        <video id="ultimate-video" class="w-full max-h-[80vh] object-contain pointer-events-none mix-blend-screen" playsinline loop preload="auto">
-            
-            <!-- Sumber video diubah hanya memuat file WebM Anda -->
+        <!-- 
+          PERUBAHAN PADA KELAS VIDEO: 
+          Menggunakan w-auto h-auto max-w-full max-h-full agar kualitas resolusi asli terjaga tanpa ditarik paksa. 
+          Ditambahkan will-change-transform untuk optimasi render grafis.
+        -->
+        <video id="ultimate-video" class="w-auto h-auto max-w-full max-h-[85vh] object-contain pointer-events-none mix-blend-screen" style="will-change: transform;" playsinline preload="auto">
             <source src="pikachu-animasi.webm" type="video/webm">
-            
             Browser Anda tidak mendukung elemen video.
         </video>
 
-        <p class="text-xs text-slate-400 mt-4 animate-bounce">Ketuk di mana saja untuk menutup</p>
+        <p class="text-xs text-slate-400 mt-4 animate-bounce">Tunggu video selesai, atau ketuk untuk menutup</p>
     </div>
 
     <!-- Footer -->
@@ -105,12 +106,14 @@
 
         const video = document.getElementById('ultimate-video');
 
+        // Menutup layar modal otomatis jika video sudah berputar sampai akhir
+        video.addEventListener('ended', closeUltimate);
+
         function triggerUltimate() {
             const modal = document.getElementById('battle-fullscreen');
             modal.classList.remove('hidden');
             
-            // Memaksa browser memuat video sebelum diputar
-            video.load();
+            // Mengulang waktu ke awal setiap kali ditekan
             video.currentTime = 0;
             
             video.play().catch(err => {
@@ -127,3 +130,4 @@
     </script>
 </body>
 </html>
+
