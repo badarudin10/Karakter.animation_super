@@ -48,13 +48,8 @@
     <!-- MODAL LAYAR PENUH (VIDEO ANIMASI TRANSPARAN) -->
     <div id="battle-fullscreen" onclick="closeUltimate()" class="fixed inset-0 bg-slate-950/80 z-50 hidden flex flex-col items-center justify-center p-4 backdrop-blur-md cursor-pointer">
         
-        <!-- 
-          PERUBAHAN PADA KELAS VIDEO: 
-          Menggunakan w-auto h-auto max-w-full max-h-full agar kualitas resolusi asli terjaga tanpa ditarik paksa. 
-          Ditambahkan will-change-transform untuk optimasi render grafis.
-        -->
+        <!-- Tag <source> dihapus, atribut 'src' akan diisi oleh JavaScript secara dinamis -->
         <video id="ultimate-video" class="w-auto h-auto max-w-full max-h-[85vh] object-contain pointer-events-none mix-blend-screen" style="will-change: transform;" playsinline preload="auto">
-            <source src="pikachu-animasi.webm" type="video/webm">
             Browser Anda tidak mendukung elemen video.
         </video>
 
@@ -68,19 +63,62 @@
 
     <!-- Logika JavaScript -->
     <script>
-        // Database 10 Karakter
+        // Database 10 Karakter dengan tambahan properti 'video'
         const characters = {
-            "pikachu": { name: "Pikachu", element: "Tipe: Petir", desc: "Mengumpulkan energi listrik di kantong pipinya untuk melepaskan sengatan dahsyat.", image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png", color: "bg-yellow-500/20" },
-            "charizard": { name: "Charizard", element: "Tipe: Api/Naga", desc: "Menghembuskan api pijar bersuhu tinggi yang mampu melelehkan batu besar.", image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/6.png", color: "bg-red-500/20" },
-            "greninja": { name: "Greninja", element: "Tipe: Air/Ninja", desc: "Bergerak secepat bayangan dan melempar shuriken air bertekanan tinggi.", image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/658.png", color: "bg-blue-500/20" },
-            "mewtwo": { name: "Mewtwo", element: "Tipe: Psikis", desc: "Memanfaatkan kekuatan psikokinesis tingkat tinggi untuk melumpuhkan musuh.", image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/150.png", color: "bg-purple-500/20" },
-            "bulbasaur": { name: "Bulbasaur", element: "Tipe: Rumput/Racun", desc: "Menggunakan cambuk tanaman dan menyerap energi matahari untuk menyerang.", image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png", color: "bg-green-500/20" },
-            "squirtle": { name: "Squirtle", element: "Tipe: Air", desc: "Menyemburkan air bertekanan tinggi dari dalam cangkangnya ke arah lawan.", image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/7.png", color: "bg-cyan-500/20" },
-            "lucario": { name: "Lucario", element: "Tipe: Bertarung/Baja", desc: "Mendeteksi aura makhluk hidup dan melepaskan gelombang energi bola aura.", image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/448.png", color: "bg-blue-600/20" },
-            "gengar": { name: "Gengar", element: "Tipe: Hantu/Racun", desc: "Bersembunyi di dalam bayangan dan menebar teror malam kepada musuhnya.", image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/94.png", color: "bg-indigo-500/20" },
-            "rayquaza": { name: "Rayquaza", element: "Tipe: Naga/Penerbang", desc: "Penguasa langit yang hidup di lapisan ozon dan mengamuk dengan kekuatan naga.", image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/384.png", color: "bg-emerald-500/20" },
-            "eevee": { name: "Eevee", element: "Tipe: Normal", desc: "Memiliki kode genetik tidak stabil yang memungkinkannya beradaptasi dengan cepat.", image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/133.png", color: "bg-amber-500/20" }
+            "pikachu": { 
+                name: "Pikachu", element: "Tipe: Petir", desc: "Mengumpulkan energi listrik di kantong pipinya untuk melepaskan sengatan dahsyat.", 
+                image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png", color: "bg-yellow-500/20",
+                video: "1000061379.webm" // Nama file video asli Pikachu Anda
+            },
+            "charizard": { 
+                name: "Charizard", element: "Tipe: Api/Naga", desc: "Menghembuskan api pijar bersuhu tinggi yang mampu melelehkan batu besar.", 
+                image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/6.png", color: "bg-red-500/20",
+                video: "charizard.webm" // Siapkan tempat untuk video Charizard
+            },
+            "greninja": { 
+                name: "Greninja", element: "Tipe: Air/Ninja", desc: "Bergerak secepat bayangan dan melempar shuriken air bertekanan tinggi.", 
+                image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/658.png", color: "bg-blue-500/20",
+                video: "greninja.webm" // Siapkan tempat untuk video Greninja
+            },
+            "mewtwo": { 
+                name: "Mewtwo", element: "Tipe: Psikis", desc: "Memanfaatkan kekuatan psikokinesis tingkat tinggi untuk melumpuhkan musuh.", 
+                image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/150.png", color: "bg-purple-500/20",
+                video: "mewtwo.webm" // Siapkan tempat untuk video Mewtwo
+            },
+            "bulbasaur": { 
+                name: "Bulbasaur", element: "Tipe: Rumput/Racun", desc: "Menggunakan cambuk tanaman dan menyerap energi matahari untuk menyerang.", 
+                image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png", color: "bg-green-500/20",
+                video: "bulbasaur.webm" // Siapkan tempat untuk video Bulbasaur
+            },
+            "squirtle": { 
+                name: "Squirtle", element: "Tipe: Air", desc: "Menyemburkan air bertekanan tinggi dari dalam cangkangnya ke arah lawan.", 
+                image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/7.png", color: "bg-cyan-500/20",
+                video: "squirtle.webm" // Siapkan tempat untuk video Squirtle
+            },
+            "lucario": { 
+                name: "Lucario", element: "Tipe: Bertarung/Baja", desc: "Mendeteksi aura makhluk hidup dan melepaskan gelombang energi bola aura.", 
+                image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/448.png", color: "bg-blue-600/20",
+                video: "lucario.webm" // Siapkan tempat untuk video Lucario
+            },
+            "gengar": { 
+                name: "Gengar", element: "Tipe: Hantu/Racun", desc: "Bersembunyi di dalam bayangan dan menebar teror malam kepada musuhnya.", 
+                image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/94.png", color: "bg-indigo-500/20",
+                video: "gengar.webm" // Siapkan tempat untuk video Gengar
+            },
+            "rayquaza": { 
+                name: "Rayquaza", element: "Tipe: Naga/Penerbang", desc: "Penguasa langit yang hidup di lapisan ozon dan mengamuk dengan kekuatan naga.", 
+                image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/384.png", color: "bg-emerald-500/20",
+                video: "rayquaza.webm" // Siapkan tempat untuk video Rayquaza
+            },
+            "eevee": { 
+                name: "Eevee", element: "Tipe: Normal", desc: "Memiliki kode genetik tidak stabil yang memungkinkannya beradaptasi dengan cepat.", 
+                image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/133.png", color: "bg-amber-500/20",
+                video: "eevee.webm" // Siapkan tempat untuk video Eevee
+            }
         };
+
+        const video = document.getElementById('ultimate-video');
+        let currentVideoSource = ""; // Menyimpan status nama video saat ini
 
         function loadCharacter(key) {
             const activeData = characters[key] || characters["pikachu"];
@@ -89,6 +127,11 @@
             document.getElementById('char-desc').innerText = activeData.desc;
             document.getElementById('char-image').src = activeData.image;
             document.getElementById('aura-bg').className = `absolute inset-0 ${activeData.color} rounded-full blur-xl animate-pulse transition-all duration-300`;
+            
+            // Merubah sumber file video sesuai karakter yang dipilih
+            currentVideoSource = activeData.video;
+            video.src = currentVideoSource;
+            video.load(); // Memuat ulang video ke memori
         }
 
         const charListContainer = document.getElementById('character-list');
@@ -104,8 +147,6 @@
         const charKey = urlParams.get('char') || 'pikachu'; 
         loadCharacter(charKey);
 
-        const video = document.getElementById('ultimate-video');
-
         // Menutup layar modal otomatis jika video sudah berputar sampai akhir
         video.addEventListener('ended', closeUltimate);
 
@@ -118,7 +159,8 @@
             
             video.play().catch(err => {
                 console.error("Gagal memutar video:", err);
-                alert("Gagal memutar video. \n\nPastikan file di GitHub Anda benar-benar bernama '1000061379.webm'. Jika namanya berbeda, video tidak akan muncul.");
+                // Pesan error ini sekarang otomatis menyesuaikan nama file yang hilang
+                alert("Gagal memutar video. \n\nPastikan file '" + currentVideoSource + "' sudah ada di GitHub Anda.");
             });
         }
 
@@ -130,4 +172,3 @@
     </script>
 </body>
 </html>
-
