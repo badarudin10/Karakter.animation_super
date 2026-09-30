@@ -48,13 +48,11 @@
     <!-- MODAL LAYAR PENUH (VIDEO ANIMASI TRANSPARAN) -->
     <div id="battle-fullscreen" onclick="closeUltimate()" class="fixed inset-0 bg-slate-950/80 z-50 hidden flex flex-col items-center justify-center p-4 backdrop-blur-md cursor-pointer">
         
-        <!-- Video dengan mix-blend-screen agar background hitam jadi transparan otomatis. Tidak ada atribut 'muted' agar bersuara. -->
+        <!-- Video dengan mix-blend-screen. Hanya menggunakan format WebM. -->
         <video id="ultimate-video" class="w-full max-h-[80vh] object-contain pointer-events-none mix-blend-screen" playsinline loop preload="auto">
             
-            <!-- Pastikan nama file ini sama persis dengan yang ada di repositori GitHub Anda -->
-            <source src="pikachu-animasi.mp4" type="video/mp4">
-            <!-- Jika Anda juga mengunggah versi webm, aktifkan baris di bawah ini -->
-            <!-- <source src="pikachu-animasi.webm" type="video/webm"> -->
+            <!-- Sumber video diubah hanya memuat file WebM Anda -->
+            <source src="pikachu-animasi.webm" type="video/webm">
             
             Browser Anda tidak mendukung elemen video.
         </video>
@@ -117,7 +115,7 @@
             
             video.play().catch(err => {
                 console.error("Gagal memutar video:", err);
-                alert("Gagal memutar video. \n\nPastikan nama file (1000061379.mp4) sudah benar di GitHub Anda. Jika masih gagal, beberapa peramban seluler mungkin memblokir pemutaran suara otomatis.");
+                alert("Gagal memutar video. \n\nPastikan file di GitHub Anda benar-benar bernama '1000061379.webm'. Jika namanya berbeda, video tidak akan muncul.");
             });
         }
 
@@ -129,4 +127,3 @@
     </script>
 </body>
 </html>
-
