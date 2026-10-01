@@ -1,5 +1,4 @@
 <!doctype html>
-
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
@@ -361,17 +360,89 @@
       }
     }
 
+    /*
+      ==========================================================
+      PIKACHU SPRITE ANIMATION ENGINE (CSS ONLY)
+      ==========================================================
+      Sprite di set otomatis memotong menjadi 16 pose ke bawah.
+      Menggunakan fungsi transform & steps(16) agar frame-by-frame
+      presisi dan tanpa celah.
+      ==========================================================
+    */
+    .pikachu-container {
+      overflow: hidden;
+      position: relative;
+      /* Proporsi asli pose potrait dari perhitungan (Misal 224:291.25) */
+      aspect-ratio: 224 / 291.25;
+    }
+
+    .pikachu-sprite {
+      width: 100%;
+      height: 1600%; /* 100% x 16 pose ke bawah */
+      background-image: url('assets/images/pikachu-pose-1-16.jpg');
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+      animation: playPikachu 1.4s steps(16) infinite;
+      pointer-events: none;
+    }
+
+    @keyframes playPikachu {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-100%); }
+    }
+
+    /* Base Styling untuk gambar karakter di berbagai modul */
     .character-image {
       position:relative;
       z-index:2;
       width:min(69%,330px);
+      height:auto;
       max-height:310px;
+      aspect-ratio: 224 / 291.25; /* Menjaga konsistensi box */
       object-fit:contain;
       filter:
         drop-shadow(0 16px 24px rgba(0,0,0,.55))
         drop-shadow(0 0 18px var(--char-glow,rgba(255,200,87,.3)));
       animation:float 4.6s ease-in-out infinite;
       user-select:none;
+      margin: 0 auto;
+    }
+
+    .card-art {
+      display:block;
+      width:100%;
+      height:auto;
+      aspect-ratio:224 / 291.25;
+      object-fit:contain;
+      object-position:center center;
+      filter:drop-shadow(0 8px 9px rgba(0,0,0,.45));
+      position:relative;
+      z-index:1;
+      margin:0;
+    }
+
+    .profile-art {
+      width:100%;
+      height:150px;
+      object-fit:contain;
+      filter:drop-shadow(0 0 15px var(--char-glow,rgba(86,233,255,.2)));
+    }
+
+    .pikachu-container.profile-art {
+      width: auto;
+      max-width: 100%;
+      margin: 0 auto;
+    }
+
+    .scanner-image {
+      width:180px;
+      height:auto;
+      aspect-ratio: 224 / 291.25;
+      object-fit:contain;
+      z-index:1;
+      filter:drop-shadow(0 0 22px rgba(86,233,255,.35));
+      animation:float 3s ease-in-out infinite;
+      margin: 0 auto;
     }
 
     @keyframes float {
@@ -706,23 +777,6 @@
       letter-spacing:.1em;
     }
 
-    /*
-      ==========================================================
-      COLLECTION / POSE ART
-      ==========================================================
-
-      Rasio sumber karakter:
-      896 x 1165
-
-      Jadi area gambar dibuat portrait:
-      width : height = 896 : 1165
-
-      Tidak dipaksa menjadi kotak persegi.
-      Tidak crop.
-      Tidak stretch.
-      ==========================================================
-    */
-
     .card-grid {
       display:grid;
       grid-template-columns:repeat(5,minmax(0,1fr));
@@ -735,36 +789,20 @@
       --card-accent:#56e9ff;
       position:relative;
       overflow:hidden;
-
-      /*
-        Area kartu mengikuti karakter portrait.
-      */
       min-height:0;
-
-      /*
-        Menghindari jarak antar pose.
-      */
       padding:10px;
-
       border:1px solid color-mix(in srgb,var(--card-accent) 28%,transparent);
       border-radius:0;
-
       background:linear-gradient(
         145deg,
         rgba(22,31,57,.85),
         rgba(8,13,26,.92)
       );
-
       text-align:left;
-
       transition:
         transform .22s ease,
         border-color .22s ease,
         box-shadow .22s ease;
-
-      /*
-        Supaya setiap kartu portrait.
-      */
       aspect-ratio:896 / 1165;
     }
 
@@ -813,34 +851,6 @@
       color:var(--muted);
       font-size:9px;
       letter-spacing:.1em;
-    }
-
-    /*
-      Gambar karakter menggunakan rasio 896 x 1165.
-
-      aspect-ratio memastikan area lebih tinggi
-      daripada lebar.
-
-      object-fit:contain menjaga seluruh karakter.
-    */
-    .card-art {
-      display:block;
-
-      width:100%;
-
-      aspect-ratio:896 / 1165;
-
-      height:auto;
-
-      object-fit:contain;
-      object-position:center center;
-
-      filter:drop-shadow(0 8px 9px rgba(0,0,0,.45));
-
-      position:relative;
-      z-index:1;
-
-      margin:0;
     }
 
     .card-name {
@@ -930,13 +940,8 @@
     }
 
     @keyframes fade-in {
-      from {
-        opacity:0;
-      }
-
-      to {
-        opacity:1;
-      }
+      from { opacity:0; }
+      to { opacity:1; }
     }
 
     .modal {
@@ -954,15 +959,8 @@
     }
 
     @keyframes modal-up {
-      from {
-        transform:translateY(18px) scale(.97);
-        opacity:0;
-      }
-
-      to {
-        transform:none;
-        opacity:1;
-      }
+      from { transform:translateY(18px) scale(.97); opacity:0; }
+      to { transform:none; opacity:1; }
     }
 
     .modal-head {
@@ -997,13 +995,6 @@
       border:1px solid var(--line);
       border-radius:16px;
       background:rgba(255,255,255,.035);
-    }
-
-    .profile-art {
-      width:100%;
-      height:150px;
-      object-fit:contain;
-      filter:drop-shadow(0 0 15px var(--char-glow,rgba(86,233,255,.2)));
     }
 
     .profile-hero h3 {
@@ -1129,22 +1120,8 @@
     }
 
     @keyframes beam {
-      from {
-        transform:translateY(30px);
-      }
-
-      to {
-        transform:translateY(460px);
-      }
-    }
-
-    .scanner-image {
-      width:210px;
-      height:210px;
-      object-fit:contain;
-      z-index:1;
-      filter:drop-shadow(0 0 22px rgba(86,233,255,.35));
-      animation:float 3s ease-in-out infinite;
+      from { transform:translateY(30px); }
+      to { transform:translateY(460px); }
     }
 
     .scan-copy {
@@ -1172,20 +1149,13 @@
       font-size:12px;
     }
 
-    /* =========================================================
-       VIDEO FULLSCREEN
-       ========================================================= */
-
+    /* FULLSCREEN VIDEO OVERLAY */
     #video-overlay {
       position:fixed !important;
       z-index:999999 !important;
       inset:0 !important;
       width:100% !important;
       height:100% !important;
-      min-width:0 !important;
-      min-height:0 !important;
-      max-width:none !important;
-      max-height:none !important;
       margin:0 !important;
       padding:0 !important;
       display:none !important;
@@ -1205,10 +1175,6 @@
       inset:0 !important;
       width:100% !important;
       height:100% !important;
-      min-width:0 !important;
-      min-height:0 !important;
-      max-width:none !important;
-      max-height:none !important;
       margin:0 !important;
       padding:0 !important;
       border:0 !important;
@@ -1224,18 +1190,11 @@
       inset:0 !important;
       width:100% !important;
       height:100% !important;
-      min-width:0 !important;
-      min-height:0 !important;
-      max-width:none !important;
-      max-height:none !important;
-      margin:0 !important;
-      padding:0 !important;
       display:flex !important;
       align-items:center !important;
       justify-content:center !important;
       background:#000 !important;
       border:0 !important;
-      border-radius:0 !important;
       overflow:hidden !important;
     }
 
@@ -1245,26 +1204,11 @@
       left:50% !important;
       top:50% !important;
       transform:translate(-50%,-50%) !important;
-
       display:block !important;
-
       width:100% !important;
       height:100% !important;
-
-      max-width:100% !important;
-      max-height:100% !important;
-
       object-fit:contain !important;
-      object-position:center center !important;
-
-      margin:0 !important;
-      padding:0 !important;
-      border:0 !important;
-
       background:#000 !important;
-      mix-blend-mode:normal !important;
-
-      vertical-align:middle !important;
     }
 
     #video-overlay #ultimate-video[hidden],
@@ -1275,72 +1219,30 @@
       pointer-events:none !important;
     }
 
-    #video-overlay .video-caption {
-      display:none !important;
-      visibility:hidden !important;
-    }
-
     #video-overlay #video-fallback {
       display:none !important;
       visibility:hidden !important;
     }
 
     @media (min-width:641px) {
-
       #video-overlay #ultimate-video:not([hidden]),
       #video-overlay #evolution-video:not([hidden]) {
         width:100vw !important;
         height:100vh !important;
-
-        width:100dvw !important;
-        height:100dvh !important;
-
-        object-fit:contain !important;
-        object-position:center center !important;
-      }
-
-      #video-overlay #ultimate-video[hidden],
-      #video-overlay #evolution-video[hidden] {
-        display:none !important;
-        visibility:hidden !important;
-        opacity:0 !important;
       }
     }
 
     @media (max-width:640px) {
-
-      #video-overlay {
-        width:100vw !important;
-        width:100dvw !important;
-        height:100vh !important;
-        height:100dvh !important;
-      }
-
+      #video-overlay,
       #video-overlay .video-modal,
       #video-overlay .video-shell {
         width:100vw !important;
-        width:100dvw !important;
         height:100vh !important;
-        height:100dvh !important;
       }
-
       #video-overlay #ultimate-video:not([hidden]),
       #video-overlay #evolution-video:not([hidden]) {
         width:100% !important;
         height:100% !important;
-
-        max-width:100% !important;
-        max-height:100% !important;
-
-        object-fit:contain !important;
-        object-position:center center !important;
-      }
-
-      #video-overlay #ultimate-video[hidden],
-      #video-overlay #evolution-video[hidden] {
-        display:none !important;
-        visibility:hidden !important;
-        opacity:0 !important;
       }
     }
 
@@ -1434,9 +1336,7 @@
     }
 
     @keyframes load {
-      to {
-        width:100%;
-      }
+      to { width:100%; }
     }
 
     .loading-copy {
@@ -1450,30 +1350,19 @@
     }
 
     @keyframes shake {
-      15%,85% {
-        transform:translateX(-2px);
-      }
-
-      30%,70% {
-        transform:translateX(4px);
-      }
-
-      45%,55% {
-        transform:translateX(-6px);
-      }
+      15%,85% { transform:translateX(-2px); }
+      30%,70% { transform:translateX(4px); }
+      45%,55% { transform:translateX(-6px); }
     }
 
     @media (max-width:980px) {
-
       .layout {
         grid-template-columns:1fr;
       }
-
       .side-stack {
         display:grid;
         grid-template-columns:1fr 1fr;
       }
-
       .card-grid {
         grid-template-columns:repeat(4,minmax(0,1fr));
         gap:0;
@@ -1481,172 +1370,150 @@
     }
 
     @media (max-width:640px) {
-
       .app-shell {
         padding:12px 12px 102px;
       }
-
       .topbar {
         margin-bottom:14px;
       }
-
       .brand-mark {
         width:37px;
         height:37px;
         border-radius:11px;
       }
-
-      .brand h1 {
-        font-size:17px;
-      }
-
-      .brand p {
-        font-size:8px;
-      }
-
-      .hud-profile {
-        display:none;
-      }
-
+      .brand h1 { font-size:17px; }
+      .brand p { font-size:8px; }
+      .hud-profile { display:none; }
+      
       .hero {
         min-height:0;
         border-radius:22px;
         padding:16px;
       }
-
-      .hero-head h2 {
-        font-size:27px;
-      }
-
+      .hero-head h2 { font-size:27px; }
       .status-pill {
         font-size:8px;
         padding:7px 8px;
       }
-
       .character-stage {
         min-height:260px;
       }
 
+      /* Adjust character image sizes appropriately */
       .character-image {
         width:72%;
         max-height:245px;
+      }
+      .scanner-image {
+        width: 150px;
+      }
+      .pikachu-container.profile-art {
+        height: 105px;
       }
 
       .hero-bottom {
         grid-template-columns:1fr;
       }
-
       .actions {
         min-width:0;
         display:grid;
         grid-template-columns:1fr 1fr;
       }
-
       .actions .primary-btn {
         grid-column:span 2;
       }
-
       .quick-stats {
         margin-top:16px;
       }
-
       .stat-tile {
         padding:8px;
       }
-
       .stat-tile b {
         font-size:16px;
       }
-
       .side-stack {
         display:flex;
       }
-
       .panel {
         padding:15px;
       }
-
-      /*
-        Tetap portrait 896 x 1165 di HP.
-        Dua kartu berdampingan tanpa gap.
-      */
       .card-grid {
         grid-template-columns:repeat(2,minmax(0,1fr));
         gap:0;
       }
-
       .collection-card {
         min-height:0;
         aspect-ratio:896 / 1165;
-        padding:8px;
+        padding:0;
         border-radius:0;
       }
-
-      .card-art {
+      .collection-card .card-top {
+        position:absolute;
+        left:7px;
+        right:7px;
+        top:7px;
+        z-index:3;
+      }
+      .collection-card .card-art {
         width:100%;
         height:auto;
-        aspect-ratio:896 / 1165;
-        object-fit:contain;
-        object-position:center center;
       }
-
       .card-name {
+        position:absolute;
+        left:8px;
+        right:8px;
+        bottom:19px;
+        margin:0;
         font-size:11px;
+        z-index:3;
+        text-shadow:0 2px 8px #000;
       }
-
       .card-meta {
+        position:absolute;
+        left:8px;
+        right:8px;
+        bottom:6px;
         font-size:8px;
+        z-index:3;
+        text-shadow:0 2px 8px #000;
       }
-
       .collection-toolbar {
         align-items:stretch;
         flex-wrap:wrap;
       }
-
       .search {
         flex-basis:100%;
       }
-
       .filter-select {
         flex:1;
       }
-
       .bottom-nav {
         width:calc(100% - 24px);
         justify-content:space-around;
       }
-
       .nav-btn {
         flex:1;
         min-width:0;
       }
-
       .profile-hero {
         grid-template-columns:105px 1fr;
       }
-
       .profile-art {
         height:105px;
       }
-
       .profile-hero h3 {
         font-size:21px;
       }
-
       .profile-grid {
         grid-template-columns:1fr;
       }
-
       .scanner-modal {
         min-height:460px;
       }
     }
 
     @media (prefers-reduced-motion:reduce) {
-
-      *,
-      *::before,
-      *::after {
+      *, *::before, *::after {
         animation-duration:.001ms!important;
         animation-iteration-count:1!important;
         scroll-behavior:auto!important;
@@ -1657,7 +1524,6 @@
 </head>
 
 <body>
-
   <div class="ambient"></div>
 
   <div id="loading-screen" class="loading-screen" aria-label="Initializing BiipBattle">
@@ -1671,338 +1537,177 @@
   <div id="app" class="app-shell" aria-live="polite">
 
     <header class="topbar">
-
       <div class="brand">
-
         <div class="brand-mark">BB</div>
-
         <div>
           <h1>BIIPBATTLE</h1>
           <p>ULTIMATE CHARACTER ARENA</p>
         </div>
-
       </div>
 
       <div class="hud-actions">
-
         <div class="hud-profile">
-
           <div id="player-avatar" class="avatar">B</div>
-
           <div>
             <strong>PLAYER 01</strong>
             <small id="hud-level">LV. 07 // ONLINE</small>
           </div>
-
         </div>
-
-        <button
-          class="icon-btn"
-          id="sound-toggle"
-          type="button"
-          title="Toggle sound"
-          aria-label="Toggle sound"
-        >◖</button>
-
-        <button
-          class="icon-btn"
-          id="settings-button"
-          type="button"
-          title="Player profile"
-          aria-label="Player profile"
-        >⚙</button>
-
+        <button class="icon-btn" id="sound-toggle" type="button" title="Toggle sound" aria-label="Toggle sound">◖</button>
+        <button class="icon-btn" id="settings-button" type="button" title="Player profile" aria-label="Player profile">⚙</button>
       </div>
-
     </header>
 
     <main>
-
       <div class="layout">
-
-        <section
-          id="hero-card"
-          class="hero glass"
-          style="--char-glow:rgba(255,200,87,.24);--char-accent:#ffc857;--rarity:#ffc857;"
-        >
-
+        <section id="hero-card" class="hero glass" style="--char-glow:rgba(255,200,87,.24);--char-accent:#ffc857;--rarity:#ffc857;">
           <div class="hero-head">
-
             <div>
-
               <div class="eyebrow">
                 ACTIVE CHARACTER // <span id="char-code">#025</span>
               </div>
-
               <h2 id="hero-title">
                 TARGET <span>READY</span>
               </h2>
-
             </div>
-
             <div class="status-pill">
-
               <i class="status-dot"></i>
-
-              <span id="state-label">
-                IDLE STATE
-              </span>
-
+              <span id="state-label">IDLE STATE</span>
             </div>
-
           </div>
 
           <div class="character-stage">
-
             <div class="stage-grid"></div>
-
             <div class="energy-ring"></div>
-
             <div class="scan-corners"></div>
 
-            <img
-              id="char-image"
-              class="character-image"
-              src=""
-              alt="Active character"
-            />
+            <!-- Wrapper penampung render gambar dari JS secara langsung -->
+            <div id="char-image-container" style="display:contents;"></div>
 
           </div>
 
           <div class="hero-bottom">
-
             <div>
-
-              <div class="eyebrow">
-                CHARACTER PROFILE
-              </div>
-
-              <h3 id="char-name">
-                PIKACHU
-              </h3>
-
+              <div class="eyebrow">CHARACTER PROFILE</div>
+              <h3 id="char-name">PIKACHU</h3>
               <div id="type-row" class="type-row"></div>
-
-              <p id="char-desc">
-                Loading character data...
-              </p>
+              <p id="char-desc">Loading character data...</p>
 
               <div class="quick-stats">
-
                 <div class="stat-tile">
                   <b id="stat-hp">120</b>
                   <span>HP</span>
                 </div>
-
                 <div class="stat-tile">
                   <b id="stat-attack">85</b>
                   <span>ATTACK</span>
                 </div>
-
                 <div class="stat-tile">
                   <b id="stat-defense">60</b>
                   <span>DEFENSE</span>
                 </div>
-
                 <div class="stat-tile">
                   <b id="stat-speed">110</b>
                   <span>SPEED</span>
                 </div>
-
               </div>
-
             </div>
 
             <div class="actions">
-
-              <button
-                id="ultimate-button"
-                class="primary-btn"
-                type="button"
-              >
+              <button id="ultimate-button" class="primary-btn" type="button">
                 ⚡ KELUARKAN ULTIMATE
               </button>
-
-              <button
-                id="scan-button"
-                class="secondary-btn"
-                type="button"
-              >
+              <button id="scan-button" class="secondary-btn" type="button">
                 ⌁ SCAN CHARACTER
               </button>
-
-              <button
-                id="profile-button"
-                class="secondary-btn"
-                type="button"
-              >
+              <button id="profile-button" class="secondary-btn" type="button">
                 ▣ VIEW PROFILE
               </button>
-
             </div>
-
           </div>
-
         </section>
 
         <aside class="side-stack">
-
           <section class="panel glass">
-
             <div class="panel-head">
-
               <h3>Player Progress</h3>
-
-              <small id="collection-count">
-                10 / 10
-              </small>
-
+              <small id="collection-count">10 / 10</small>
             </div>
 
             <div class="progress-wrap">
-
               <div class="level-orb">
-
                 <div>
                   <small>LEVEL</small>
                   <span id="player-level">07</span>
                 </div>
-
               </div>
 
               <div style="flex:1">
-
                 <div class="progress-label">
-
                   <span>EXP CORE</span>
-
-                  <span id="player-exp-label">
-                    640 / 1000
-                  </span>
-
+                  <span id="player-exp-label">640 / 1000</span>
                 </div>
-
                 <div class="progress">
-                  <i
-                    id="player-exp-bar"
-                    style="--value:64%"
-                  ></i>
+                  <i id="player-exp-bar" style="--value:64%"></i>
                 </div>
-
-                <p
-                  style="color:var(--muted);font-size:10px;margin:9px 0 0"
-                >
+                <p style="color:var(--muted);font-size:10px;margin:9px 0 0">
                   Arena sync active · progress autosaved
                 </p>
-
               </div>
-
             </div>
-
           </section>
 
           <section class="panel glass">
-
             <div class="panel-head">
-
               <h3>Combat Readout</h3>
-
-              <small id="rarity-label">
-                RARE
-              </small>
-
+              <small id="rarity-label">RARE</small>
             </div>
-
-            <div
-              id="stat-list"
-              class="stat-list"
-            ></div>
-
+            <div id="stat-list" class="stat-list"></div>
           </section>
 
           <section class="panel glass">
-
             <div class="panel-head">
-
               <h3>Mission Log</h3>
-
               <small>LIVE</small>
-
             </div>
-
             <div class="metric-grid">
-
               <div class="metric">
                 <strong id="viewed-count">0</strong>
                 <span>Viewed</span>
               </div>
-
               <div class="metric">
                 <strong id="ultimate-count">0</strong>
                 <span>Ultimates</span>
               </div>
-
               <div class="metric">
                 <strong id="evolution-count">0</strong>
                 <span>Evolutions</span>
               </div>
-
               <div class="metric">
                 <strong>10</strong>
                 <span>Unlocked</span>
               </div>
-
             </div>
-
           </section>
-
         </aside>
-
       </div>
 
       <section class="collection-section">
-
         <div class="panel-head">
-
           <div>
-
-            <div class="eyebrow">
-              DATABASE // 001–010
-            </div>
-
-            <h2
-              style="margin:4px 0 0;font-size:22px;letter-spacing:.08em"
-            >
+            <div class="eyebrow">DATABASE // 001–010</div>
+            <h2 style="margin:4px 0 0;font-size:22px;letter-spacing:.08em">
               MY COLLECTION
             </h2>
-
           </div>
-
-          <small>
-            Tap a card to scan
-          </small>
-
+          <small>Tap a card to scan</small>
         </div>
 
         <div class="collection-toolbar">
-
           <label class="search">
-
-            <input
-              id="search-input"
-              type="search"
-              placeholder="Search Pokémon..."
-              autocomplete="off"
-            />
-
+            <input id="search-input" type="search" placeholder="Search Pokémon..." autocomplete="off" />
           </label>
-
-          <select
-            id="type-filter"
-            class="filter-select"
-            aria-label="Filter by type"
-          >
-
+          <select id="type-filter" class="filter-select" aria-label="Filter by type">
             <option value="all">ALL TYPES</option>
             <option value="electric">ELECTRIC</option>
             <option value="fire">FIRE</option>
@@ -2013,200 +1718,69 @@
             <option value="dragon">DRAGON</option>
             <option value="fighting">FIGHTING</option>
             <option value="normal">NORMAL</option>
-
           </select>
-
         </div>
 
-        <div
-          id="character-list"
-          class="card-grid"
-        ></div>
-
-        <div
-          id="empty-state"
-          class="empty-state"
-        >
+        <div id="character-list" class="card-grid"></div>
+        <div id="empty-state" class="empty-state">
           No character matches this scan filter.
         </div>
-
       </section>
-
     </main>
-
   </div>
 
-  <nav
-    class="bottom-nav"
-    aria-label="Main navigation"
-  >
-
-    <button
-      class="nav-btn active"
-      data-nav="home"
-      type="button"
-    >
-      <b>⌂</b>HOME
-    </button>
-
-    <button
-      class="nav-btn"
-      data-nav="collection"
-      type="button"
-    >
-      <b>▦</b>COLLECTION
-    </button>
-
-    <button
-      class="nav-btn"
-      data-nav="scan"
-      type="button"
-    >
-      <b>⌁</b>SCAN
-    </button>
-
-    <button
-      class="nav-btn"
-      data-nav="profile"
-      type="button"
-    >
-      <b>◉</b>PROFILE
-    </button>
-
+  <nav class="bottom-nav" aria-label="Main navigation">
+    <button class="nav-btn active" data-nav="home" type="button"><b>⌂</b>HOME</button>
+    <button class="nav-btn" data-nav="collection" type="button"><b>▦</b>COLLECTION</button>
+    <button class="nav-btn" data-nav="scan" type="button"><b>⌁</b>SCAN</button>
+    <button class="nav-btn" data-nav="profile" type="button"><b>◉</b>PROFILE</button>
   </nav>
 
-  <div
-    id="scanner-overlay"
-    class="overlay"
-  >
-
+  <div id="scanner-overlay" class="overlay">
     <div class="modal scanner-modal">
-
-      <button
-        class="close-btn"
-        data-close="scanner-overlay"
-        type="button"
-        aria-label="Close scanner"
-      >×</button>
-
+      <button class="close-btn" data-close="scanner-overlay" type="button" aria-label="Close scanner">×</button>
+      
       <div class="scan-beam"></div>
-
       <div class="scanner-target"></div>
 
-      <img
-        id="scanner-image"
-        class="scanner-image"
-        src=""
-        alt="Scanning character"
-      />
+      <!-- Wadah dinamis untuk Scan Art -->
+      <div id="scanner-image-container" style="display:contents;"></div>
 
       <div class="scan-copy">
-
-        <div
-          id="scan-status"
-          class="scan-status"
-        >
-          SCANNING...
-        </div>
-
-        <h2 id="scan-name">
-          TARGET
-        </h2>
-
-        <p id="scan-details">
-          Acquiring battle signature...
-        </p>
-
+        <div id="scan-status" class="scan-status">SCANNING...</div>
+        <h2 id="scan-name">TARGET</h2>
+        <p id="scan-details">Acquiring battle signature...</p>
       </div>
-
     </div>
-
   </div>
 
-  <div
-    id="profile-overlay"
-    class="overlay"
-  >
-
+  <div id="profile-overlay" class="overlay">
     <div class="modal">
-
       <div class="modal-head">
-
         <div>
-
-          <div class="eyebrow">
-            DATABASE ENTRY // FULL READOUT
-          </div>
-
-          <h2>
-            Character Profile
-          </h2>
-
+          <div class="eyebrow">DATABASE ENTRY // FULL READOUT</div>
+          <h2>Character Profile</h2>
         </div>
-
-        <button
-          class="close-btn"
-          data-close="profile-overlay"
-          type="button"
-          aria-label="Close profile"
-        >×</button>
-
+        <button class="close-btn" data-close="profile-overlay" type="button" aria-label="Close profile">×</button>
       </div>
-
       <div id="profile-content"></div>
-
     </div>
-
   </div>
 
   <!-- FULLSCREEN VIDEO OVERLAY -->
-
-  <div
-    id="video-overlay"
-    class="overlay"
-  >
-
+  <div id="video-overlay" class="overlay">
     <div class="modal video-modal">
-
       <div class="video-shell">
-
-        <video
-          id="ultimate-video"
-          playsinline
-          webkit-playsinline
-          preload="auto"
-        ></video>
-
-        <video
-          id="evolution-video"
-          playsinline
-          webkit-playsinline
-          preload="auto"
-          hidden
-        ></video>
-
-        <div
-          id="video-fallback"
-          aria-hidden="true"
-        ></div>
-
+        <video id="ultimate-video" playsinline webkit-playsinline preload="auto"></video>
+        <video id="evolution-video" playsinline webkit-playsinline preload="auto" hidden></video>
+        <div id="video-fallback" aria-hidden="true"></div>
       </div>
-
     </div>
-
   </div>
 
-  <div
-    id="toast"
-    class="toast"
-  >
-
-    <b id="toast-title">
-      SYSTEM
-    </b>
-
+  <div id="toast" class="toast">
+    <b id="toast-title">SYSTEM</b>
     <span id="toast-message"></span>
-
   </div>
 
   <script>
@@ -2239,7 +1813,7 @@
         evolution:'Pichu → Pikachu → Raichu',
         weakness:'Ground',
         strength:'Water · Flying',
-        image:'assets/images/pikachu.png',
+        image:'assets/images/pikachu-pose-1-16.jpg',
         video:'pikachu-animasi.webm',
         sound:'assets/audio/ultimate.mp3',
         themeColor:'#ffc857',
@@ -2620,68 +2194,43 @@
     const $=(id)=>document.getElementById(id);
 
     const AudioManager={
-
       cache:new Map(),
       music:null,
 
       init(){
-        this.music=new Audio(
-          'assets/audio/bg-music.mp3'
-        );
-
+        this.music=new Audio('assets/audio/bg-music.mp3');
         this.music.loop=true;
         this.music.volume=.18;
       },
 
       play(name,volume=.55){
-
         if(!state.soundOn)return;
-
         try{
-
           let a=this.cache.get(name);
-
           if(!a){
-
-            a=new Audio(
-              `assets/audio/${name}.mp3`
-            );
-
+            a=new Audio(`assets/audio/${name}.mp3`);
             this.cache.set(name,a);
           }
-
           a.currentTime=0;
           a.volume=volume;
-
           a.play().catch(()=>{});
-
         }catch(e){}
       },
 
       startMusic(){
-
-        if(
-          state.soundOn &&
-          this.music
-        ){
+        if(state.soundOn && this.music){
           this.music.play().catch(()=>{});
         }
       },
 
       stopAll(){
-
         if(this.music){
-
           this.music.pause();
           this.music.currentTime=0;
-
         }
-
         this.cache.forEach(a=>{
-
           a.pause();
           a.currentTime=0;
-
         });
       }
     };
@@ -2689,112 +2238,55 @@
     AudioManager.init();
 
     function vibrate(pattern){
-
       try{
-
         if(navigator.vibrate){
           navigator.vibrate(pattern);
         }
-
       }catch(e){}
     }
 
     function saveGameState(){
-
-      localStorage.setItem(
-        'biipbattle-state',
-        JSON.stringify(state.player)
-      );
-
-      localStorage.setItem(
-        'biipbattle-sound',
-        String(state.soundOn)
-      );
+      localStorage.setItem('biipbattle-state', JSON.stringify(state.player));
+      localStorage.setItem('biipbattle-sound', String(state.soundOn));
     }
 
     function loadGameState(){
-
       try{
-
-        const saved=JSON.parse(
-          localStorage.getItem(
-            'biipbattle-state'
-          )||'null'
-        );
-
+        const saved=JSON.parse(localStorage.getItem('biipbattle-state')||'null');
         if(saved){
-
-          state.player={
-            ...state.player,
-            ...saved
-          };
-
+          state.player={ ...state.player, ...saved };
         }
-
-        state.soundOn=
-          localStorage.getItem(
-            'biipbattle-sound'
-          )!=='false';
-
+        state.soundOn = localStorage.getItem('biipbattle-sound') !== 'false';
       }catch(e){
-
-        showToast(
-          'SAVE ERROR',
-          'Progress reset to safe defaults.',
-          true
-        );
+        showToast('SAVE ERROR', 'Progress reset to safe defaults.', true);
       }
     }
 
     function playSound(name,pattern){
-
       AudioManager.play(name);
-
       if(pattern){
         vibrate(pattern);
       }
     }
 
     function setCharacterState(next){
-
       state.characterState=next;
-
-      $('state-label').textContent=
-        `${next.toUpperCase()} STATE`;
+      $('state-label').textContent = `${next.toUpperCase()} STATE`;
     }
 
     function getCurrent(){
-
-      return characters[state.currentKey]||
-        characters.pikachu;
+      return characters[state.currentKey]||characters.pikachu;
     }
 
     function colorizeHero(c){
-
-      $('hero-card').style.setProperty(
-        '--char-glow',
-        `${c.themeColor}35`
-      );
-
-      $('hero-card').style.setProperty(
-        '--char-accent',
-        c.accentColor
-      );
-
-      $('hero-card').style.setProperty(
-        '--rarity',
-        c.rarityColor
-      );
-
-      $('rarity-label').textContent=
-        c.rarity.toUpperCase();
-
-      $('rarity-label').style.color=
-        c.rarityColor;
+      $('hero-card').style.setProperty('--char-glow', `${c.themeColor}35`);
+      $('hero-card').style.setProperty('--char-accent', c.accentColor);
+      $('hero-card').style.setProperty('--rarity', c.rarityColor);
+      $('rarity-label').textContent=c.rarity.toUpperCase();
+      $('rarity-label').style.color=c.rarityColor;
     }
 
     function renderStats(c){
-
       $('stat-hp').textContent=c.hp;
       $('stat-attack').textContent=c.attack;
       $('stat-defense').textContent=c.defense;
@@ -2809,93 +2301,58 @@
         ['SP. DEFENSE',c.specialDefense,180]
       ];
 
-      $('stat-list').innerHTML=
-        stats.map(
-          ([n,v,max])=>
-            `<div class="stat-row">
-              <span>${n}</span>
+      $('stat-list').innerHTML=stats.map(
+        ([n,v,max])=>
+          `<div class="stat-row">
+            <span>${n}</span>
+            <div class="progress">
+              <i style="--value:${Math.min(100,v/max*100)}%;background:linear-gradient(90deg,${c.accentColor},${c.rarityColor})"></i>
+            </div>
+            <b>${v}</b>
+          </div>`
+      ).join('');
+    }
 
-              <div class="progress">
-
-                <i
-                  style="
-                    --value:${Math.min(100,v/max*100)}%;
-                    background:linear-gradient(
-                      90deg,
-                      ${c.accentColor},
-                      ${c.rarityColor}
-                    )
-                  "
-                ></i>
-
-              </div>
-
-              <b>${v}</b>
-            </div>`
-        ).join('');
+    function isPikachu(c) {
+      return c && c.id === 'pikachu';
     }
 
     function renderCharacterCard(c){
+      $('char-code').textContent=c.pokedex;
+      $('char-name').textContent=c.name;
+      $('char-desc').textContent=c.description;
 
-      $('char-code').textContent=
-        c.pokedex;
+      const heroContainer = $('char-image-container');
+      
+      if(isPikachu(c)) {
+        heroContainer.innerHTML = `
+          <div class="pikachu-container character-image" role="img" aria-label="${c.name}">
+            <div class="pikachu-sprite"></div>
+          </div>
+        `;
+      } else {
+        heroContainer.innerHTML = `
+          <img class="character-image" src="${c.image}" alt="${c.name}" onerror="showToast('IMAGE ERROR', 'Character artwork could not be loaded.', true);" />
+        `;
+      }
 
-      $('char-name').textContent=
-        c.name;
+      $('type-row').innerHTML=c.types.map(t=>`<span class="type-chip">${t}</span>`).join('')+
+        `<span class="rarity-badge" style="--rarity:${c.rarityColor}">${c.rarity}</span>`;
 
-      $('char-desc').textContent=
-        c.description;
-
-      $('char-image').src=
-        c.image;
-
-      $('char-image').alt=
-        c.name;
-
-      $('char-image').onerror=()=>{
-
-        showToast(
-          'IMAGE ERROR',
-          'Character artwork could not be loaded.',
-          true
-        );
-      };
-
-      $('type-row').innerHTML=
-        c.types.map(
-          t=>`<span class="type-chip">${t}</span>`
-        ).join('')+
-        `<span
-          class="rarity-badge"
-          style="--rarity:${c.rarityColor}"
-        >
-          ${c.rarity}
-        </span>`;
-
-      $('hero-title').innerHTML=
-        `TARGET <span>${c.name}</span>`;
+      $('hero-title').innerHTML=`TARGET <span>${c.name}</span>`;
 
       colorizeHero(c);
       renderStats(c);
     }
 
     function loadCharacter(key,options={}){
-
-      state.currentKey=
-        characters[key]?
-          key:
-          'pikachu';
-
+      state.currentKey=characters[key]?key:'pikachu';
       const c=getCurrent();
 
       renderCharacterCard(c);
 
-      if(
-        !state.player.viewed.includes(c.id)
-      ){
-
+      if(!state.player.viewed.includes(c.id)){
         state.player.viewed.push(c.id);
-
         saveGameState();
       }
 
@@ -2903,593 +2360,234 @@
       renderCollection();
 
       if(!options.silent){
-
-        window.history.replaceState(
-          {},
-          '',
-          `?char=${c.id}`
-        );
+        window.history.replaceState({},'',`?char=${c.id}`);
       }
     }
 
     function updatePlayerProgress(){
-
       const p=state.player;
+      const next=p.level*1000;
 
-      const next=
-        p.level*1000;
+      $('player-level').textContent=String(p.level).padStart(2,'0');
+      $('hud-level').textContent=`LV. ${String(p.level).padStart(2,'0')} // ONLINE`;
+      $('player-exp-label').textContent=`${p.exp} / ${next}`;
+      $('player-exp-bar').style.setProperty('--value',`${Math.min(100,p.exp/next*100)}%`);
 
-      $('player-level').textContent=
-        String(p.level).padStart(2,'0');
-
-      $('hud-level').textContent=
-        `LV. ${String(p.level).padStart(2,'0')} // ONLINE`;
-
-      $('player-exp-label').textContent=
-        `${p.exp} / ${next}`;
-
-      $('player-exp-bar').style.setProperty(
-        '--value',
-        `${Math.min(100,p.exp/next*100)}%`
-      );
-
-      $('viewed-count').textContent=
-        p.viewed.length;
-
-      $('ultimate-count').textContent=
-        p.ultimateUsed;
-
-      $('evolution-count').textContent=
-        p.evolutionUnlocked;
-
-      $('collection-count').textContent=
-        `${p.viewed.length} / 10`;
+      $('viewed-count').textContent=p.viewed.length;
+      $('ultimate-count').textContent=p.ultimateUsed;
+      $('evolution-count').textContent=p.evolutionUnlocked;
+      $('collection-count').textContent=`${p.viewed.length} / 10`;
     }
 
     function renderCollection(){
+      const query=$('search-input').value.trim().toLowerCase();
+      const filter=$('type-filter').value;
 
-      const query=
-        $('search-input').value
-          .trim()
-          .toLowerCase();
+      const list=Object.values(characters).filter(
+        c=>
+          (!query||c.name.toLowerCase().includes(query)||c.types.some(t=>t.toLowerCase().includes(query)))&&
+          (filter==='all'||c.types.some(t=>t.toLowerCase()===filter))
+      );
 
-      const filter=
-        $('type-filter').value;
+      $('character-list').innerHTML=list.map(c=>{
+        const art = isPikachu(c)
+          ? `
+            <div class="pikachu-container card-art" role="img" aria-label="${c.name}">
+              <div class="pikachu-sprite"></div>
+            </div>
+            `
+          : `<img class="card-art" loading="lazy" src="${c.image}" alt="${c.name}" />`;
 
-      const list=
-        Object.values(characters).filter(
-          c=>
-            (
-              !query||
-              c.name.toLowerCase()
-                .includes(query)||
-              c.types.some(
-                t=>t.toLowerCase()
-                  .includes(query)
-              )
-            )&&
-            (
-              filter==='all'||
-              c.types.some(
-                t=>
-                  t.toLowerCase()===filter
-              )
-            )
-        );
+        return `
+          <button class="collection-card" style="--card-accent:${c.rarityColor}" data-character="${c.id}" type="button">
+            <div class="card-top">
+              <span class="card-no">${c.pokedex}</span>
+              <span class="rarity-badge" style="--rarity:${c.rarityColor}">${c.rarity}</span>
+            </div>
+            ${art}
+            <div class="card-name">${c.name}</div>
+            <div class="card-meta">
+              <span>LV. ${c.level}</span>
+              <span>${c.types[0]}</span>
+            </div>
+          </button>
+        `;
+      }).join('');
 
-      $('character-list').innerHTML=
-        list.map(
-          c=>
-            `<button
-              class="collection-card"
-              style="--card-accent:${c.rarityColor}"
-              data-character="${c.id}"
-              type="button"
-            >
+      $('empty-state').style.display=list.length?'none':'block';
 
-              <div class="card-top">
-
-                <span class="card-no">
-                  ${c.pokedex}
-                </span>
-
-                <span
-                  class="rarity-badge"
-                  style="--rarity:${c.rarityColor}"
-                >
-                  ${c.rarity}
-                </span>
-
-              </div>
-
-              <img
-                class="card-art"
-                loading="lazy"
-                src="${c.image}"
-                alt="${c.name}"
-              />
-
-              <div class="card-name">
-                ${c.name}
-              </div>
-
-              <div class="card-meta">
-                <span>LV. ${c.level}</span>
-                <span>${c.types[0]}</span>
-              </div>
-
-            </button>`
-        ).join('');
-
-      $('empty-state').style.display=
-        list.length?
-          'none':
-          'block';
-
-      document
-        .querySelectorAll('[data-character]')
-        .forEach(btn=>
-          btn.addEventListener(
-            'click',
-            ()=>{
-
-              loadCharacter(
-                btn.dataset.character
-              );
-
-              startScan();
-            }
-          )
-        );
+      document.querySelectorAll('[data-character]').forEach(btn=>
+        btn.addEventListener('click',()=>{
+          loadCharacter(btn.dataset.character);
+          startScan();
+        })
+      );
     }
 
     function openOverlay(id){
-
       $(id).classList.add('visible');
-
       if(id==='video-overlay'){
-
-        document.documentElement
-          .style.overflow='hidden';
-
-        document.body
-          .style.overflow='hidden';
+        document.documentElement.style.overflow='hidden';
+        document.body.style.overflow='hidden';
       }
     }
 
     function closeOverlay(id){
-
       $(id).classList.remove('visible');
-
       if(id==='video-overlay'){
-
-        document.documentElement
-          .style.overflow='';
-
-        document.body
-          .style.overflow='';
+        document.documentElement.style.overflow='';
+        document.body.style.overflow='';
       }
     }
 
-    function showToast(
-      title,
-      message,
-      error=false
-    ){
+    function showToast(title,message,error=false){
+      $('toast-title').textContent=title;
+      $('toast-message').textContent=message;
+      $('toast').classList.toggle('error',error);$('toast').classList.add('show');
 
-      $('toast-title').textContent=
-        title;
-
-      $('toast-message').textContent=
-        message;
-
-      $('toast').classList.toggle(
-        'error',
-        error
-      );
-
-      $('toast').classList.add('show');
-
-      clearTimeout(
-        state.toastTimer
-      );
-
-      state.toastTimer=
-        setTimeout(
-          ()=>
-            $('toast')
-              .classList.remove('show'),
-          3200
-        );
+      clearTimeout(state.toastTimer);
+      state.toastTimer=setTimeout(()=>$('toast').classList.remove('show'),3200);
     }
 
     function openScanner(){
-
-      playSound(
-        'scan',
-        [30]
-      );
-
-      openOverlay(
-        'scanner-overlay'
-      );
-
+      playSound('scan',[30]);
+      openOverlay('scanner-overlay');
       startScan();
     }
 
     function startScan(){
+      const c = getCurrent();
+      clearTimeout(state.scannerTimer);
+      setCharacterState('scanning');
 
-      const c=getCurrent();
+      const scannerContainer = $('scanner-image-container');
+      if (isPikachu(c)) {
+        scannerContainer.innerHTML = `
+          <div class="pikachu-container scanner-image" role="img" aria-label="Scanning character">
+            <div class="pikachu-sprite"></div>
+          </div>
+        `;
+      } else {
+        scannerContainer.innerHTML = `
+          <img class="scanner-image" src="${c.image}" alt="${c.name}" />
+        `;
+      }
 
-      clearTimeout(
-        state.scannerTimer
-      );
+      $('scan-status').textContent='SCANNING...';
+      $('scan-name').textContent='TARGET ACQUIRING';$('scan-details').textContent='Reading battle signature // please wait';
 
-      setCharacterState(
-        'scanning'
-      );
-
-      $('scanner-image').src=
-        c.image;
-
-      $('scan-status').textContent=
-        'SCANNING...';
-
-      $('scan-name').textContent=
-        'TARGET ACQUIRING';
-
-      $('scan-details').textContent=
-        'Reading battle signature // please wait';
-
-      state.scannerTimer=
-        setTimeout(
-          showDetected,
-          1550
-        );
+      state.scannerTimer=setTimeout(showDetected,1550);
     }
 
     function showDetected(){
-
       const c=getCurrent();
+      setCharacterState('detected');
+      playSound('detected',[45]);
 
-      setCharacterState(
-        'detected'
-      );
+      $('scan-status').textContent='TARGET DETECTED';$('scan-name').textContent=c.name;
+      $('scan-details').textContent=`${c.pokedex} // ${c.types.join(' / ')} TYPE // ${c.rarity.toUpperCase()}`;
+      showToast('CHARACTER DETECTED',`${c.name} profile unlocked.`);
 
-      playSound(
-        'detected',
-        [45]
-      );
-
-      $('scan-status').textContent=
-        'TARGET DETECTED';
-
-      $('scan-name').textContent=
-        c.name;
-
-      $('scan-details').textContent=
-        `${c.pokedex} // ${c.types.join(' / ')} TYPE // ${c.rarity.toUpperCase()}`;
-
-      showToast(
-        'CHARACTER DETECTED',
-        `${c.name} profile unlocked.`
-      );
-
-      setTimeout(
-        ()=>{
-          closeOverlay(
-            'scanner-overlay'
-          );
-
-          openProfile();
-        },
-        780
-      );
+      setTimeout(()=>{
+        closeOverlay('scanner-overlay');
+        openProfile();
+      },780);
     }
 
     function evolutionMarkup(c){
-
-      const parts=
-        c.evolution
-          .split('→')
-          .map(v=>v.trim());
-
+      const parts=c.evolution.split('→').map(v=>v.trim());
       return `
         <div class="evolution-track">
-
-          ${
-            parts.map(
-              (p,i)=>
-                `${
-                  i?
-                    '<span>→</span>':
-                    ''
-                }
-                <span class="evo-node">
-                  ${p}
-                </span>`
-            ).join('')
-          }
-
+          ${parts.map((p,i)=>`${i?'<span>→</span>':''}<span class="evo-node">${p}</span>`).join('')}
         </div>
       `;
     }
 
     function renderProfile(c){
-
-      $('profile-content').innerHTML=
-        `<div
-          class="profile-hero"
-          style="--char-glow:${c.themeColor}55"
-        >
-
-          <img
-            class="profile-art"
-            src="${c.image}"
-            alt="${c.name}"
-          />
-
-          <div>
-
-            <div class="eyebrow">
-              ${c.pokedex} // LV. ${c.level}
-            </div>
-
-            <h3>${c.name}</h3>
-
-            <div class="type-row">
-
-              ${c.types.map(
-                t=>
-                  `<span class="type-chip">
-                    ${t}
-                  </span>`
-              ).join('')}
-
-              <span
-                class="rarity-badge"
-                style="--rarity:${c.rarityColor}"
-              >
-                ${c.rarity}
-              </span>
-
-            </div>
-
-            <p>
-              ${c.description}
-            </p>
-
+      const profileArtwork = isPikachu(c)
+        ? `
+          <div class="pikachu-container profile-art" role="img" aria-label="${c.name}">
+            <div class="pikachu-sprite"></div>
           </div>
+          `
+        : `<img class="profile-art" src="${c.image}" alt="${c.name}" />`;
 
+      $('profile-content').innerHTML=`
+        <div class="profile-hero" style="--char-glow:${c.themeColor}55">
+          ${profileArtwork}
+          <div>
+            <div class="eyebrow">${c.pokedex} // LV. ${c.level}</div>
+            <h3>${c.name}</h3>
+            <div class="type-row">
+              ${c.types.map(t=>`<span class="type-chip">${t}</span>`).join('')}
+              <span class="rarity-badge" style="--rarity:${c.rarityColor}">${c.rarity}</span>
+            </div>
+            <p>${c.description}</p>
+          </div>
         </div>
 
         <div class="profile-grid">
-
           <div class="profile-block">
-
-            <h4>
-              Base Stats
-            </h4>
-
+            <h4>Base Stats</h4>
             <div class="stat-list">
-
-              ${
-                [
-                  ['HP',c.hp],
-                  ['Attack',c.attack],
-                  ['Defense',c.defense],
-                  ['Speed',c.speed],
-                  ['Sp. Attack',c.specialAttack],
-                  ['Sp. Defense',c.specialDefense]
-                ].map(
-                  ([n,v])=>
-                    `<div class="stat-row">
-
-                      <span>${n}</span>
-
-                      <div class="progress">
-
-                        <i
-                          style="
-                            --value:${Math.min(
-                              100,
-                              v/180*100
-                            )}%;
-                            background:linear-gradient(
-                              90deg,
-                              ${c.accentColor},
-                              ${c.rarityColor}
-                            )
-                          "
-                        ></i>
-
-                      </div>
-
-                      <b>${v}</b>
-
-                    </div>`
-                ).join('')
-              }
-
+              ${[['HP',c.hp],['Attack',c.attack],['Defense',c.defense],['Speed',c.speed],['Sp. Attack',c.specialAttack],['Sp. Defense',c.specialDefense]].map(
+                ([n,v])=>
+                  `<div class="stat-row">
+                    <span>${n}</span>
+                    <div class="progress">
+                      <i style="--value:${Math.min(100,v/180*100)}%;background:linear-gradient(90deg,${c.accentColor},${c.rarityColor})"></i>
+                    </div>
+                    <b>${v}</b>
+                  </div>`
+              ).join('')}
             </div>
-
           </div>
 
           <div class="profile-block">
-
-            <h4>
-              Bio / Lore
-            </h4>
-
-            <p>
-              ${c.lore}
-            </p>
-
-            <p
-              style="
-                margin-top:10px;
-                color:#8493ad
-              "
-            >
-              ${c.category} · ${c.height} · ${c.weight}<br>
-              Habitat: ${c.habitat}
-            </p>
-
+            <h4>Bio / Lore</h4>
+            <p>${c.lore}</p>
+            <p style="margin-top:10px;color:#8493ad">${c.category} · ${c.height} · ${c.weight}<br>Habitat: ${c.habitat}</p>
           </div>
 
           <div class="profile-block">
-
-            <h4>
-              Ability / Battle Style
-            </h4>
-
-            <p>
-
-              <strong
-                style="color:#f5f7ff"
-              >
-                ${c.ability}
-              </strong>
-
-              <br>
-
-              ${c.battleStyle}
-
-            </p>
-
+            <h4>Ability / Battle Style</h4>
+            <p><strong style="color:#f5f7ff">${c.ability}</strong><br>${c.battleStyle}</p>
           </div>
 
           <div class="profile-block">
-
-            <h4>
-              Special Move
-            </h4>
-
-            <p
-              style="
-                font-size:17px;
-                color:#f5f7ff;
-                font-weight:900
-              "
-            >
-              ${c.specialMove}
-            </p>
-
-            <p
-              style="
-                margin-top:7px;
-                color:#8493ad
-              "
-            >
-              Strength: ${c.strength}<br>
-              Weakness: ${c.weakness}
-            </p>
-
+            <h4>Special Move</h4>
+            <p style="font-size:17px;color:#f5f7ff;font-weight:900">${c.specialMove}</p>
+            <p style="margin-top:7px;color:#8493ad">Strength: ${c.strength}<br>Weakness: ${c.weakness}</p>
           </div>
 
-          <div
-            class="profile-block"
-            style="grid-column:1/-1"
-          >
-
-            <h4>
-              Evolution Path
-            </h4>
-
+          <div class="profile-block" style="grid-column:1/-1">
+            <h4>Evolution Path</h4>
             ${evolutionMarkup(c)}
-
-            <div
-              style="
-                display:flex;
-                gap:8px;
-                justify-content:center;
-                margin-top:14px;
-                flex-wrap:wrap
-              "
-            >
-
-              <button
-                class="secondary-btn"
-                id="level-up-button"
-                type="button"
-              >
-                ＋ LEVEL UP
-              </button>
-
-              <button
-                class="primary-btn"
-                id="evolve-button"
-                type="button"
-              >
-                ✦ EVOLVE
-              </button>
-
+            <div style="display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap">
+              <button class="secondary-btn" id="level-up-button" type="button">＋ LEVEL UP</button>
+              <button class="primary-btn" id="evolve-button" type="button">✦ EVOLVE</button>
             </div>
-
           </div>
-
         </div>`;
 
-      $('level-up-button')
-        .addEventListener(
-          'click',
-          levelUpCharacter
-        );
-
-      $('evolve-button')
-        .addEventListener(
-          'click',
-          ()=>playEvolution(c)
-        );
+      $('level-up-button').addEventListener('click',levelUpCharacter);$('evolve-button').addEventListener('click',()=>playEvolution(c));
     }
 
     function openProfile(){
-
-      renderProfile(
-        getCurrent()
-      );
-
-      openOverlay(
-        'profile-overlay'
-      );
+      renderProfile(getCurrent());
+      openOverlay('profile-overlay');
     }
 
-    function videoCandidates(
-      c,
-      isEvolution=false
-    ){
-
-      const file=
-        isEvolution
-          ? `${c.id}-evolution.webm`
-          : c.video;
-
+    function videoCandidates(c,isEvolution=false){
+      const file = isEvolution ? `${c.id}-evolution.webm` : c.video;
       return isEvolution
-        ? [
-            `assets/videos/evolution/${file}`,
-            file
-          ]
-        : [
-            `assets/videos/ultimate/${file}`,
-            `assets/videos/${file}`,
-            file
-          ];
+        ? [`assets/videos/evolution/${file}`, file]
+        : [`assets/videos/ultimate/${file}`, `assets/videos/${file}`, file];
     }
 
-    function playVideoSequence(
-      c,
-      isEvolution=false
-    ){
-
-      const video=
-        isEvolution
-          ? $('evolution-video')
-          : $('ultimate-video');
-
-      const other=
-        isEvolution
-          ? $('ultimate-video')
-          : $('evolution-video');
+    function playVideoSequence(c,isEvolution=false){
+      const video=isEvolution?$('evolution-video'):$('ultimate-video');
+      const other=isEvolution?$('ultimate-video'):$('evolution-video');
 
       other.pause();
       other.hidden=true;
@@ -3500,562 +2598,221 @@
       video.className='';
 
       let index=0;
-
-      const candidates=
-        videoCandidates(
-          c,
-          isEvolution
-        );
+      const candidates=videoCandidates(c,isEvolution);
 
       const tryNext=()=>{
-
         if(index>=candidates.length){
-
           video.onerror=null;
-
           video.hidden=true;
-
-          $('video-fallback')
-            .style.display='none';
-
+          $('video-fallback').style.display='none';
           showToast(
-            isEvolution
-              ? 'EVOLUTION VIDEO NOT AVAILABLE'
-              : 'ANIMATION UNAVAILABLE',
-
-            isEvolution
-              ? 'Evolution sequence is locked.'
-              : 'Video ultimate untuk karakter ini belum tersedia.',
-
+            isEvolution?'EVOLUTION VIDEO NOT AVAILABLE':'ANIMATION UNAVAILABLE',
+            isEvolution?'Evolution sequence is locked.':'Video ultimate untuk karakter ini belum tersedia.',
             true
           );
-
           closeUltimate();
-
           return;
         }
 
         video.hidden=false;
-
-        video.src=
-          candidates[index++];
-
+        video.src=candidates[index++];
         video.load();
 
-        const playPromise=
-          video.play();
-
+        const playPromise=video.play();
         if(playPromise){
-
           playPromise.catch(()=>{
-
             if(index<candidates.length){
               tryNext();
             }
-
           });
         }
       };
 
       video.onerror=tryNext;
-
-      $('video-fallback')
-        .style.display='none';
-
+      $('video-fallback').style.display='none';
       tryNext();
     }
 
     function triggerUltimate(){
-
       const c=getCurrent();
-
-      setCharacterState(
-        'ultimate'
-      );
-
+      setCharacterState('ultimate');
       state.player.ultimateUsed++;
-
       saveGameState();
-
       updatePlayerProgress();
-
-      playSound(
-        'ultimate',
-        [80]
-      );
-
-      openOverlay(
-        'video-overlay'
-      );
-
-      playVideoSequence(
-        c,
-        false
-      );
+      playSound('ultimate',[80]);
+      openOverlay('video-overlay');
+      playVideoSequence(c,false);
     }
 
     function closeUltimate(){
-
-      closeOverlay(
-        'video-overlay'
-      );
-
-      $('ultimate-video').pause();
-      $('evolution-video').pause();
+      closeOverlay('video-overlay');
+      $('ultimate-video').pause();$('evolution-video').pause();
 
       try{
-
-        $('ultimate-video')
-          .currentTime=0;
-
-        $('evolution-video')
-          .currentTime=0;
-
+        $('ultimate-video').currentTime=0;
+        $('evolution-video').currentTime=0;
       }catch(e){}
 
       $('ultimate-video').hidden=false;
       $('evolution-video').hidden=true;
-
-      setCharacterState(
-        'idle'
-      );
-
-      playSound(
-        'close'
-      );
+      setCharacterState('idle');
+      playSound('close');
     }
 
     function levelUpCharacter(){
-
       const c=getCurrent();
-
       const cost=260;
 
       if(state.player.exp<cost){
-
-        playSound(
-          'error'
-        );
-
-        showToast(
-          'NOT ENOUGH EXP',
-          `Need ${cost} EXP to level up this character.`,
-          true
-        );
-
+        playSound('error');
+        showToast('NOT ENOUGH EXP',`Need ${cost} EXP to level up this character.`,true);
         return;
       }
 
       const old=c.level;
-
       c.level++;
-
-      c.exp=
-        Math.min(
-          c.maxExp,
-          c.exp+130
-        );
-
+      c.exp=Math.min(c.maxExp,c.exp+130);
       c.attack+=4;
       c.defense+=3;
       c.speed+=2;
-
       state.player.exp-=cost;
-
+      
       saveGameState();
-
       updatePlayerProgress();
-
       renderCharacterCard(c);
-
       renderProfile(c);
+      setCharacterState('levelup');
+      playSound('levelup',[50]);
 
-      setCharacterState(
-        'levelup'
-      );
+      $('hero-card').classList.remove('shake');
+      void $('hero-card').offsetWidth;
+      $('hero-card').classList.add('shake');
 
-      playSound(
-        'levelup',
-        [50]
-      );
-
-      $('hero-card')
-        .classList.remove(
-          'shake'
-        );
-
-      void $('hero-card')
-        .offsetWidth;
-
-      $('hero-card')
-        .classList.add(
-          'shake'
-        );
-
-      showToast(
-        'LEVEL UP!',
-        `${c.name} // LV. ${old} → LV. ${c.level}`
-      );
-
-      setTimeout(
-        ()=>setCharacterState(
-          'idle'
-        ),
-        700
-      );
+      showToast('LEVEL UP!',`${c.name} // LV. ${old} → LV. ${c.level}`);
+      setTimeout(()=>setCharacterState('idle'),700);
     }
 
     function checkEvolution(c){
-
       return c.evolutionVideo||false;
     }
 
     function playEvolution(c){
-
-      setCharacterState(
-        'evolution'
-      );
-
-      playSound(
-        'evolution',
-        [50,30,100]
-      );
-
+      setCharacterState('evolution');
+      playSound('evolution',[50,30,100]);
       state.player.evolutionUnlocked++;
-
       saveGameState();
-
       updatePlayerProgress();
 
       if(!checkEvolution(c)){
-
         showToast(
           'EVOLUTION SEQUENCE IS LOCKED',
           'Add an evolution WebM in assets/videos/evolution to unlock it.',
           true
         );
-
-        setTimeout(
-          ()=>setCharacterState(
-            'idle'
-          ),
-          700
-        );
-
+        setTimeout(()=>setCharacterState('idle'),700);
         return;
       }
 
-      openOverlay(
-        'video-overlay'
-      );
-
-      playVideoSequence(
-        c,
-        true
-      );
+      openOverlay('video-overlay');
+      playVideoSequence(c,true);
     }
 
     function toggleSound(){
-
-      state.soundOn=
-        !state.soundOn;
-
-      $('sound-toggle')
-        .textContent=
-          state.soundOn?
-            '◖':
-            '◌';
+      state.soundOn=!state.soundOn;
+      $('sound-toggle').textContent=state.soundOn?'◖':'◌';
 
       if(state.soundOn){
-
-        playSound(
-          'click'
-        );
-
-        AudioManager
-          .startMusic();
-
-        showToast(
-          'SOUND ON',
-          'Audio systems online.'
-        );
-
+        playSound('click');
+        AudioManager.startMusic();
+        showToast('SOUND ON','Audio systems online.');
       }else{
-
-        AudioManager
-          .stopAll();
-
-        showToast(
-          'SOUND OFF',
-          'All audio systems muted.'
-        );
+        AudioManager.stopAll();
+        showToast('SOUND OFF','All audio systems muted.');
       }
-
       saveGameState();
     }
 
     function addButtonFeedback(){
-
-      document
-        .querySelectorAll('button')
-        .forEach(btn=>{
-
-          btn.addEventListener(
-            'pointerdown',
-            ()=>btn.style.transform=
-              'scale(.97)'
-          );
-
-          btn.addEventListener(
-            'pointerup',
-            ()=>btn.style.transform=''
-          );
-
-          btn.addEventListener(
-            'pointerleave',
-            ()=>btn.style.transform=''
-          );
-        });
+      document.querySelectorAll('button').forEach(btn=>{
+        btn.addEventListener('pointerdown',()=>btn.style.transform='scale(.97)');
+        btn.addEventListener('pointerup',()=>btn.style.transform='');
+        btn.addEventListener('pointerleave',()=>btn.style.transform='');
+      });
     }
 
     function initTilt(){
-
-      const card=
-        $('hero-card');
-
+      const card=$('hero-card');
       const move=(e)=>{
-
-        if(
-          matchMedia(
-            '(pointer:coarse)'
-          ).matches
-        ){
-          return;
-        }
-
-        const r=
-          card.getBoundingClientRect();
-
-        const x=
-          (e.clientX-r.left)/
-          r.width-.5;
-
-        const y=
-          (e.clientY-r.top)/
-          r.height-.5;
-
-        card.style.transform=
-          `perspective(1100px) rotateY(${x*3}deg) rotateX(${y*-3}deg)`;
+        if(matchMedia('(pointer:coarse)').matches)return;
+        const r=card.getBoundingClientRect();
+        const x=(e.clientX-r.left)/r.width-.5;
+        const y=(e.clientY-r.top)/r.height-.5;
+        card.style.transform=`perspective(1100px) rotateY(${x*3}deg) rotateX(${y*-3}deg)`;
       };
 
-      card.addEventListener(
-        'pointermove',
-        move
-      );
-
-      card.addEventListener(
-        'pointerleave',
-        ()=>card.style.transform=''
-      );
+      card.addEventListener('pointermove',move);
+      card.addEventListener('pointerleave',()=>card.style.transform='');
     }
 
     function bindEvents(){
+      $('ultimate-button').addEventListener('click',triggerUltimate);
+      $('scan-button').addEventListener('click',openScanner);$('profile-button').addEventListener('click',openProfile);
+      $('sound-toggle').addEventListener('click',toggleSound);$('settings-button').addEventListener('click',openProfile);
+      $('ultimate-video').addEventListener('ended',closeUltimate);$('evolution-video').addEventListener('ended',closeUltimate);
+      $('search-input').addEventListener('input',renderCollection);$('type-filter').addEventListener('change',renderCollection);
 
-      $('ultimate-button')
-        .addEventListener(
-          'click',
-          triggerUltimate
-        );
-
-      $('scan-button')
-        .addEventListener(
-          'click',
-          openScanner
-        );
-
-      $('profile-button')
-        .addEventListener(
-          'click',
-          openProfile
-        );
-
-      $('sound-toggle')
-        .addEventListener(
-          'click',
-          toggleSound
-        );
-
-      $('settings-button')
-        .addEventListener(
-          'click',
-          openProfile
-        );
-
-      $('ultimate-video')
-        .addEventListener(
-          'ended',
-          closeUltimate
-        );
-
-      $('evolution-video')
-        .addEventListener(
-          'ended',
-          closeUltimate
-        );
-
-      $('search-input')
-        .addEventListener(
-          'input',
-          renderCollection
-        );
-
-      $('type-filter')
-        .addEventListener(
-          'change',
-          renderCollection
-        );
-
-      document
-        .querySelectorAll('[data-close]')
-        .forEach(btn=>
-          btn.addEventListener(
-            'click',
-            ()=>{
-
-              const id=
-                btn.dataset.close;
-
-              if(id==='video-overlay'){
-
-                closeUltimate();
-
-              }else{
-
-                closeOverlay(id);
-
-              }
-            }
-          )
-        );
-
-      document
-        .querySelectorAll('.overlay')
-        .forEach(o=>
-          o.addEventListener(
-            'click',
-            e=>{
-
-              if(e.target===o){
-
-                if(
-                  o.id===
-                  'video-overlay'
-                ){
-                  return;
-                }
-
-                closeOverlay(
-                  o.id
-                );
-              }
-            }
-          )
-        );
-
-      document
-        .querySelectorAll('[data-nav]')
-        .forEach(btn=>
-          btn.addEventListener(
-            'click',
-            ()=>{
-
-              document
-                .querySelectorAll(
-                  '.nav-btn'
-                )
-                .forEach(n=>
-                  n.classList.remove(
-                    'active'
-                  )
-                );
-
-              btn.classList.add(
-                'active'
-              );
-
-              const target=
-                btn.dataset.nav;
-
-              if(target==='collection'){
-
-                document
-                  .querySelector(
-                    '.collection-section'
-                  )
-                  .scrollIntoView({
-                    behavior:'smooth'
-                  });
-              }
-
-              if(target==='scan'){
-                openScanner();
-              }
-
-              if(target==='profile'){
-                openProfile();
-              }
-
-              if(target==='home'){
-
-                window.scrollTo({
-                  top:0,
-                  behavior:'smooth'
-                });
-              }
-
-              playSound(
-                'click',
-                [20]
-              );
-            }
-          )
-        );
-
-      document.addEventListener(
-        'pointerdown',
-        ()=>AudioManager
-          .startMusic(),
-        {once:true}
+      document.querySelectorAll('[data-close]').forEach(btn=>
+        btn.addEventListener('click',()=>{
+          const id=btn.dataset.close;
+          if(id==='video-overlay'){
+            closeUltimate();
+          }else{
+            closeOverlay(id);
+          }
+        })
       );
 
-      addButtonFeedback();
+      document.querySelectorAll('.overlay').forEach(o=>
+        o.addEventListener('click',e=>{
+          if(e.target===o){
+            if(o.id==='video-overlay')return;
+            closeOverlay(o.id);
+          }
+        })
+      );
 
+      document.querySelectorAll('[data-nav]').forEach(btn=>
+        btn.addEventListener('click',()=>{
+          document.querySelectorAll('.nav-btn').forEach(n=>n.classList.remove('active'));
+          btn.classList.add('active');
+          const target=btn.dataset.nav;
+
+          if(target==='collection'){
+            document.querySelector('.collection-section').scrollIntoView({behavior:'smooth'});
+          }
+          if(target==='scan'){
+            openScanner();
+          }
+          if(target==='profile'){
+            openProfile();
+          }
+          if(target==='home'){
+            window.scrollTo({top:0,behavior:'smooth'});
+          }
+          playSound('click',[20]);
+        })
+      );
+
+      document.addEventListener('pointerdown',()=>AudioManager.startMusic(),{once:true});
+      addButtonFeedback();
       initTilt();
     }
 
     function boot(){
-
       loadGameState();
-
-      const key=
-        new URLSearchParams(
-          location.search
-        ).get('char')||
-        'pikachu';
-
-      loadCharacter(
-        key,
-        {
-          silent:true
-        }
-      );
-
-      $('sound-toggle')
-        .textContent=
-          state.soundOn?
-            '◖':
-            '◌';
-
+      const key=new URLSearchParams(location.search).get('char')||'pikachu';
+      loadCharacter(key,{silent:true});
+      $('sound-toggle').textContent=state.soundOn?'◖':'◌';
       bindEvents();
 
       const messages=[
@@ -4065,65 +2822,24 @@
         'LOAD ANIMATION...',
         'READY'
       ];
-
       let i=0;
-
-      const timer=
-        setInterval(()=>{
-
-          $('loading-copy')
-            .textContent=
-              messages[
-                Math.min(
-                  i++,
-                  messages.length-1
-                )
-              ];
-
-          if(i>=messages.length){
-
-            clearInterval(timer);
-
-            setTimeout(
-              ()=>
-                $('loading-screen')
-                  .classList.add(
-                    'done'
-                  ),
-              260
-            );
-          }
-
-        },290);
+      const timer=setInterval(()=>{
+        $('loading-copy').textContent=messages[Math.min(i++,messages.length-1)];
+        if(i>=messages.length){
+          clearInterval(timer);
+          setTimeout(()=>$('loading-screen').classList.add('done'),260);
+        }
+      },290);
     }
 
-    window.addEventListener(
-      'popstate',
-      ()=>loadCharacter(
-        new URLSearchParams(
-          location.search
-        ).get('char')||
-        'pikachu',
-        {
-          silent:true
-        }
-      )
-    );
-
-    window.triggerUltimate=
-      triggerUltimate;
-
-    window.closeUltimate=
-      closeUltimate;
-
-    window.loadCharacter=
-      loadCharacter;
-
-    window.playEvolution=
-      playEvolution;
+    window.addEventListener('popstate',()=>loadCharacter(new URLSearchParams(location.search).get('char')||'pikachu',{silent:true}));
+    window.triggerUltimate=triggerUltimate;
+    window.closeUltimate=closeUltimate;
+    window.loadCharacter=loadCharacter;
+    window.playEvolution=playEvolution;
 
     boot();
   </script>
-
 </body>
-  </html>
+</html>
+
