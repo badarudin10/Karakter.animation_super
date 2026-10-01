@@ -1,4 +1,5 @@
 <!doctype html>
+
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
@@ -705,39 +706,92 @@
       letter-spacing:.1em;
     }
 
+    /*
+      ==========================================================
+      COLLECTION / POSE ART
+      ==========================================================
+
+      Rasio sumber karakter:
+      896 x 1165
+
+      Jadi area gambar dibuat portrait:
+      width : height = 896 : 1165
+
+      Tidak dipaksa menjadi kotak persegi.
+      Tidak crop.
+      Tidak stretch.
+      ==========================================================
+    */
+
     .card-grid {
       display:grid;
       grid-template-columns:repeat(5,minmax(0,1fr));
-      gap:11px;
+      gap:0;
+      overflow:hidden;
+      border-radius:17px;
     }
 
     .collection-card {
       --card-accent:#56e9ff;
       position:relative;
       overflow:hidden;
-      min-height:185px;
-      padding:12px;
+
+      /*
+        Area kartu mengikuti karakter portrait.
+      */
+      min-height:0;
+
+      /*
+        Menghindari jarak antar pose.
+      */
+      padding:10px;
+
       border:1px solid color-mix(in srgb,var(--card-accent) 28%,transparent);
-      border-radius:17px;
-      background:linear-gradient(145deg,rgba(22,31,57,.85),rgba(8,13,26,.92));
+      border-radius:0;
+
+      background:linear-gradient(
+        145deg,
+        rgba(22,31,57,.85),
+        rgba(8,13,26,.92)
+      );
+
       text-align:left;
-      transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease;
+
+      transition:
+        transform .22s ease,
+        border-color .22s ease,
+        box-shadow .22s ease;
+
+      /*
+        Supaya setiap kartu portrait.
+      */
+      aspect-ratio:896 / 1165;
     }
 
     .collection-card:hover {
-      transform:translateY(-5px) rotateX(2deg);
+      transform:translateY(-5px);
       border-color:var(--card-accent);
       box-shadow:
         0 16px 32px rgba(0,0,0,.3),
-        0 0 24px color-mix(in srgb,var(--card-accent) 18%,transparent);
+        0 0 24px color-mix(
+          in srgb,
+          var(--card-accent) 18%,
+          transparent
+        );
+      z-index:2;
     }
 
     .collection-card::after {
       content:"";
       position:absolute;
       inset:-40%;
-      opacity:.0;
-      background:linear-gradient(110deg,transparent 38%,rgba(255,255,255,.18) 50%,transparent 62%);
+      opacity:0;
+      background:linear-gradient(
+        110deg,
+        transparent 38%,
+        rgba(255,255,255,.18) 50%,
+        transparent 62%
+      );
       transform:rotate(12deg);
       transition:.4s;
     }
@@ -761,14 +815,32 @@
       letter-spacing:.1em;
     }
 
+    /*
+      Gambar karakter menggunakan rasio 896 x 1165.
+
+      aspect-ratio memastikan area lebih tinggi
+      daripada lebar.
+
+      object-fit:contain menjaga seluruh karakter.
+    */
     .card-art {
       display:block;
+
       width:100%;
-      height:98px;
+
+      aspect-ratio:896 / 1165;
+
+      height:auto;
+
       object-fit:contain;
+      object-position:center center;
+
       filter:drop-shadow(0 8px 9px rgba(0,0,0,.45));
+
       position:relative;
       z-index:1;
+
+      margin:0;
     }
 
     .card-name {
@@ -1102,14 +1174,6 @@
 
     /* =========================================================
        VIDEO FULLSCREEN
-       FIX:
-       - Hanya video aktif yang dirender
-       - Video dengan hidden benar-benar disembunyikan
-       - Tidak ada video kedua yang menutupi video aktif
-       - Fullscreen desktop dan mobile
-       - Rasio video tetap asli
-       - Tidak crop
-       - Tidak stretch
        ========================================================= */
 
     #video-overlay {
@@ -1175,12 +1239,6 @@
       overflow:hidden !important;
     }
 
-    /*
-      PENTING:
-      Jangan gunakan selector umum display:block untuk
-      kedua video karena akan membatalkan hidden.
-    */
-
     #video-overlay #ultimate-video:not([hidden]),
     #video-overlay #evolution-video:not([hidden]) {
       position:absolute !important;
@@ -1209,10 +1267,6 @@
       vertical-align:middle !important;
     }
 
-    /*
-      INI FIX UTAMA.
-      Video yang memiliki hidden TIDAK BOLEH tampil.
-    */
     #video-overlay #ultimate-video[hidden],
     #video-overlay #evolution-video[hidden] {
       display:none !important;
@@ -1231,7 +1285,6 @@
       visibility:hidden !important;
     }
 
-    /* Desktop / laptop landscape */
     @media (min-width:641px) {
 
       #video-overlay #ultimate-video:not([hidden]),
@@ -1254,7 +1307,6 @@
       }
     }
 
-    /* HP portrait */
     @media (max-width:640px) {
 
       #video-overlay {
@@ -1424,6 +1476,7 @@
 
       .card-grid {
         grid-template-columns:repeat(4,minmax(0,1fr));
+        gap:0;
       }
     }
 
@@ -1513,13 +1566,36 @@
         padding:15px;
       }
 
+      /*
+        Tetap portrait 896 x 1165 di HP.
+        Dua kartu berdampingan tanpa gap.
+      */
       .card-grid {
         grid-template-columns:repeat(2,minmax(0,1fr));
-        gap:8px;
+        gap:0;
       }
 
       .collection-card {
-        min-height:172px;
+        min-height:0;
+        aspect-ratio:896 / 1165;
+        padding:8px;
+        border-radius:0;
+      }
+
+      .card-art {
+        width:100%;
+        height:auto;
+        aspect-ratio:896 / 1165;
+        object-fit:contain;
+        object-position:center center;
+      }
+
+      .card-name {
+        font-size:11px;
+      }
+
+      .card-meta {
+        font-size:8px;
       }
 
       .collection-toolbar {
@@ -2084,6 +2160,7 @@
   </div>
 
   <!-- FULLSCREEN VIDEO OVERLAY -->
+
   <div
     id="video-overlay"
     class="overlay"
@@ -2092,11 +2169,6 @@
     <div class="modal video-modal">
 
       <div class="video-shell">
-
-        <!--
-          Hanya satu video yang aktif pada satu waktu.
-          Video lainnya tetap hidden.
-        -->
 
         <video
           id="ultimate-video"
@@ -3419,18 +3491,11 @@
           ? $('ultimate-video')
           : $('evolution-video');
 
-      /*
-        Pastikan video yang tidak aktif
-        benar-benar hidden.
-      */
       other.pause();
       other.hidden=true;
       other.removeAttribute('src');
       other.load();
 
-      /*
-        Aktifkan hanya video yang dipilih.
-      */
       video.hidden=false;
       video.className='';
 
@@ -3470,9 +3535,6 @@
           return;
         }
 
-        /*
-          Pastikan video aktif terlihat.
-        */
         video.hidden=false;
 
         video.src=
@@ -3551,10 +3613,6 @@
 
       }catch(e){}
 
-      /*
-        Kembalikan video evolution ke hidden
-        supaya tidak pernah menutupi video ultimate.
-      */
       $('ultimate-video').hidden=false;
       $('evolution-video').hidden=true;
 
