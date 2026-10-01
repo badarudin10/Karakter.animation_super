@@ -81,7 +81,70 @@
     .modal-head { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; margin-bottom:16px; } .modal-head h2 { margin:3px 0 0; font-size:25px; text-transform:uppercase; } .close-btn { width:36px; height:36px; border-radius:10px; background:rgba(255,255,255,.06); color:#aab6cc; font-size:20px; }
     .profile-hero { display:grid; grid-template-columns:150px 1fr; gap:18px; align-items:center; padding:13px; border:1px solid var(--line); border-radius:16px; background:rgba(255,255,255,.035); } .profile-art { width:100%; height:150px; object-fit:contain; filter:drop-shadow(0 0 15px var(--char-glow,rgba(86,233,255,.2))); } .profile-hero h3 { margin:0; font-size:28px; text-transform:uppercase; } .profile-hero p { margin:7px 0 0; color:#aab6cc; font-size:12px; line-height:1.5; } .profile-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px; } .profile-block { padding:13px; border:1px solid var(--line); border-radius:14px; background:rgba(255,255,255,.03); } .profile-block h4 { margin:0 0 10px; color:var(--cyan); font-size:10px; letter-spacing:.15em; text-transform:uppercase; } .profile-block p { margin:0; color:#b9c5da; font-size:12px; line-height:1.55; } .evolution-track { display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap; color:var(--muted); font-size:10px; text-transform:uppercase; } .evo-node { padding:8px 10px; border:1px solid rgba(86,233,255,.25); border-radius:9px; color:#dce7fa; background:rgba(86,233,255,.07); }
     .scanner-modal { position:relative; min-height:500px; overflow:hidden; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; background:radial-gradient(circle at center,rgba(86,233,255,.13),transparent 35%),#060b17; } .scanner-modal::before { content:""; position:absolute; inset:0; opacity:.28; background-image:linear-gradient(rgba(86,233,255,.18) 1px,transparent 1px),linear-gradient(90deg,rgba(86,233,255,.18) 1px,transparent 1px); background-size:28px 28px; } .scanner-target { position:absolute; width:250px; aspect-ratio:1; border:1px solid rgba(86,233,255,.38); border-radius:50%; box-shadow:0 0 55px rgba(86,233,255,.2); } .scanner-target::before,.scanner-target::after { content:""; position:absolute; inset:18%; border:1px dashed rgba(86,233,255,.45); border-radius:50%; animation:spin 5s linear infinite; } .scanner-target::after { inset:5%; animation-direction:reverse; animation-duration:9s; } .scan-beam { position:absolute; left:0; right:0; top:0; height:2px; background:linear-gradient(90deg,transparent,var(--cyan),transparent); box-shadow:0 0 22px 4px rgba(86,233,255,.75); animation:beam 1.55s ease-in-out infinite; } @keyframes beam { from { transform:translateY(30px); } to { transform:translateY(460px); } } .scanner-image { width:210px; height:210px; object-fit:contain; z-index:1; filter:drop-shadow(0 0 22px rgba(86,233,255,.35)); animation:float 3s ease-in-out infinite; } .scan-copy { position:relative; z-index:2; } .scan-copy .scan-status { color:var(--cyan); font-size:11px; font-weight:900; letter-spacing:.26em; } .scan-copy h2 { margin:12px 0 3px; font-size:32px; text-transform:uppercase; letter-spacing:.08em; } .scan-copy p { margin:0; color:#9eacc4; font-size:12px; }
-    .video-modal { width:min(100%,620px); padding:10px; background:#02040a; } .video-shell { position:relative; min-height:330px; display:grid; place-items:center; border-radius:17px; overflow:hidden; background:radial-gradient(circle,#1c2545,#03050b 70%); } #ultimate-video,#evolution-video { display:block; width:100%; max-height:75vh; object-fit:contain; mix-blend-mode:screen; } .video-caption { padding:8px 8px 2px; display:flex; justify-content:space-between; gap:10px; color:#8795ad; font-size:10px; }
+
+    /* =========================================================
+       ULTIMATE / EVOLUTION VIDEO — FULL SCREEN
+       Tidak ada card, caption, tombol, atau teks.
+       ========================================================= */
+
+    #video-overlay {
+      padding:0 !important;
+      background:#000 !important;
+      backdrop-filter:none !important;
+      align-items:stretch !important;
+      justify-content:stretch !important;
+    }
+
+    #video-overlay .video-modal {
+      width:100vw !important;
+      height:100dvh !important;
+      min-width:100vw !important;
+      min-height:100dvh !important;
+      max-width:none !important;
+      max-height:none !important;
+      margin:0 !important;
+      padding:0 !important;
+      border:0 !important;
+      border-radius:0 !important;
+      background:#000 !important;
+      box-shadow:none !important;
+      overflow:hidden !important;
+      animation:none !important;
+    }
+
+    #video-overlay .video-shell {
+      position:relative;
+      width:100vw !important;
+      height:100dvh !important;
+      min-height:0 !important;
+      display:flex !important;
+      align-items:center !important;
+      justify-content:center !important;
+      border-radius:0 !important;
+      background:#000 !important;
+      overflow:hidden !important;
+    }
+
+    #video-overlay #ultimate-video,
+    #video-overlay #evolution-video {
+      display:block !important;
+      width:100vw !important;
+      height:100dvh !important;
+      max-width:none !important;
+      max-height:none !important;
+      object-fit:contain !important;
+      background:#000 !important;
+      mix-blend-mode:normal !important;
+    }
+
+    #video-overlay .video-caption {
+      display:none !important;
+    }
+
+    #video-overlay #video-fallback {
+      display:none !important;
+    }
+
     .toast { position:fixed; z-index:120; left:50%; bottom:89px; transform:translate(-50%,20px); min-width:min(90vw,330px); padding:13px 15px; border:1px solid rgba(86,233,255,.3); border-radius:13px; color:#eaf5ff; background:rgba(9,16,31,.95); box-shadow:0 14px 35px rgba(0,0,0,.45),0 0 25px rgba(86,233,255,.13); opacity:0; pointer-events:none; transition:.25s ease; text-align:center; font-size:12px; } .toast.show { opacity:1; transform:translate(-50%,0); } .toast.error { border-color:rgba(255,107,129,.55); } .toast b { display:block; color:var(--cyan); font-size:10px; letter-spacing:.14em; margin-bottom:3px; } .toast.error b { color:var(--danger); }
     .loading-screen { position:fixed; z-index:200; inset:0; display:grid; place-items:center; background:#050710; transition:opacity .45s ease,visibility .45s; } .loading-screen.done { opacity:0; visibility:hidden; pointer-events:none; } .loading-inner { width:min(88vw,360px); text-align:center; } .loading-logo { font-size:35px; font-weight:950; letter-spacing:.18em; color:var(--cyan); text-shadow:0 0 30px rgba(86,233,255,.5); } .loading-line { height:5px; margin:24px 0 11px; border-radius:99px; background:rgba(255,255,255,.1); overflow:hidden; } .loading-line i { display:block; width:0; height:100%; background:linear-gradient(90deg,var(--cyan),var(--violet)); box-shadow:0 0 16px var(--cyan); animation:load 1.55s ease-out forwards; } @keyframes load { to { width:100%; } } .loading-copy { color:#93a3bf; font:10px ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.13em; }
     .shake { animation:shake .5s ease; } @keyframes shake { 15%,85% { transform:translateX(-2px); } 30%,70% { transform:translateX(4px); } 45%,55% { transform:translateX(-6px); } }
@@ -131,12 +194,22 @@
 
   <div id="profile-overlay" class="overlay"><div class="modal"><div class="modal-head"><div><div class="eyebrow">DATABASE ENTRY // FULL READOUT</div><h2>Character Profile</h2></div><button class="close-btn" data-close="profile-overlay" type="button" aria-label="Close profile">×</button></div><div id="profile-content"></div></div></div>
 
-  <div id="video-overlay" class="overlay"><div class="modal video-modal"><div class="video-shell"><video id="ultimate-video" playsinline preload="metadata"></video><video id="evolution-video" playsinline preload="metadata" hidden></video><div id="video-fallback" style="display:none;text-align:center;padding:28px"><div style="font-size:28px;color:var(--danger)">⚠</div><strong style="display:block;margin:8px 0;color:#ffb0bb">ANIMATION UNAVAILABLE</strong><span style="font-size:12px;color:#9eacc4">Video ultimate untuk karakter ini belum tersedia.</span></div></div><div class="video-caption"><span id="video-caption-text">ULTIMATE SEQUENCE // PLAYING</span><button class="secondary-btn" data-close="video-overlay" type="button" style="min-height:32px;padding:0 11px">CLOSE</button></div></div></div>
+  <!-- FULLSCREEN VIDEO OVERLAY -->
+  <div id="video-overlay" class="overlay">
+    <div class="modal video-modal">
+      <div class="video-shell">
+        <video id="ultimate-video" playsinline preload="metadata"></video>
+        <video id="evolution-video" playsinline preload="metadata" hidden></video>
+        <div id="video-fallback" style="display:none;"></div>
+      </div>
+    </div>
+  </div>
 
   <div id="toast" class="toast"><b id="toast-title">SYSTEM</b><span id="toast-message"></span></div>
 
   <script>
     'use strict';
+
     // ---------- Character database: expanded from the original name/element/desc/image/video shape ----------
     const characters = {
       pikachu:{id:'pikachu',name:'Pikachu',pokedex:'#025',types:['Electric'],rarity:'Rare',level:12,exp:720,maxExp:1000,hp:120,attack:85,defense:60,speed:110,specialAttack:95,specialDefense:70,ability:'Static',specialMove:'Thunder Impact',description:'Mengumpulkan energi listrik di kantong pipinya untuk melepaskan sengatan dahsyat.',lore:'Pikachu membaca arus energi di arena sebelum mengubah kecepatannya menjadi kilatan petir.',height:'0.4 m',weight:'6.0 kg',category:'Mouse Pokémon',habitat:'Urban / Forest',evolution:'Pichu → Pikachu → Raichu',weakness:'Ground',strength:'Water · Flying',image:'assets/images/pikachu.png',video:'pikachu-animasi.webm',sound:'assets/audio/ultimate.mp3',themeColor:'#ffc857',accentColor:'#56e9ff',rarityColor:'#ffc857',evolutionLevel:22,nextEvolution:'Raichu',previousEvolution:'Pichu',battleStyle:'Fast burst damage with chain lightning.'},
@@ -153,46 +226,830 @@
 
     // Optional evolution uploads can be enabled later by setting a character's evolutionVideo.
     Object.values(characters).forEach(c => { if (!('evolutionVideo' in c)) c.evolutionVideo = ''; });
-    const state = { currentKey:'pikachu', characterState:'idle', soundOn:true, player:{level:7,exp:640,viewed:[],ultimateUsed:0,evolutionUnlocked:0}, scannerTimer:null, toastTimer:null };
+
+    const state = {
+      currentKey:'pikachu',
+      characterState:'idle',
+      soundOn:true,
+      player:{
+        level:7,
+        exp:640,
+        viewed:[],
+        ultimateUsed:0,
+        evolutionUnlocked:0
+      },
+      scannerTimer:null,
+      toastTimer:null
+    };
+
     const $ = (id) => document.getElementById(id);
-    const AudioManager = { cache:new Map(), music:null, init(){ this.music=new Audio('assets/audio/bg-music.mp3'); this.music.loop=true; this.music.volume=.18; }, play(name,volume=.55){ if(!state.soundOn)return; try{ let a=this.cache.get(name); if(!a){a=new Audio(`assets/audio/${name}.mp3`);this.cache.set(name,a);} a.currentTime=0;a.volume=volume;a.play().catch(()=>{});}catch(e){} }, startMusic(){ if(state.soundOn&&this.music)this.music.play().catch(()=>{}); }, stopAll(){ if(this.music){this.music.pause();this.music.currentTime=0;} this.cache.forEach(a=>{a.pause();a.currentTime=0;}); } };
+
+    const AudioManager = {
+      cache:new Map(),
+      music:null,
+
+      init(){
+        this.music=new Audio('assets/audio/bg-music.mp3');
+        this.music.loop=true;
+        this.music.volume=.18;
+      },
+
+      play(name,volume=.55){
+        if(!state.soundOn)return;
+        try{
+          let a=this.cache.get(name);
+          if(!a){
+            a=new Audio(`assets/audio/${name}.mp3`);
+            this.cache.set(name,a);
+          }
+          a.currentTime=0;
+          a.volume=volume;
+          a.play().catch(()=>{});
+        }catch(e){}
+      },
+
+      startMusic(){
+        if(state.soundOn&&this.music)this.music.play().catch(()=>{});
+      },
+
+      stopAll(){
+        if(this.music){
+          this.music.pause();
+          this.music.currentTime=0;
+        }
+        this.cache.forEach(a=>{
+          a.pause();
+          a.currentTime=0;
+        });
+      }
+    };
+
     AudioManager.init();
 
-    function vibrate(pattern){ try{ if(navigator.vibrate)navigator.vibrate(pattern); }catch(e){} }
-    function saveGameState(){ localStorage.setItem('biipbattle-state',JSON.stringify(state.player)); localStorage.setItem('biipbattle-sound',String(state.soundOn)); }
-    function loadGameState(){ try{ const saved=JSON.parse(localStorage.getItem('biipbattle-state')||'null'); if(saved)state.player={...state.player,...saved}; state.soundOn=localStorage.getItem('biipbattle-sound')!=='false'; }catch(e){ showToast('SAVE ERROR','Progress reset to safe defaults.',true); } }
-    function playSound(name,pattern){ AudioManager.play(name); if(pattern)vibrate(pattern); }
-    function setCharacterState(next){ state.characterState=next; $('state-label').textContent=`${next.toUpperCase()} STATE`; }
-    function getCurrent(){ return characters[state.currentKey]||characters.pikachu; }
-    function colorizeHero(c){ $('hero-card').style.setProperty('--char-glow',`${c.themeColor}35`); $('hero-card').style.setProperty('--char-accent',c.accentColor); $('hero-card').style.setProperty('--rarity',c.rarityColor); $('rarity-label').textContent=c.rarity.toUpperCase(); $('rarity-label').style.color=c.rarityColor; }
-    function renderStats(c){ $('stat-hp').textContent=c.hp; $('stat-attack').textContent=c.attack; $('stat-defense').textContent=c.defense; $('stat-speed').textContent=c.speed; const stats=[['HP',c.hp,300],['ATTACK',c.attack,180],['DEFENSE',c.defense,180],['SPEED',c.speed,180],['SP. ATTACK',c.specialAttack,180],['SP. DEFENSE',c.specialDefense,180]]; $('stat-list').innerHTML=stats.map(([n,v,max])=>`<div class="stat-row"><span>${n}</span><div class="progress"><i style="--value:${Math.min(100,v/max*100)}%;background:linear-gradient(90deg,${c.accentColor},${c.rarityColor})"></i></div><b>${v}</b></div>`).join(''); }
-    function renderCharacterCard(c){ $('char-code').textContent=c.pokedex; $('char-name').textContent=c.name; $('char-desc').textContent=c.description; $('char-image').src=c.image; $('char-image').alt=c.name; $('char-image').onerror=()=>showToast('IMAGE ERROR','Character artwork could not be loaded.',true); $('type-row').innerHTML=c.types.map(t=>`<span class="type-chip">${t}</span>`).join('')+`<span class="rarity-badge" style="--rarity:${c.rarityColor}">${c.rarity}</span>`; $('hero-title').innerHTML=`TARGET <span>${c.name}</span>`; colorizeHero(c); renderStats(c); }
-    function loadCharacter(key,options={}){ state.currentKey=characters[key]?key:'pikachu'; const c=getCurrent(); renderCharacterCard(c); if(!state.player.viewed.includes(c.id)){state.player.viewed.push(c.id);saveGameState();} updatePlayerProgress(); renderCollection(); if(!options.silent)window.history.replaceState({},'',`?char=${c.id}`); }
-    function updatePlayerProgress(){ const p=state.player; const next=p.level*1000; $('player-level').textContent=String(p.level).padStart(2,'0'); $('hud-level').textContent=`LV. ${String(p.level).padStart(2,'0')} // ONLINE`; $('player-exp-label').textContent=`${p.exp} / ${next}`; $('player-exp-bar').style.setProperty('--value',`${Math.min(100,p.exp/next*100)}%`); $('viewed-count').textContent=p.viewed.length; $('ultimate-count').textContent=p.ultimateUsed; $('evolution-count').textContent=p.evolutionUnlocked; $('collection-count').textContent=`${p.viewed.length} / 10`; }
-    function renderCollection(){ const query=$('search-input').value.trim().toLowerCase(); const filter=$('type-filter').value; const list=Object.values(characters).filter(c=>(!query||c.name.toLowerCase().includes(query)||c.types.some(t=>t.toLowerCase().includes(query)))&&(filter==='all'||c.types.some(t=>t.toLowerCase()===filter))); $('character-list').innerHTML=list.map(c=>`<button class="collection-card" style="--card-accent:${c.rarityColor}" data-character="${c.id}" type="button"><div class="card-top"><span class="card-no">${c.pokedex}</span><span class="rarity-badge" style="--rarity:${c.rarityColor}">${c.rarity}</span></div><img class="card-art" loading="lazy" src="${c.image}" alt="${c.name}" /><div class="card-name">${c.name}</div><div class="card-meta"><span>LV. ${c.level}</span><span>${c.types[0]}</span></div></button>`).join(''); $('empty-state').style.display=list.length?'none':'block'; document.querySelectorAll('[data-character]').forEach(btn=>btn.addEventListener('click',()=>{ loadCharacter(btn.dataset.character); startScan(); })); }
-    function openOverlay(id){ $(id).classList.add('visible'); }
-    function closeOverlay(id){ $(id).classList.remove('visible'); }
-    function showToast(title,message,error=false){ $('toast-title').textContent=title; $('toast-message').textContent=message; $('toast').classList.toggle('error',error); $('toast').classList.add('show'); clearTimeout(state.toastTimer); state.toastTimer=setTimeout(()=>$('toast').classList.remove('show'),3200); }
-    function openScanner(){ playSound('scan',[30]); openOverlay('scanner-overlay'); startScan(); }
-    function startScan(){ const c=getCurrent(); clearTimeout(state.scannerTimer); setCharacterState('scanning'); $('scanner-image').src=c.image; $('scan-status').textContent='SCANNING...'; $('scan-name').textContent='TARGET ACQUIRING'; $('scan-details').textContent='Reading battle signature // please wait'; state.scannerTimer=setTimeout(showDetected,1550); }
-    function showDetected(){ const c=getCurrent(); setCharacterState('detected'); playSound('detected',[45]); $('scan-status').textContent='TARGET DETECTED'; $('scan-name').textContent=c.name; $('scan-details').textContent=`${c.pokedex} // ${c.types.join(' / ')} TYPE // ${c.rarity.toUpperCase()}`; showToast('CHARACTER DETECTED',`${c.name} profile unlocked.`); setTimeout(()=>{ closeOverlay('scanner-overlay'); openProfile(); },780); }
-    function evolutionMarkup(c){ const parts=c.evolution.split('→').map(v=>v.trim()); return `<div class="evolution-track">${parts.map((p,i)=>`${i?'<span>→</span>':''}<span class="evo-node">${p}</span>`).join('')}</div>`; }
-    function renderProfile(c){ $('profile-content').innerHTML=`<div class="profile-hero" style="--char-glow:${c.themeColor}55"><img class="profile-art" src="${c.image}" alt="${c.name}" /><div><div class="eyebrow">${c.pokedex} // LV. ${c.level}</div><h3>${c.name}</h3><div class="type-row">${c.types.map(t=>`<span class="type-chip">${t}</span>`).join('')}<span class="rarity-badge" style="--rarity:${c.rarityColor}">${c.rarity}</span></div><p>${c.description}</p></div></div><div class="profile-grid"><div class="profile-block"><h4>Base Stats</h4><div class="stat-list">${[['HP',c.hp],['Attack',c.attack],['Defense',c.defense],['Speed',c.speed],['Sp. Attack',c.specialAttack],['Sp. Defense',c.specialDefense]].map(([n,v])=>`<div class="stat-row"><span>${n}</span><div class="progress"><i style="--value:${Math.min(100,v/180*100)}%;background:linear-gradient(90deg,${c.accentColor},${c.rarityColor})"></i></div><b>${v}</b></div>`).join('')}</div></div><div class="profile-block"><h4>Bio / Lore</h4><p>${c.lore}</p><p style="margin-top:10px;color:#8493ad">${c.category} · ${c.height} · ${c.weight}<br>Habitat: ${c.habitat}</p></div><div class="profile-block"><h4>Ability / Battle Style</h4><p><strong style="color:#f5f7ff">${c.ability}</strong><br>${c.battleStyle}</p></div><div class="profile-block"><h4>Special Move</h4><p style="font-size:17px;color:#f5f7ff;font-weight:900">${c.specialMove}</p><p style="margin-top:7px;color:#8493ad">Strength: ${c.strength}<br>Weakness: ${c.weakness}</p></div><div class="profile-block" style="grid-column:1/-1"><h4>Evolution Path</h4>${evolutionMarkup(c)}<div style="display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap"><button class="secondary-btn" id="level-up-button" type="button">＋ LEVEL UP</button><button class="primary-btn" id="evolve-button" type="button">✦ EVOLVE</button></div></div></div>`; $('level-up-button').addEventListener('click',levelUpCharacter); $('evolve-button').addEventListener('click',()=>playEvolution(c)); }
-    function openProfile(){ renderProfile(getCurrent()); openOverlay('profile-overlay'); }
-    function videoCandidates(c,isEvolution=false){ const file=isEvolution?`${c.id}-evolution.webm`:c.video; return isEvolution?[`assets/videos/evolution/${file}`,file]:[`assets/videos/ultimate/${file}`,`assets/videos/${file}`,file]; }
-    function playVideoSequence(c,isEvolution=false){ const video=isEvolution?$('evolution-video'):$('ultimate-video'); const other=isEvolution?$('ultimate-video'):$('evolution-video'); other.pause();other.hidden=true; video.hidden=false; video.className=''; let index=0; const candidates=videoCandidates(c,isEvolution); const tryNext=()=>{ if(index>=candidates.length){ video.onerror=null; video.hidden=true; $('video-fallback').style.display='block'; showToast(isEvolution?'EVOLUTION VIDEO NOT AVAILABLE':'ANIMATION UNAVAILABLE',isEvolution?'Evolution sequence is locked.':'Video ultimate untuk karakter ini belum tersedia.',true); return; } video.src=candidates[index++]; video.load(); video.play().catch(()=>{ if(index<candidates.length)tryNext(); }); }; video.onerror=tryNext; $('video-fallback').style.display='none'; tryNext(); }
-    function triggerUltimate(){ const c=getCurrent(); setCharacterState('ultimate'); state.player.ultimateUsed++; saveGameState(); updatePlayerProgress(); playSound('ultimate',[80]); openOverlay('video-overlay'); $('video-caption-text').textContent=`${c.name.toUpperCase()} // ULTIMATE SEQUENCE`; playVideoSequence(c,false); }
-    function closeUltimate(){ closeOverlay('video-overlay'); $('ultimate-video').pause(); $('evolution-video').pause(); setCharacterState('idle'); playSound('close'); }
-    function levelUpCharacter(){ const c=getCurrent(); const cost=260; if(state.player.exp<cost){ playSound('error'); showToast('NOT ENOUGH EXP',`Need ${cost} EXP to level up this character.`,true); return; } const old=c.level; c.level++; c.exp=Math.min(c.maxExp,c.exp+130); c.attack+=4;c.defense+=3;c.speed+=2; state.player.exp-=cost; saveGameState(); updatePlayerProgress(); renderCharacterCard(c); renderProfile(c); setCharacterState('levelup'); playSound('levelup',[50]); $('hero-card').classList.remove('shake'); void $('hero-card').offsetWidth; $('hero-card').classList.add('shake'); showToast('LEVEL UP!',`${c.name} // LV. ${old} → LV. ${c.level}`); setTimeout(()=>setCharacterState('idle'),700); }
-    function checkEvolution(c){ return c.evolutionVideo||false; }
-    function playEvolution(c){ setCharacterState('evolution'); playSound('evolution',[50,30,100]); state.player.evolutionUnlocked++; saveGameState(); updatePlayerProgress(); if(!checkEvolution(c)){ showToast('EVOLUTION SEQUENCE IS LOCKED','Add an evolution WebM in assets/videos/evolution to unlock it.',true); setTimeout(()=>setCharacterState('idle'),700); return; } openOverlay('video-overlay'); $('video-caption-text').textContent=`${c.name.toUpperCase()} // EVOLUTION SEQUENCE`; playVideoSequence(c,true); }
-    function toggleSound(){ state.soundOn=!state.soundOn; $('sound-toggle').textContent=state.soundOn?'◖':'◌'; if(state.soundOn){playSound('click');AudioManager.startMusic();showToast('SOUND ON','Audio systems online.');}else{AudioManager.stopAll();showToast('SOUND OFF','All audio systems muted.');} saveGameState(); }
-    function addButtonFeedback(){ document.querySelectorAll('button').forEach(btn=>{ btn.addEventListener('pointerdown',()=>btn.style.transform='scale(.97)'); btn.addEventListener('pointerup',()=>btn.style.transform=''); btn.addEventListener('pointerleave',()=>btn.style.transform=''); }); }
-    function initTilt(){ const card=$('hero-card'); const move=(e)=>{ if(matchMedia('(pointer:coarse)').matches)return; const r=card.getBoundingClientRect(); const x=(e.clientX-r.left)/r.width-.5; const y=(e.clientY-r.top)/r.height-.5; card.style.transform=`perspective(1100px) rotateY(${x*3}deg) rotateX(${y*-3}deg)`; }; card.addEventListener('pointermove',move); card.addEventListener('pointerleave',()=>card.style.transform=''); }
-    function bindEvents(){ $('ultimate-button').addEventListener('click',triggerUltimate); $('scan-button').addEventListener('click',openScanner); $('profile-button').addEventListener('click',openProfile); $('sound-toggle').addEventListener('click',toggleSound); $('settings-button').addEventListener('click',openProfile); $('ultimate-video').addEventListener('ended',closeUltimate); $('evolution-video').addEventListener('ended',closeUltimate); $('search-input').addEventListener('input',renderCollection); $('type-filter').addEventListener('change',renderCollection); document.querySelectorAll('[data-close]').forEach(btn=>btn.addEventListener('click',()=>{const id=btn.dataset.close;if(id==='video-overlay')closeUltimate();else closeOverlay(id);})); document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o){if(o.id==='video-overlay')closeUltimate();else closeOverlay(o.id);}})); document.querySelectorAll('[data-nav]').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.nav-btn').forEach(n=>n.classList.remove('active'));btn.classList.add('active'); const target=btn.dataset.nav; if(target==='collection')document.querySelector('.collection-section').scrollIntoView({behavior:'smooth'}); if(target==='scan')openScanner(); if(target==='profile')openProfile(); if(target==='home')window.scrollTo({top:0,behavior:'smooth'}); playSound('click',[20]);})); document.addEventListener('pointerdown',()=>AudioManager.startMusic(),{once:true}); addButtonFeedback(); initTilt(); }
-    function boot(){ loadGameState(); const key=new URLSearchParams(location.search).get('char')||'pikachu'; loadCharacter(key,{silent:true}); $('sound-toggle').textContent=state.soundOn?'◖':'◌'; bindEvents(); const messages=['INITIALIZING...','LOAD CHARACTER DATABASE...','LOAD AUDIO...','LOAD ANIMATION...','READY']; let i=0; const timer=setInterval(()=>{ $('loading-copy').textContent=messages[Math.min(i++,messages.length-1)]; if(i>=messages.length){clearInterval(timer);setTimeout(()=>$('loading-screen').classList.add('done'),260);}},290); }
-    window.addEventListener('popstate',()=>loadCharacter(new URLSearchParams(location.search).get('char')||'pikachu',{silent:true}));
-    window.triggerUltimate=triggerUltimate; window.closeUltimate=closeUltimate; window.loadCharacter=loadCharacter; window.playEvolution=playEvolution;
+    function vibrate(pattern){
+      try{
+        if(navigator.vibrate)navigator.vibrate(pattern);
+      }catch(e){}
+    }
+
+    function saveGameState(){
+      localStorage.setItem('biipbattle-state',JSON.stringify(state.player));
+      localStorage.setItem('biipbattle-sound',String(state.soundOn));
+    }
+
+    function loadGameState(){
+      try{
+        const saved=JSON.parse(localStorage.getItem('biipbattle-state')||'null');
+        if(saved)state.player={...state.player,...saved};
+        state.soundOn=localStorage.getItem('biipbattle-sound')!=='false';
+      }catch(e){
+        showToast('SAVE ERROR','Progress reset to safe defaults.',true);
+      }
+    }
+
+    function playSound(name,pattern){
+      AudioManager.play(name);
+      if(pattern)vibrate(pattern);
+    }
+
+    function setCharacterState(next){
+      state.characterState=next;
+      $('state-label').textContent=`${next.toUpperCase()} STATE`;
+    }
+
+    function getCurrent(){
+      return characters[state.currentKey]||characters.pikachu;
+    }
+
+    function colorizeHero(c){
+      $('hero-card').style.setProperty('--char-glow',`${c.themeColor}35`);
+      $('hero-card').style.setProperty('--char-accent',c.accentColor);
+      $('hero-card').style.setProperty('--rarity',c.rarityColor);
+      $('rarity-label').textContent=c.rarity.toUpperCase();
+      $('rarity-label').style.color=c.rarityColor;
+    }
+
+    function renderStats(c){
+      $('stat-hp').textContent=c.hp;
+      $('stat-attack').textContent=c.attack;
+      $('stat-defense').textContent=c.defense;
+      $('stat-speed').textContent=c.speed;
+
+      const stats=[
+        ['HP',c.hp,300],
+        ['ATTACK',c.attack,180],
+        ['DEFENSE',c.defense,180],
+        ['SPEED',c.speed,180],
+        ['SP. ATTACK',c.specialAttack,180],
+        ['SP. DEFENSE',c.specialDefense,180]
+      ];
+
+      $('stat-list').innerHTML=stats.map(([n,v,max])=>
+        `<div class="stat-row"><span>${n}</span><div class="progress"><i style="--value:${Math.min(100,v/max*100)}%;background:linear-gradient(90deg,${c.accentColor},${c.rarityColor})"></i></div><b>${v}</b></div>`
+      ).join('');
+    }
+
+    function renderCharacterCard(c){
+      $('char-code').textContent=c.pokedex;
+      $('char-name').textContent=c.name;
+      $('char-desc').textContent=c.description;
+      $('char-image').src=c.image;
+      $('char-image').alt=c.name;
+
+      $('char-image').onerror=()=>{
+        showToast('IMAGE ERROR','Character artwork could not be loaded.',true);
+      };
+
+      $('type-row').innerHTML=
+        c.types.map(t=>`<span class="type-chip">${t}</span>`).join('')+
+        `<span class="rarity-badge" style="--rarity:${c.rarityColor}">${c.rarity}</span>`;
+
+      $('hero-title').innerHTML=`TARGET <span>${c.name}</span>`;
+
+      colorizeHero(c);
+      renderStats(c);
+    }
+
+    function loadCharacter(key,options={}){
+      state.currentKey=characters[key]?key:'pikachu';
+
+      const c=getCurrent();
+
+      renderCharacterCard(c);
+
+      if(!state.player.viewed.includes(c.id)){
+        state.player.viewed.push(c.id);
+        saveGameState();
+      }
+
+      updatePlayerProgress();
+      renderCollection();
+
+      if(!options.silent){
+        window.history.replaceState({},'',`?char=${c.id}`);
+      }
+    }
+
+    function updatePlayerProgress(){
+      const p=state.player;
+      const next=p.level*1000;
+
+      $('player-level').textContent=String(p.level).padStart(2,'0');
+      $('hud-level').textContent=`LV. ${String(p.level).padStart(2,'0')} // ONLINE`;
+      $('player-exp-label').textContent=`${p.exp} / ${next}`;
+      $('player-exp-bar').style.setProperty('--value',`${Math.min(100,p.exp/next*100)}%`);
+      $('viewed-count').textContent=p.viewed.length;
+      $('ultimate-count').textContent=p.ultimateUsed;
+      $('evolution-count').textContent=p.evolutionUnlocked;
+      $('collection-count').textContent=`${p.viewed.length} / 10`;
+    }
+
+    function renderCollection(){
+      const query=$('search-input').value.trim().toLowerCase();
+      const filter=$('type-filter').value;
+
+      const list=Object.values(characters).filter(c=>
+        (!query||
+          c.name.toLowerCase().includes(query)||
+          c.types.some(t=>t.toLowerCase().includes(query))
+        )&&
+        (filter==='all'||c.types.some(t=>t.toLowerCase()===filter))
+      );
+
+      $('character-list').innerHTML=list.map(c=>
+        `<button class="collection-card" style="--card-accent:${c.rarityColor}" data-character="${c.id}" type="button">
+          <div class="card-top">
+            <span class="card-no">${c.pokedex}</span>
+            <span class="rarity-badge" style="--rarity:${c.rarityColor}">${c.rarity}</span>
+          </div>
+          <img class="card-art" loading="lazy" src="${c.image}" alt="${c.name}" />
+          <div class="card-name">${c.name}</div>
+          <div class="card-meta">
+            <span>LV. ${c.level}</span>
+            <span>${c.types[0]}</span>
+          </div>
+        </button>`
+      ).join('');
+
+      $('empty-state').style.display=list.length?'none':'block';
+
+      document.querySelectorAll('[data-character]').forEach(btn=>
+        btn.addEventListener('click',()=>{
+          loadCharacter(btn.dataset.character);
+          startScan();
+        })
+      );
+    }
+
+    function openOverlay(id){
+      $(id).classList.add('visible');
+    }
+
+    function closeOverlay(id){
+      $(id).classList.remove('visible');
+    }
+
+    function showToast(title,message,error=false){
+      $('toast-title').textContent=title;
+      $('toast-message').textContent=message;
+      $('toast').classList.toggle('error',error);
+      $('toast').classList.add('show');
+
+      clearTimeout(state.toastTimer);
+
+      state.toastTimer=setTimeout(
+        ()=>$('toast').classList.remove('show'),
+        3200
+      );
+    }
+
+    function openScanner(){
+      playSound('scan',[30]);
+      openOverlay('scanner-overlay');
+      startScan();
+    }
+
+    function startScan(){
+      const c=getCurrent();
+
+      clearTimeout(state.scannerTimer);
+
+      setCharacterState('scanning');
+
+      $('scanner-image').src=c.image;
+      $('scan-status').textContent='SCANNING...';
+      $('scan-name').textContent='TARGET ACQUIRING';
+      $('scan-details').textContent='Reading battle signature // please wait';
+
+      state.scannerTimer=setTimeout(showDetected,1550);
+    }
+
+    function showDetected(){
+      const c=getCurrent();
+
+      setCharacterState('detected');
+      playSound('detected',[45]);
+
+      $('scan-status').textContent='TARGET DETECTED';
+      $('scan-name').textContent=c.name;
+      $('scan-details').textContent=
+        `${c.pokedex} // ${c.types.join(' / ')} TYPE // ${c.rarity.toUpperCase()}`;
+
+      showToast(
+        'CHARACTER DETECTED',
+        `${c.name} profile unlocked.`
+      );
+
+      setTimeout(()=>{
+        closeOverlay('scanner-overlay');
+        openProfile();
+      },780);
+    }
+
+    function evolutionMarkup(c){
+      const parts=c.evolution.split('→').map(v=>v.trim());
+
+      return `<div class="evolution-track">${
+        parts.map((p,i)=>
+          `${i?'<span>→</span>':''}<span class="evo-node">${p}</span>`
+        ).join('')
+      }</div>`;
+    }
+
+    function renderProfile(c){
+      $('profile-content').innerHTML=
+        `<div class="profile-hero" style="--char-glow:${c.themeColor}55">
+          <img class="profile-art" src="${c.image}" alt="${c.name}" />
+          <div>
+            <div class="eyebrow">${c.pokedex} // LV. ${c.level}</div>
+            <h3>${c.name}</h3>
+            <div class="type-row">
+              ${c.types.map(t=>`<span class="type-chip">${t}</span>`).join('')}
+              <span class="rarity-badge" style="--rarity:${c.rarityColor}">${c.rarity}</span>
+            </div>
+            <p>${c.description}</p>
+          </div>
+        </div>
+
+        <div class="profile-grid">
+
+          <div class="profile-block">
+            <h4>Base Stats</h4>
+            <div class="stat-list">
+              ${
+                [
+                  ['HP',c.hp],
+                  ['Attack',c.attack],
+                  ['Defense',c.defense],
+                  ['Speed',c.speed],
+                  ['Sp. Attack',c.specialAttack],
+                  ['Sp. Defense',c.specialDefense]
+                ].map(([n,v])=>
+                  `<div class="stat-row">
+                    <span>${n}</span>
+                    <div class="progress">
+                      <i style="--value:${Math.min(100,v/180*100)}%;background:linear-gradient(90deg,${c.accentColor},${c.rarityColor})"></i>
+                    </div>
+                    <b>${v}</b>
+                  </div>`
+                ).join('')
+              }
+            </div>
+          </div>
+
+          <div class="profile-block">
+            <h4>Bio / Lore</h4>
+            <p>${c.lore}</p>
+            <p style="margin-top:10px;color:#8493ad">
+              ${c.category} · ${c.height} · ${c.weight}<br>
+              Habitat: ${c.habitat}
+            </p>
+          </div>
+
+          <div class="profile-block">
+            <h4>Ability / Battle Style</h4>
+            <p>
+              <strong style="color:#f5f7ff">${c.ability}</strong><br>
+              ${c.battleStyle}
+            </p>
+          </div>
+
+          <div class="profile-block">
+            <h4>Special Move</h4>
+            <p style="font-size:17px;color:#f5f7ff;font-weight:900">
+              ${c.specialMove}
+            </p>
+            <p style="margin-top:7px;color:#8493ad">
+              Strength: ${c.strength}<br>
+              Weakness: ${c.weakness}
+            </p>
+          </div>
+
+          <div class="profile-block" style="grid-column:1/-1">
+            <h4>Evolution Path</h4>
+            ${evolutionMarkup(c)}
+
+            <div style="display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap">
+              <button class="secondary-btn" id="level-up-button" type="button">
+                ＋ LEVEL UP
+              </button>
+
+              <button class="primary-btn" id="evolve-button" type="button">
+                ✦ EVOLVE
+              </button>
+            </div>
+          </div>
+
+        </div>`;
+
+      $('level-up-button').addEventListener(
+        'click',
+        levelUpCharacter
+      );
+
+      $('evolve-button').addEventListener(
+        'click',
+        ()=>playEvolution(c)
+      );
+    }
+
+    function openProfile(){
+      renderProfile(getCurrent());
+      openOverlay('profile-overlay');
+    }
+
+    function videoCandidates(c,isEvolution=false){
+      const file=isEvolution
+        ? `${c.id}-evolution.webm`
+        : c.video;
+
+      return isEvolution
+        ? [
+            `assets/videos/evolution/${file}`,
+            file
+          ]
+        : [
+            `assets/videos/ultimate/${file}`,
+            `assets/videos/${file}`,
+            file
+          ];
+    }
+
+    function playVideoSequence(c,isEvolution=false){
+      const video=isEvolution
+        ? $('evolution-video')
+        : $('ultimate-video');
+
+      const other=isEvolution
+        ? $('ultimate-video')
+        : $('evolution-video');
+
+      other.pause();
+      other.hidden=true;
+
+      video.hidden=false;
+      video.className='';
+
+      let index=0;
+
+      const candidates=videoCandidates(c,isEvolution);
+
+      const tryNext=()=>{
+        if(index>=candidates.length){
+          video.onerror=null;
+          video.hidden=true;
+
+          $('video-fallback').style.display='block';
+
+          showToast(
+            isEvolution
+              ? 'EVOLUTION VIDEO NOT AVAILABLE'
+              : 'ANIMATION UNAVAILABLE',
+            isEvolution
+              ? 'Evolution sequence is locked.'
+              : 'Video ultimate untuk karakter ini belum tersedia.',
+            true
+          );
+
+          return;
+        }
+
+        video.src=candidates[index++];
+        video.load();
+
+        video.play().catch(()=>{
+          if(index<candidates.length){
+            tryNext();
+          }
+        });
+      };
+
+      video.onerror=tryNext;
+
+      $('video-fallback').style.display='none';
+
+      tryNext();
+    }
+
+    /* =========================================================
+       ULTIMATE
+       ========================================================= */
+
+    function triggerUltimate(){
+      const c=getCurrent();
+
+      setCharacterState('ultimate');
+
+      state.player.ultimateUsed++;
+
+      saveGameState();
+      updatePlayerProgress();
+
+      playSound('ultimate',[80]);
+
+      openOverlay('video-overlay');
+
+      playVideoSequence(c,false);
+    }
+
+    /* =========================================================
+       CLOSE ULTIMATE / EVOLUTION
+       ========================================================= */
+
+    function closeUltimate(){
+      closeOverlay('video-overlay');
+
+      $('ultimate-video').pause();
+      $('evolution-video').pause();
+
+      try{
+        $('ultimate-video').currentTime=0;
+        $('evolution-video').currentTime=0;
+      }catch(e){}
+
+      setCharacterState('idle');
+
+      playSound('close');
+    }
+
+    function levelUpCharacter(){
+      const c=getCurrent();
+      const cost=260;
+
+      if(state.player.exp<cost){
+        playSound('error');
+        showToast(
+          'NOT ENOUGH EXP',
+          `Need ${cost} EXP to level up this character.`,
+          true
+        );
+        return;
+      }
+
+      const old=c.level;
+
+      c.level++;
+      c.exp=Math.min(c.maxExp,c.exp+130);
+      c.attack+=4;
+      c.defense+=3;
+      c.speed+=2;
+
+      state.player.exp-=cost;
+
+      saveGameState();
+      updatePlayerProgress();
+      renderCharacterCard(c);
+      renderProfile(c);
+
+      setCharacterState('levelup');
+
+      playSound('levelup',[50]);
+
+      $('hero-card').classList.remove('shake');
+      void $('hero-card').offsetWidth;
+      $('hero-card').classList.add('shake');
+
+      showToast(
+        'LEVEL UP!',
+        `${c.name} // LV. ${old} → LV. ${c.level}`
+      );
+
+      setTimeout(
+        ()=>setCharacterState('idle'),
+        700
+      );
+    }
+
+    function checkEvolution(c){
+      return c.evolutionVideo||false;
+    }
+
+    function playEvolution(c){
+      setCharacterState('evolution');
+
+      playSound('evolution',[50,30,100]);
+
+      state.player.evolutionUnlocked++;
+
+      saveGameState();
+      updatePlayerProgress();
+
+      if(!checkEvolution(c)){
+        showToast(
+          'EVOLUTION SEQUENCE IS LOCKED',
+          'Add an evolution WebM in assets/videos/evolution to unlock it.',
+          true
+        );
+
+        setTimeout(
+          ()=>setCharacterState('idle'),
+          700
+        );
+
+        return;
+      }
+
+      openOverlay('video-overlay');
+
+      playVideoSequence(c,true);
+    }
+
+    function toggleSound(){
+      state.soundOn=!state.soundOn;
+
+      $('sound-toggle').textContent=
+        state.soundOn?'◖':'◌';
+
+      if(state.soundOn){
+        playSound('click');
+        AudioManager.startMusic();
+        showToast(
+          'SOUND ON',
+          'Audio systems online.'
+        );
+      }else{
+        AudioManager.stopAll();
+
+        showToast(
+          'SOUND OFF',
+          'All audio systems muted.'
+        );
+      }
+
+      saveGameState();
+    }
+
+    function addButtonFeedback(){
+      document.querySelectorAll('button').forEach(btn=>{
+        btn.addEventListener(
+          'pointerdown',
+          ()=>btn.style.transform='scale(.97)'
+        );
+
+        btn.addEventListener(
+          'pointerup',
+          ()=>btn.style.transform=''
+        );
+
+        btn.addEventListener(
+          'pointerleave',
+          ()=>btn.style.transform=''
+        );
+      });
+    }
+
+    function initTilt(){
+      const card=$('hero-card');
+
+      const move=(e)=>{
+        if(matchMedia('(pointer:coarse)').matches)return;
+
+        const r=card.getBoundingClientRect();
+
+        const x=(e.clientX-r.left)/r.width-.5;
+        const y=(e.clientY-r.top)/r.height-.5;
+
+        card.style.transform=
+          `perspective(1100px) rotateY(${x*3}deg) rotateX(${y*-3}deg)`;
+      };
+
+      card.addEventListener('pointermove',move);
+
+      card.addEventListener(
+        'pointerleave',
+        ()=>card.style.transform=''
+      );
+    }
+
+    function bindEvents(){
+      $('ultimate-button').addEventListener(
+        'click',
+        triggerUltimate
+      );
+
+      $('scan-button').addEventListener(
+        'click',
+        openScanner
+      );
+
+      $('profile-button').addEventListener(
+        'click',
+        openProfile
+      );
+
+      $('sound-toggle').addEventListener(
+        'click',
+        toggleSound
+      );
+
+      $('settings-button').addEventListener(
+        'click',
+        openProfile
+      );
+
+      $('ultimate-video').addEventListener(
+        'ended',
+        closeUltimate
+      );
+
+      $('evolution-video').addEventListener(
+        'ended',
+        closeUltimate
+      );
+
+      $('search-input').addEventListener(
+        'input',
+        renderCollection
+      );
+
+      $('type-filter').addEventListener(
+        'change',
+        renderCollection
+      );
+
+      document.querySelectorAll('[data-close]').forEach(btn=>
+        btn.addEventListener('click',()=>{
+          const id=btn.dataset.close;
+
+          if(id==='video-overlay'){
+            closeUltimate();
+          }else{
+            closeOverlay(id);
+          }
+        })
+      );
+
+      /* Video fullscreen tidak ditutup dengan klik backdrop */
+      document.querySelectorAll('.overlay').forEach(o=>
+        o.addEventListener('click',e=>{
+          if(e.target===o){
+            if(o.id==='video-overlay'){
+              return;
+            }
+
+            closeOverlay(o.id);
+          }
+        })
+      );
+
+      document.querySelectorAll('[data-nav]').forEach(btn=>
+        btn.addEventListener('click',()=>{
+          document.querySelectorAll('.nav-btn')
+            .forEach(n=>n.classList.remove('active'));
+
+          btn.classList.add('active');
+
+          const target=btn.dataset.nav;
+
+          if(target==='collection'){
+            document.querySelector('.collection-section')
+              .scrollIntoView({behavior:'smooth'});
+          }
+
+          if(target==='scan'){
+            openScanner();
+          }
+
+          if(target==='profile'){
+            openProfile();
+          }
+
+          if(target==='home'){
+            window.scrollTo({
+              top:0,
+              behavior:'smooth'
+            });
+          }
+
+          playSound('click',[20]);
+        })
+      );
+
+      document.addEventListener(
+        'pointerdown',
+        ()=>AudioManager.startMusic(),
+        {once:true}
+      );
+
+      addButtonFeedback();
+      initTilt();
+    }
+
+    function boot(){
+      loadGameState();
+
+      const key=
+        new URLSearchParams(location.search).get('char')||
+        'pikachu';
+
+      loadCharacter(
+        key,
+        {silent:true}
+      );
+
+      $('sound-toggle').textContent=
+        state.soundOn?'◖':'◌';
+
+      bindEvents();
+
+      const messages=[
+        'INITIALIZING...',
+        'LOAD CHARACTER DATABASE...',
+        'LOAD AUDIO...',
+        'LOAD ANIMATION...',
+        'READY'
+      ];
+
+      let i=0;
+
+      const timer=setInterval(()=>{
+        $('loading-copy').textContent=
+          messages[Math.min(i++,messages.length-1)];
+
+        if(i>=messages.length){
+          clearInterval(timer);
+
+          setTimeout(
+            ()=>$('loading-screen').classList.add('done'),
+            260
+          );
+        }
+      },290);
+    }
+
+    window.addEventListener(
+      'popstate',
+      ()=>loadCharacter(
+        new URLSearchParams(location.search).get('char')||'pikachu',
+        {silent:true}
+      )
+    );
+
+    window.triggerUltimate=triggerUltimate;
+    window.closeUltimate=closeUltimate;
+    window.loadCharacter=loadCharacter;
+    window.playEvolution=playEvolution;
+
     boot();
   </script>
 </body>
