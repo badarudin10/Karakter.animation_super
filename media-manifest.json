@@ -1,0 +1,204 @@
+{
+  "application": "BiipBattle Arena",
+  "staticOnly": true,
+  "backendRequired": false,
+  "buildRequired": false,
+  "artwork": {
+    "pikachu": {
+      "path": "assets/images/pikachu.png",
+      "included": true
+    },
+    "charizard": {
+      "path": "assets/images/charizard.png",
+      "included": true
+    },
+    "greninja": {
+      "path": "assets/images/greninja.png",
+      "included": true
+    },
+    "mewtwo": {
+      "path": "assets/images/mewtwo.png",
+      "included": true
+    },
+    "bulbasaur": {
+      "path": "assets/images/bulbasaur.png",
+      "included": true
+    },
+    "squirtle": {
+      "path": "assets/images/squirtle.png",
+      "included": true
+    },
+    "lucario": {
+      "path": "assets/images/lucario.png",
+      "included": true
+    },
+    "gengar": {
+      "path": "assets/images/gengar.png",
+      "included": true
+    },
+    "rayquaza": {
+      "path": "assets/images/rayquaza.png",
+      "included": true
+    },
+    "eevee": {
+      "path": "assets/images/eevee.png",
+      "included": true
+    }
+  },
+  "ultimateVideos": {
+    "pikachu-animasi.webm": {
+      "path": "assets/videos/ultimate/pikachu-animasi.webm",
+      "included": false,
+      "reason": "Original user media was not available for upload"
+    },
+    "charizard-animasi.webm": {
+      "path": "assets/videos/ultimate/charizard-animasi.webm",
+      "included": false,
+      "reason": "Original user media was not available for upload"
+    },
+    "greninja-animasi.webm": {
+      "path": "assets/videos/ultimate/greninja-animasi.webm",
+      "included": false,
+      "reason": "Original user media was not available for upload"
+    },
+    "mewtwo-animasi.webm": {
+      "path": "assets/videos/ultimate/mewtwo-animasi.webm",
+      "included": false,
+      "reason": "Original user media was not available for upload"
+    },
+    "bulbasaur-animasi.webm": {
+      "path": "assets/videos/ultimate/bulbasaur-animasi.webm",
+      "included": false,
+      "reason": "Original user media was not available for upload"
+    },
+    "squirtle-animasi.webm": {
+      "path": "assets/videos/ultimate/squirtle-animasi.webm",
+      "included": false,
+      "reason": "Original user media was not available for upload"
+    },
+    "lucario-animasi.webm": {
+      "path": "assets/videos/ultimate/lucario-animasi.webm",
+      "included": false,
+      "reason": "Original user media was not available for upload"
+    },
+    "gengar-animasi.webm": {
+      "path": "assets/videos/ultimate/gengar-animasi.webm",
+      "included": false,
+      "reason": "Original user media was not available for upload"
+    },
+    "rayquaza-animasi.webm": {
+      "path": "assets/videos/ultimate/rayquaza-animasi.webm",
+      "included": false,
+      "reason": "Original user media was not available for upload"
+    },
+    "eevee-animasi.webm": {
+      "path": "assets/videos/ultimate/eevee-animasi.webm",
+      "included": false,
+      "reason": "Original user media was not available for upload"
+    }
+  },
+  "evolutionVideos": {
+    "pikachu-evolution.webm": {
+      "path": "assets/videos/evolution/pikachu-evolution.webm",
+      "included": false,
+      "optional": true
+    },
+    "charizard-evolution.webm": {
+      "path": "assets/videos/evolution/charizard-evolution.webm",
+      "included": false,
+      "optional": true
+    },
+    "greninja-evolution.webm": {
+      "path": "assets/videos/evolution/greninja-evolution.webm",
+      "included": false,
+      "optional": true
+    },
+    "mewtwo-evolution.webm": {
+      "path": "assets/videos/evolution/mewtwo-evolution.webm",
+      "included": false,
+      "optional": true
+    },
+    "bulbasaur-evolution.webm": {
+      "path": "assets/videos/evolution/bulbasaur-evolution.webm",
+      "included": false,
+      "optional": true
+    },
+    "squirtle-evolution.webm": {
+      "path": "assets/videos/evolution/squirtle-evolution.webm",
+      "included": false,
+      "optional": true
+    },
+    "lucario-evolution.webm": {
+      "path": "assets/videos/evolution/lucario-evolution.webm",
+      "included": false,
+      "optional": true
+    },
+    "gengar-evolution.webm": {
+      "path": "assets/videos/evolution/gengar-evolution.webm",
+      "included": false,
+      "optional": true
+    },
+    "rayquaza-evolution.webm": {
+      "path": "assets/videos/evolution/rayquaza-evolution.webm",
+      "included": false,
+      "optional": true
+    },
+    "eevee-evolution.webm": {
+      "path": "assets/videos/evolution/eevee-evolution.webm",
+      "included": false,
+      "optional": true
+    }
+  },
+  "audio": {
+    "bg-music.mp3": {
+      "path": "assets/audio/bg-music.mp3",
+      "included": false,
+      "optional": true
+    },
+    "click.mp3": {
+      "path": "assets/audio/click.mp3",
+      "included": false,
+      "optional": true
+    },
+    "hover.mp3": {
+      "path": "assets/audio/hover.mp3",
+      "included": false,
+      "optional": true
+    },
+    "scan.mp3": {
+      "path": "assets/audio/scan.mp3",
+      "included": false,
+      "optional": true
+    },
+    "detected.mp3": {
+      "path": "assets/audio/detected.mp3",
+      "included": false,
+      "optional": true
+    },
+    "levelup.mp3": {
+      "path": "assets/audio/levelup.mp3",
+      "included": false,
+      "optional": true
+    },
+    "evolution.mp3": {
+      "path": "assets/audio/evolution.mp3",
+      "included": false,
+      "optional": true
+    },
+    "ultimate.mp3": {
+      "path": "assets/audio/ultimate.mp3",
+      "included": false,
+      "optional": true
+    },
+    "close.mp3": {
+      "path": "assets/audio/close.mp3",
+      "included": false,
+      "optional": true
+    },
+    "error.mp3": {
+      "path": "assets/audio/error.mp3",
+      "included": false,
+      "optional": true
+    }
+  }
+}
