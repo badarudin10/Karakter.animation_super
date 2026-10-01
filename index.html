@@ -23,9 +23,7 @@
       --shadow:0 24px 80px rgba(0,0,0,.42);
     }
 
-    * {
-      box-sizing:border-box;
-    }
+    * { box-sizing:border-box; }
 
     html {
       min-width:320px;
@@ -45,16 +43,8 @@
       overflow-x:hidden;
     }
 
-    button,
-    input {
-      font:inherit;
-    }
-
-    button {
-      border:0;
-      color:inherit;
-      cursor:pointer;
-    }
+    button, input { font:inherit; }
+    button { border:0; color:inherit; cursor:pointer; }
 
     .app-shell {
       position:relative;
@@ -101,23 +91,11 @@
       animation:drift 16s ease-in-out infinite alternate;
     }
 
-    .ambient::before {
-      background:#31d8ff;
-      left:-12vw;
-      top:18vh;
-    }
-
-    .ambient::after {
-      background:#8e55ff;
-      right:-10vw;
-      top:48vh;
-      animation-delay:-7s;
-    }
+    .ambient::before { background:#31d8ff; left:-12vw; top:18vh; }
+    .ambient::after { background:#8e55ff; right:-10vw; top:48vh; animation-delay:-7s; }
 
     @keyframes drift {
-      to {
-        transform:translate3d(8vw,-5vh,0) scale(1.16);
-      }
+      to { transform:translate3d(8vw,-5vh,0) scale(1.16); }
     }
 
     .topbar {
@@ -129,70 +107,38 @@
       max-width:1220px;
     }
 
-    .brand {
-      display:flex;
-      align-items:center;
-      gap:12px;
-    }
+    .brand { display:flex; align-items:center; gap:12px; }
 
     .brand-mark {
-      width:44px;
-      height:44px;
-      display:grid;
-      place-items:center;
+      width:44px; height:44px;
+      display:grid; place-items:center;
       border:1px solid rgba(86,233,255,.4);
       border-radius:14px;
       background:linear-gradient(145deg,rgba(86,233,255,.24),rgba(154,123,255,.16));
       box-shadow:0 0 24px rgba(86,233,255,.15),inset 0 0 20px rgba(255,255,255,.04);
-      font-weight:950;
-      color:var(--cyan);
+      font-weight:950; color:var(--cyan);
       letter-spacing:-.1em;
     }
 
-    .eyebrow,
-    .label {
-      color:var(--muted);
-      font-size:10px;
-      letter-spacing:.17em;
-      text-transform:uppercase;
-      font-weight:800;
+    .eyebrow, .label {
+      color:var(--muted); font-size:10px;
+      letter-spacing:.17em; text-transform:uppercase; font-weight:800;
     }
 
-    .brand h1 {
-      margin:0;
-      font-size:clamp(19px,3vw,28px);
-      letter-spacing:.14em;
-      font-weight:950;
-    }
+    .brand h1 { margin:0; font-size:clamp(19px,3vw,28px); letter-spacing:.14em; font-weight:950; }
+    .brand p { margin:3px 0 0; font-size:10px; color:#8292af; letter-spacing:.2em; }
 
-    .brand p {
-      margin:3px 0 0;
-      font-size:10px;
-      color:#8292af;
-      letter-spacing:.2em;
-    }
+    .hud-actions { display:flex; align-items:center; gap:8px; }
 
-    .hud-actions {
-      display:flex;
-      align-items:center;
-      gap:8px;
-    }
-
-    .icon-btn,
-    .mini-btn {
-      display:inline-grid;
-      place-items:center;
-      min-width:40px;
-      height:40px;
+    .icon-btn, .mini-btn {
+      display:inline-grid; place-items:center;
+      min-width:40px; height:40px;
       border:1px solid var(--line);
       background:rgba(255,255,255,.045);
-      border-radius:12px;
-      color:#cdd8ee;
-      transition:.2s ease;
+      border-radius:12px; color:#cdd8ee; transition:.2s ease;
     }
 
-    .icon-btn:hover,
-    .mini-btn:hover {
+    .icon-btn:hover, .mini-btn:hover {
       transform:translateY(-2px);
       border-color:rgba(86,233,255,.6);
       color:var(--cyan);
@@ -200,1155 +146,340 @@
     }
 
     .hud-profile {
-      display:flex;
-      align-items:center;
-      gap:10px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.04);
-      padding:7px 11px 7px 7px;
-      border-radius:14px;
+      display:flex; align-items:center; gap:10px;
+      border:1px solid var(--line); background:rgba(255,255,255,.04);
+      padding:7px 11px 7px 7px; border-radius:14px;
     }
 
     .avatar {
-      width:31px;
-      height:31px;
-      display:grid;
-      place-items:center;
-      border-radius:10px;
-      background:linear-gradient(135deg,#2cddff,#7963ff);
-      color:#05101e;
-      font-weight:950;
+      width:31px; height:31px; display:grid; place-items:center;
+      border-radius:10px; background:linear-gradient(135deg,#2cddff,#7963ff);
+      color:#05101e; font-weight:950;
     }
 
-    .hud-profile strong {
-      display:block;
-      font-size:12px;
-    }
-
-    .hud-profile small {
-      color:var(--muted);
-      font-size:10px;
-    }
+    .hud-profile strong { display:block; font-size:12px; }
+    .hud-profile small { color:var(--muted); font-size:10px; }
 
     .layout {
-      max-width:1220px;
-      margin:auto;
-      display:grid;
-      grid-template-columns:minmax(0,1.5fr) minmax(300px,.85fr);
-      gap:20px;
+      max-width:1220px; margin:auto;
+      display:grid; grid-template-columns:minmax(0,1.5fr) minmax(300px,.85fr); gap:20px;
     }
 
     .glass {
       border:1px solid var(--line);
       background:linear-gradient(145deg,rgba(20,29,53,.8),rgba(9,14,28,.78));
-      box-shadow:var(--shadow);
-      backdrop-filter:blur(18px);
+      box-shadow:var(--shadow); backdrop-filter:blur(18px);
     }
 
     .hero {
-      position:relative;
-      overflow:hidden;
-      border-radius:28px;
-      min-height:530px;
-      padding:clamp(18px,3vw,34px);
+      position:relative; overflow:hidden; border-radius:28px; min-height:530px; padding:clamp(18px,3vw,34px);
     }
 
     .hero::after {
-      content:"";
-      position:absolute;
-      inset:0;
-      pointer-events:none;
+      content:""; position:absolute; inset:0; pointer-events:none;
       background:
         linear-gradient(125deg,transparent 10%,rgba(86,233,255,.07) 38%,transparent 58%),
         radial-gradient(circle at 72% 38%,var(--char-glow,rgba(255,200,87,.16)),transparent 33%);
     }
 
     .hero-head {
-      position:relative;
-      z-index:2;
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      gap:12px;
+      position:relative; z-index:2; display:flex; justify-content:space-between; align-items:flex-start; gap:12px;
     }
 
     .hero-head h2 {
-      margin:5px 0 0;
-      font-size:clamp(26px,5vw,48px);
-      letter-spacing:-.045em;
-      line-height:1;
+      margin:5px 0 0; font-size:clamp(26px,5vw,48px); letter-spacing:-.045em; line-height:1;
     }
-
-    .hero-head h2 span {
-      color:var(--cyan);
-      text-shadow:0 0 18px rgba(86,233,255,.45);
-    }
+    .hero-head h2 span { color:var(--cyan); text-shadow:0 0 18px rgba(86,233,255,.45); }
 
     .status-pill {
-      display:flex;
-      align-items:center;
-      gap:7px;
-      padding:8px 10px;
-      border:1px solid rgba(100,230,164,.3);
-      background:rgba(100,230,164,.08);
-      border-radius:99px;
-      color:var(--green);
-      font-size:10px;
-      font-weight:900;
-      letter-spacing:.14em;
+      display:flex; align-items:center; gap:7px; padding:8px 10px;
+      border:1px solid rgba(100,230,164,.3); background:rgba(100,230,164,.08);
+      border-radius:99px; color:var(--green); font-size:10px; font-weight:900; letter-spacing:.14em;
     }
-
-    .status-dot {
-      width:7px;
-      height:7px;
-      border-radius:50%;
-      background:currentColor;
-      box-shadow:0 0 12px currentColor;
-    }
+    .status-dot { width:7px; height:7px; border-radius:50%; background:currentColor; box-shadow:0 0 12px currentColor; }
 
     .character-stage {
-      min-height:300px;
-      position:relative;
-      display:grid;
-      place-items:center;
-      margin:4px 0 -4px;
+      min-height:300px; position:relative; display:grid; place-items:center; margin:4px 0 -4px;
     }
 
     .stage-grid {
-      position:absolute;
-      width:min(82%,530px);
-      aspect-ratio:1;
-      border-radius:50%;
-      opacity:.5;
+      position:absolute; width:min(82%,530px); aspect-ratio:1; border-radius:50%; opacity:.5;
       background:
         radial-gradient(circle,transparent 48%,rgba(86,233,255,.1) 49%,transparent 50%),
         linear-gradient(90deg,transparent 49.7%,rgba(86,233,255,.1) 50%,transparent 50.3%),
         linear-gradient(0deg,transparent 49.7%,rgba(86,233,255,.1) 50%,transparent 50.3%);
-      background-size:100% 100%,100% 100%,100% 100%;
       box-shadow:0 0 80px var(--char-glow,rgba(255,200,87,.22));
       animation:spin 24s linear infinite;
     }
-
     .stage-grid::after {
-      content:"";
-      position:absolute;
-      inset:13%;
-      border:1px dashed rgba(86,233,255,.28);
-      border-radius:50%;
+      content:""; position:absolute; inset:13%; border:1px dashed rgba(86,233,255,.28); border-radius:50%;
     }
 
-    @keyframes spin {
-      to {
-        transform:rotate(360deg);
-      }
-    }
+    @keyframes spin { to { transform:rotate(360deg); } }
 
     .energy-ring {
-      position:absolute;
-      width:min(68%,370px);
-      aspect-ratio:1;
-      border:1px solid var(--char-accent,#ffc857);
-      border-radius:50%;
-      opacity:.25;
+      position:absolute; width:min(68%,370px); aspect-ratio:1;
+      border:1px solid var(--char-accent,#ffc857); border-radius:50%; opacity:.25;
       animation:pulse-ring 3.2s ease-in-out infinite;
     }
 
-    @keyframes pulse-ring {
-      50% {
-        transform:scale(1.08);
-        opacity:.52;
-      }
-    }
+    @keyframes pulse-ring { 50% { transform:scale(1.08); opacity:.52; } }
 
-    /*
-      ==========================================================
-      PIKACHU SPRITE ANIMATION ENGINE (CSS ONLY)
-      ==========================================================
-      Sprite di set otomatis memotong menjadi 16 pose ke bawah.
-      Menggunakan fungsi transform & steps(16) agar frame-by-frame
-      presisi dan tanpa celah.
-      ==========================================================
-    */
+    /* ==========================================================
+       PIKACHU 4x4 GRID SPRITE ANIMATION CSS
+       ========================================================== */
     .pikachu-container {
+      width: 230px;
+      height: 230px;
       overflow: hidden;
       position: relative;
-      /* Proporsi asli pose potrait dari perhitungan (Misal 224:291.25) */
-      aspect-ratio: 224 / 291.25;
+      margin: 0 auto;
+      background: transparent;
+      z-index: 2;
     }
 
     .pikachu-sprite {
-      width: 100%;
-      height: 1600%; /* 100% x 16 pose ke bawah */
+      width: 400%;
+      height: 400%;
       background-image: url('assets/images/pikachu-pose-1-16.jpg');
       background-size: 100% 100%;
       background-repeat: no-repeat;
-      animation: playPikachu 1.4s steps(16) infinite;
+      mix-blend-mode: screen; /* Menyamarkan background kotak-kotak JPG */
+      animation: playPikachuGrid 1.6s steps(16) infinite;
       pointer-events: none;
     }
 
-    @keyframes playPikachu {
-      0% { transform: translateY(0); }
-      100% { transform: translateY(-100%); }
+    @keyframes playPikachuGrid {
+      0% { background-position: 0% 0%; }
+      100% { background-position: -400% -400%; }
     }
 
-    /* Base Styling untuk gambar karakter di berbagai modul */
     .character-image {
-      position:relative;
-      z-index:2;
-      width:min(69%,330px);
-      height:auto;
-      max-height:310px;
-      aspect-ratio: 224 / 291.25; /* Menjaga konsistensi box */
-      object-fit:contain;
-      filter:
-        drop-shadow(0 16px 24px rgba(0,0,0,.55))
-        drop-shadow(0 0 18px var(--char-glow,rgba(255,200,87,.3)));
-      animation:float 4.6s ease-in-out infinite;
+      position:relative; z-index:2;
+      filter: drop-shadow(0 16px 24px rgba(0,0,0,.55)) drop-shadow(0 0 18px var(--char-glow,rgba(255,200,87,.3)));
+      animation: float 4.6s ease-in-out infinite;
       user-select:none;
-      margin: 0 auto;
     }
 
     .card-art {
-      display:block;
-      width:100%;
-      height:auto;
-      aspect-ratio:224 / 291.25;
-      object-fit:contain;
-      object-position:center center;
-      filter:drop-shadow(0 8px 9px rgba(0,0,0,.45));
-      position:relative;
-      z-index:1;
-      margin:0;
+      display:block; width:100%; height:auto; object-fit:contain; object-position:center;
+      filter:drop-shadow(0 8px 9px rgba(0,0,0,.45)); position:relative; z-index:1; margin:0;
     }
 
-    .profile-art {
-      width:100%;
-      height:150px;
-      object-fit:contain;
-      filter:drop-shadow(0 0 15px var(--char-glow,rgba(86,233,255,.2)));
-    }
+    .profile-art { width:100%; height:150px; object-fit:contain; filter:drop-shadow(0 0 15px var(--char-glow,rgba(86,233,255,.2))); }
+    .scanner-image { width:180px; height:auto; object-fit:contain; z-index:1; filter:drop-shadow(0 0 22px rgba(86,233,255,.35)); animation:float 3s ease-in-out infinite; margin: 0 auto; }
 
-    .pikachu-container.profile-art {
-      width: auto;
-      max-width: 100%;
-      margin: 0 auto;
-    }
-
-    .scanner-image {
-      width:180px;
-      height:auto;
-      aspect-ratio: 224 / 291.25;
-      object-fit:contain;
-      z-index:1;
-      filter:drop-shadow(0 0 22px rgba(86,233,255,.35));
-      animation:float 3s ease-in-out infinite;
-      margin: 0 auto;
-    }
-
-    @keyframes float {
-      50% {
-        transform:translateY(-10px) scale(1.02);
-      }
-    }
+    @keyframes float { 50% { transform:translateY(-10px) scale(1.02); } }
 
     .scan-corners {
-      position:absolute;
-      z-index:3;
-      width:min(58%,270px);
-      aspect-ratio:1;
-      border:1px solid rgba(86,233,255,.2);
-      clip-path:polygon(
-        0 15%,15% 15%,15% 0,30% 0,30% 3%,3% 3%,3% 30%,0 30%,
-        0 70%,3% 70%,3% 97%,30% 97%,30% 100%,15% 100%,15% 85%,0 85%,
-        100% 85%,85% 85%,85% 100%,70% 100%,70% 97%,97% 97%,97% 70%,
-        100% 70%,100% 30%,97% 30%,97% 3%,70% 3%,70% 0,85% 0,
-        85% 15%,100% 15%,100% 85%
-      );
+      position:absolute; z-index:3; width:min(58%,270px); aspect-ratio:1; border:1px solid rgba(86,233,255,.2);
+      clip-path:polygon(0 15%,15% 15%,15% 0,30% 0,30% 3%,3% 3%,3% 30%,0 30%,0 70%,3% 70%,3% 97%,30% 97%,30% 100%,15% 100%,15% 85%,0 85%,100% 85%,85% 85%,85% 100%,70% 100%,70% 97%,97% 97%,97% 70%,100% 70%,100% 30%,97% 30%,97% 3%,70% 3%,70% 0,85% 0,85% 15%,100% 15%,100% 85%);
       opacity:.7;
     }
 
-    .hero-bottom {
-      position:relative;
-      z-index:2;
-      display:grid;
-      grid-template-columns:1fr auto;
-      gap:20px;
-      align-items:end;
-    }
+    .hero-bottom { position:relative; z-index:2; display:grid; grid-template-columns:1fr auto; gap:20px; align-items:end; }
+    .hero-bottom h3 { margin:4px 0; font-size:clamp(25px,4vw,40px); text-transform:uppercase; letter-spacing:.06em; }
+    .hero-bottom p { max-width:600px; color:#aab6cc; line-height:1.55; margin:0; font-size:13px; }
 
-    .hero-bottom h3 {
-      margin:4px 0;
-      font-size:clamp(25px,4vw,40px);
-      text-transform:uppercase;
-      letter-spacing:.06em;
+    .type-row { display:flex; flex-wrap:wrap; gap:6px; margin:10px 0 0; }
+    .type-chip, .rarity-badge {
+      display:inline-flex; align-items:center; gap:6px; padding:6px 9px;
+      border-radius:7px; font-size:10px; font-weight:900; letter-spacing:.12em; text-transform:uppercase;
     }
+    .type-chip { color:var(--cyan); border:1px solid rgba(86,233,255,.25); background:rgba(86,233,255,.08); }
+    .rarity-badge { color:var(--rarity,#ffc857); border:1px solid color-mix(in srgb,var(--rarity,#ffc857) 38%,transparent); background:color-mix(in srgb,var(--rarity,#ffc857) 11%,transparent); }
 
-    .hero-bottom p {
-      max-width:600px;
-      color:#aab6cc;
-      line-height:1.55;
-      margin:0;
-      font-size:13px;
+    .quick-stats { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:20px; }
+    .stat-tile { padding:10px; border:1px solid var(--line); background:rgba(0,0,0,.14); border-radius:12px; }
+    .stat-tile b { display:block; font-size:18px; }
+    .stat-tile span { color:var(--muted); font-size:9px; letter-spacing:.14em; }
+
+    .actions { display:flex; flex-direction:column; gap:9px; min-width:210px; }
+    .primary-btn, .secondary-btn {
+      min-height:46px; padding:0 15px; border-radius:12px;
+      font-size:11px; font-weight:950; letter-spacing:.12em; text-transform:uppercase; transition:.2s ease;
     }
+    .primary-btn { color:#06101b; background:linear-gradient(100deg,#72f1ff,#a894ff); box-shadow:0 0 22px rgba(86,233,255,.22); }
+    .primary-btn:hover { transform:translateY(-2px); box-shadow:0 0 30px rgba(86,233,255,.42); }
+    .secondary-btn { border:1px solid rgba(148,163,184,.24); background:rgba(255,255,255,.06); color:#d9e2f5; }
+    .secondary-btn:hover { border-color:rgba(86,233,255,.5); color:var(--cyan); }
 
-    .type-row {
-      display:flex;
-      flex-wrap:wrap;
-      gap:6px;
-      margin:10px 0 0;
-    }
+    .side-stack { display:flex; flex-direction:column; gap:16px; }
+    .panel { border-radius:22px; padding:18px; }
+    .panel-head { display:flex; justify-content:space-between; gap:10px; align-items:center; margin-bottom:14px; }
+    .panel-head h3 { margin:0; font-size:13px; letter-spacing:.15em; text-transform:uppercase; }
+    .panel-head small { color:var(--muted); font-size:10px; }
 
-    .type-chip,
-    .rarity-badge {
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      padding:6px 9px;
-      border-radius:7px;
-      font-size:10px;
-      font-weight:900;
-      letter-spacing:.12em;
-      text-transform:uppercase;
-    }
-
-    .type-chip {
-      color:var(--cyan);
-      border:1px solid rgba(86,233,255,.25);
-      background:rgba(86,233,255,.08);
-    }
-
-    .rarity-badge {
-      color:var(--rarity,#ffc857);
-      border:1px solid color-mix(in srgb,var(--rarity,#ffc857) 38%,transparent);
-      background:color-mix(in srgb,var(--rarity,#ffc857) 11%,transparent);
-    }
-
-    .quick-stats {
-      display:grid;
-      grid-template-columns:repeat(4,1fr);
-      gap:8px;
-      margin-top:20px;
-    }
-
-    .stat-tile {
-      padding:10px;
-      border:1px solid var(--line);
-      background:rgba(0,0,0,.14);
-      border-radius:12px;
-    }
-
-    .stat-tile b {
-      display:block;
-      font-size:18px;
-    }
-
-    .stat-tile span {
-      color:var(--muted);
-      font-size:9px;
-      letter-spacing:.14em;
-    }
-
-    .actions {
-      display:flex;
-      flex-direction:column;
-      gap:9px;
-      min-width:210px;
-    }
-
-    .primary-btn,
-    .secondary-btn {
-      min-height:46px;
-      padding:0 15px;
-      border-radius:12px;
-      font-size:11px;
-      font-weight:950;
-      letter-spacing:.12em;
-      text-transform:uppercase;
-      transition:.2s ease;
-    }
-
-    .primary-btn {
-      color:#06101b;
-      background:linear-gradient(100deg,#72f1ff,#a894ff);
-      box-shadow:0 0 22px rgba(86,233,255,.22);
-    }
-
-    .primary-btn:hover {
-      transform:translateY(-2px);
-      box-shadow:0 0 30px rgba(86,233,255,.42);
-    }
-
-    .secondary-btn {
-      border:1px solid rgba(148,163,184,.24);
-      background:rgba(255,255,255,.06);
-      color:#d9e2f5;
-    }
-
-    .secondary-btn:hover {
-      border-color:rgba(86,233,255,.5);
-      color:var(--cyan);
-    }
-
-    .side-stack {
-      display:flex;
-      flex-direction:column;
-      gap:16px;
-    }
-
-    .panel {
-      border-radius:22px;
-      padding:18px;
-    }
-
-    .panel-head {
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      align-items:center;
-      margin-bottom:14px;
-    }
-
-    .panel-head h3 {
-      margin:0;
-      font-size:13px;
-      letter-spacing:.15em;
-      text-transform:uppercase;
-    }
-
-    .panel-head small {
-      color:var(--muted);
-      font-size:10px;
-    }
-
-    .progress-wrap {
-      display:flex;
-      gap:13px;
-      align-items:center;
-    }
-
+    .progress-wrap { display:flex; gap:13px; align-items:center; }
     .level-orb {
-      width:56px;
-      height:56px;
-      flex:none;
-      display:grid;
-      place-items:center;
-      border-radius:18px;
-      color:#06101b;
-      background:linear-gradient(135deg,#ffdd7a,#ff8e60);
-      font-weight:950;
+      width:56px; height:56px; flex:none; display:grid; place-items:center;
+      border-radius:18px; color:#06101b; background:linear-gradient(135deg,#ffdd7a,#ff8e60); font-weight:950;
       box-shadow:0 0 25px rgba(255,200,87,.22);
     }
+    .level-orb small { display:block; font-size:8px; text-align:center; }
 
-    .level-orb small {
-      display:block;
-      font-size:8px;
-      text-align:center;
-    }
-
-    .progress {
-      height:7px;
-      border-radius:99px;
-      overflow:hidden;
-      background:rgba(255,255,255,.08);
-    }
-
+    .progress { height:7px; border-radius:99px; overflow:hidden; background:rgba(255,255,255,.08); }
     .progress > i {
-      display:block;
-      height:100%;
-      width:var(--value,40%);
-      border-radius:inherit;
-      background:linear-gradient(90deg,#57e8ff,#8f78ff);
-      box-shadow:0 0 10px rgba(86,233,255,.55);
+      display:block; height:100%; width:var(--value,40%); border-radius:inherit;
+      background:linear-gradient(90deg,#57e8ff,#8f78ff); box-shadow:0 0 10px rgba(86,233,255,.55);
       transition:width .7s cubic-bezier(.2,.8,.2,1);
     }
+    .progress-label { display:flex; justify-content:space-between; margin-bottom:7px; color:var(--muted); font-size:10px; }
 
-    .progress-label {
-      display:flex;
-      justify-content:space-between;
-      margin-bottom:7px;
-      color:var(--muted);
-      font-size:10px;
-    }
+    .metric-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+    .metric { padding:11px; border-radius:12px; border:1px solid var(--line); background:rgba(255,255,255,.035); }
+    .metric strong { display:block; font-size:18px; }
+    .metric span { color:var(--muted); font-size:9px; text-transform:uppercase; letter-spacing:.1em; }
 
-    .metric-grid {
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:8px;
-    }
+    .stat-list { display:grid; gap:10px; }
+    .stat-row { display:grid; grid-template-columns:72px 1fr 34px; align-items:center; gap:8px; font-size:10px; text-transform:uppercase; letter-spacing:.1em; }
+    .stat-row span:first-child { color:#aab6cc; }
+    .stat-row b { text-align:right; }
+    .stat-row .progress { height:5px; }
 
-    .metric {
-      padding:11px;
-      border-radius:12px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.035);
-    }
-
-    .metric strong {
-      display:block;
-      font-size:18px;
-    }
-
-    .metric span {
-      color:var(--muted);
-      font-size:9px;
-      text-transform:uppercase;
-      letter-spacing:.1em;
-    }
-
-    .stat-list {
-      display:grid;
-      gap:10px;
-    }
-
-    .stat-row {
-      display:grid;
-      grid-template-columns:72px 1fr 34px;
-      align-items:center;
-      gap:8px;
-      font-size:10px;
-      text-transform:uppercase;
-      letter-spacing:.1em;
-    }
-
-    .stat-row span:first-child {
-      color:#aab6cc;
-    }
-
-    .stat-row b {
-      text-align:right;
-    }
-
-    .stat-row .progress {
-      height:5px;
-    }
-
-    .collection-section {
-      max-width:1220px;
-      margin:20px auto 0;
-    }
-
-    .collection-toolbar {
-      display:flex;
-      gap:10px;
-      align-items:center;
-      margin-bottom:12px;
-    }
-
-    .search {
-      flex:1;
-      position:relative;
-    }
-
+    .collection-section { max-width:1220px; margin:20px auto 0; }
+    .collection-toolbar { display:flex; gap:10px; align-items:center; margin-bottom:12px; }
+    .search { flex:1; position:relative; }
     .search input {
-      width:100%;
-      height:42px;
-      border:1px solid var(--line);
-      border-radius:12px;
-      outline:0;
-      color:var(--text);
-      background:rgba(255,255,255,.045);
-      padding:0 14px 0 38px;
+      width:100%; height:42px; border:1px solid var(--line); border-radius:12px;
+      outline:0; color:var(--text); background:rgba(255,255,255,.045); padding:0 14px 0 38px;
     }
-
-    .search input:focus {
-      border-color:rgba(86,233,255,.7);
-      box-shadow:0 0 0 3px rgba(86,233,255,.08);
-    }
-
-    .search::before {
-      content:"⌕";
-      position:absolute;
-      left:14px;
-      top:8px;
-      color:var(--cyan);
-      font-size:20px;
-    }
+    .search input:focus { border-color:rgba(86,233,255,.7); box-shadow:0 0 0 3px rgba(86,233,255,.08); }
+    .search::before { content:"⌕"; position:absolute; left:14px; top:8px; color:var(--cyan); font-size:20px; }
 
     .filter-select {
-      height:42px;
-      border:1px solid var(--line);
-      border-radius:12px;
-      color:#cdd8ee;
-      background:#10182c;
-      padding:0 11px;
-      outline:0;
-      text-transform:uppercase;
-      font-size:10px;
-      letter-spacing:.1em;
+      height:42px; border:1px solid var(--line); border-radius:12px;
+      color:#cdd8ee; background:#10182c; padding:0 11px; outline:0; text-transform:uppercase; font-size:10px; letter-spacing:.1em;
     }
 
-    .card-grid {
-      display:grid;
-      grid-template-columns:repeat(5,minmax(0,1fr));
-      gap:0;
-      overflow:hidden;
-      border-radius:17px;
-    }
-
+    .card-grid { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:0; overflow:hidden; border-radius:17px; }
     .collection-card {
-      --card-accent:#56e9ff;
-      position:relative;
-      overflow:hidden;
-      min-height:0;
-      padding:10px;
-      border:1px solid color-mix(in srgb,var(--card-accent) 28%,transparent);
-      border-radius:0;
-      background:linear-gradient(
-        145deg,
-        rgba(22,31,57,.85),
-        rgba(8,13,26,.92)
-      );
-      text-align:left;
-      transition:
-        transform .22s ease,
-        border-color .22s ease,
-        box-shadow .22s ease;
-      aspect-ratio:896 / 1165;
+      --card-accent:#56e9ff; position:relative; overflow:hidden; min-height:0; padding:10px;
+      border:1px solid color-mix(in srgb,var(--card-accent) 28%,transparent); border-radius:0;
+      background:linear-gradient(145deg,rgba(22,31,57,.85),rgba(8,13,26,.92)); text-align:left;
+      transition:transform .22s ease, border-color .22s ease, box-shadow .22s ease; aspect-ratio:896 / 1165;
     }
-
     .collection-card:hover {
-      transform:translateY(-5px);
-      border-color:var(--card-accent);
-      box-shadow:
-        0 16px 32px rgba(0,0,0,.3),
-        0 0 24px color-mix(
-          in srgb,
-          var(--card-accent) 18%,
-          transparent
-        );
+      transform:translateY(-5px); border-color:var(--card-accent);
+      box-shadow:0 16px 32px rgba(0,0,0,.3), 0 0 24px color-mix(in srgb,var(--card-accent) 18%,transparent);
       z-index:2;
     }
 
-    .collection-card::after {
-      content:"";
-      position:absolute;
-      inset:-40%;
-      opacity:0;
-      background:linear-gradient(
-        110deg,
-        transparent 38%,
-        rgba(255,255,255,.18) 50%,
-        transparent 62%
-      );
-      transform:rotate(12deg);
-      transition:.4s;
-    }
+    .card-top { display:flex; align-items:center; justify-content:space-between; position:relative; z-index:1; }
+    .card-no { color:var(--muted); font-size:9px; letter-spacing:.1em; }
+    .card-name { margin:1px 0; font-size:13px; font-weight:900; text-transform:uppercase; letter-spacing:.08em; position:relative; z-index:1; }
+    .card-meta { display:flex; justify-content:space-between; color:var(--muted); font-size:9px; position:relative; z-index:1; }
 
-    .collection-card:hover::after {
-      opacity:1;
-      transform:translateX(40%) rotate(12deg);
-    }
-
-    .card-top {
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      position:relative;
-      z-index:1;
-    }
-
-    .card-no {
-      color:var(--muted);
-      font-size:9px;
-      letter-spacing:.1em;
-    }
-
-    .card-name {
-      margin:1px 0 1px;
-      font-size:13px;
-      font-weight:900;
-      text-transform:uppercase;
-      letter-spacing:.08em;
-      position:relative;
-      z-index:1;
-    }
-
-    .card-meta {
-      display:flex;
-      justify-content:space-between;
-      color:var(--muted);
-      font-size:9px;
-      position:relative;
-      z-index:1;
-    }
-
-    .empty-state {
-      display:none;
-      padding:28px;
-      text-align:center;
-      color:var(--muted);
-      border:1px dashed var(--line);
-      border-radius:16px;
-    }
+    .empty-state { display:none; padding:28px; text-align:center; color:var(--muted); border:1px dashed var(--line); border-radius:16px; }
 
     .bottom-nav {
-      position:fixed;
-      z-index:30;
-      left:50%;
-      bottom:14px;
-      transform:translateX(-50%);
-      display:flex;
-      gap:4px;
-      padding:7px;
-      border:1px solid rgba(148,163,184,.22);
-      border-radius:18px;
-      background:rgba(8,13,27,.85);
-      box-shadow:0 12px 40px rgba(0,0,0,.45);
-      backdrop-filter:blur(18px);
+      position:fixed; z-index:30; left:50%; bottom:14px; transform:translateX(-50%);
+      display:flex; gap:4px; padding:7px; border:1px solid rgba(148,163,184,.22); border-radius:18px;
+      background:rgba(8,13,27,.85); box-shadow:0 12px 40px rgba(0,0,0,.45); backdrop-filter:blur(18px);
     }
-
     .nav-btn {
-      min-width:72px;
-      padding:7px 9px;
-      color:#8e9ab3;
-      background:transparent;
-      border-radius:12px;
-      font-size:9px;
-      font-weight:900;
-      letter-spacing:.1em;
-      text-transform:uppercase;
-      transition:.2s;
+      min-width:72px; padding:7px 9px; color:#8e9ab3; background:transparent; border-radius:12px;
+      font-size:9px; font-weight:900; letter-spacing:.1em; text-transform:uppercase; transition:.2s;
     }
-
-    .nav-btn b {
-      display:block;
-      font-size:17px;
-      margin-bottom:3px;
-    }
-
-    .nav-btn.active,
-    .nav-btn:hover {
-      color:var(--cyan);
-      background:rgba(86,233,255,.1);
-    }
+    .nav-btn b { display:block; font-size:17px; margin-bottom:3px; }
+    .nav-btn.active, .nav-btn:hover { color:var(--cyan); background:rgba(86,233,255,.1); }
 
     .overlay {
-      position:fixed;
-      z-index:80;
-      inset:0;
-      display:none;
-      align-items:center;
-      justify-content:center;
-      padding:18px;
-      background:rgba(3,5,13,.84);
-      backdrop-filter:blur(14px);
+      position:fixed; z-index:80; inset:0; display:none; align-items:center; justify-content:center;
+      padding:18px; background:rgba(3,5,13,.84); backdrop-filter:blur(14px);
     }
+    .overlay.visible { display:flex; animation:fade-in .22s ease both; }
 
-    .overlay.visible {
-      display:flex;
-      animation:fade-in .22s ease both;
-    }
-
-    @keyframes fade-in {
-      from { opacity:0; }
-      to { opacity:1; }
-    }
+    @keyframes fade-in { from { opacity:0; } to { opacity:1; } }
 
     .modal {
-      width:min(100%,680px);
-      max-height:min(90vh,860px);
-      overflow:auto;
-      border:1px solid rgba(86,233,255,.25);
-      border-radius:25px;
+      width:min(100%,680px); max-height:min(90vh,860px); overflow:auto;
+      border:1px solid rgba(86,233,255,.25); border-radius:25px;
       background:linear-gradient(145deg,#111b35,#080c19);
-      box-shadow:
-        0 30px 100px rgba(0,0,0,.65),
-        0 0 45px rgba(86,233,255,.08);
-      padding:20px;
-      animation:modal-up .3s cubic-bezier(.2,.8,.2,1) both;
+      box-shadow:0 30px 100px rgba(0,0,0,.65), 0 0 45px rgba(86,233,255,.08);
+      padding:20px; animation:modal-up .3s cubic-bezier(.2,.8,.2,1) both;
     }
 
-    @keyframes modal-up {
-      from { transform:translateY(18px) scale(.97); opacity:0; }
-      to { transform:none; opacity:1; }
-    }
+    @keyframes modal-up { from { transform:translateY(18px) scale(.97); opacity:0; } to { transform:none; opacity:1; } }
 
-    .modal-head {
-      display:flex;
-      justify-content:space-between;
-      gap:12px;
-      align-items:flex-start;
-      margin-bottom:16px;
-    }
-
-    .modal-head h2 {
-      margin:3px 0 0;
-      font-size:25px;
-      text-transform:uppercase;
-    }
-
-    .close-btn {
-      width:36px;
-      height:36px;
-      border-radius:10px;
-      background:rgba(255,255,255,.06);
-      color:#aab6cc;
-      font-size:20px;
-    }
+    .modal-head { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; margin-bottom:16px; }
+    .modal-head h2 { margin:3px 0 0; font-size:25px; text-transform:uppercase; }
+    .close-btn { width:36px; height:36px; border-radius:10px; background:rgba(255,255,255,.06); color:#aab6cc; font-size:20px; }
 
     .profile-hero {
-      display:grid;
-      grid-template-columns:150px 1fr;
-      gap:18px;
-      align-items:center;
-      padding:13px;
-      border:1px solid var(--line);
-      border-radius:16px;
-      background:rgba(255,255,255,.035);
+      display:grid; grid-template-columns:150px 1fr; gap:18px; align-items:center;
+      padding:13px; border:1px solid var(--line); border-radius:16px; background:rgba(255,255,255,.035);
     }
+    .profile-hero h3 { margin:0; font-size:28px; text-transform:uppercase; }
+    .profile-hero p { margin:7px 0 0; color:#aab6cc; font-size:12px; line-height:1.5; }
 
-    .profile-hero h3 {
-      margin:0;
-      font-size:28px;
-      text-transform:uppercase;
-    }
+    .profile-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px; }
+    .profile-block { padding:13px; border:1px solid var(--line); border-radius:14px; background:rgba(255,255,255,.03); }
+    .profile-block h4 { margin:0 0 10px; color:var(--cyan); font-size:10px; letter-spacing:.15em; text-transform:uppercase; }
+    .profile-block p { margin:0; color:#b9c5da; font-size:12px; line-height:1.55; }
 
-    .profile-hero p {
-      margin:7px 0 0;
-      color:#aab6cc;
-      font-size:12px;
-      line-height:1.5;
-    }
-
-    .profile-grid {
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-      margin-top:12px;
-    }
-
-    .profile-block {
-      padding:13px;
-      border:1px solid var(--line);
-      border-radius:14px;
-      background:rgba(255,255,255,.03);
-    }
-
-    .profile-block h4 {
-      margin:0 0 10px;
-      color:var(--cyan);
-      font-size:10px;
-      letter-spacing:.15em;
-      text-transform:uppercase;
-    }
-
-    .profile-block p {
-      margin:0;
-      color:#b9c5da;
-      font-size:12px;
-      line-height:1.55;
-    }
-
-    .evolution-track {
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:10px;
-      flex-wrap:wrap;
-      color:var(--muted);
-      font-size:10px;
-      text-transform:uppercase;
-    }
-
-    .evo-node {
-      padding:8px 10px;
-      border:1px solid rgba(86,233,255,.25);
-      border-radius:9px;
-      color:#dce7fa;
-      background:rgba(86,233,255,.07);
-    }
+    .evolution-track { display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap; color:var(--muted); font-size:10px; text-transform:uppercase; }
+    .evo-node { padding:8px 10px; border:1px solid rgba(86,233,255,.25); border-radius:9px; color:#dce7fa; background:rgba(86,233,255,.07); }
 
     .scanner-modal {
-      position:relative;
-      min-height:500px;
-      overflow:hidden;
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      align-items:center;
-      text-align:center;
-      background:
-        radial-gradient(circle at center,rgba(86,233,255,.13),transparent 35%),
-        #060b17;
+      position:relative; min-height:500px; overflow:hidden; display:flex; flex-direction:column;
+      justify-content:center; align-items:center; text-align:center;
+      background:radial-gradient(circle at center,rgba(86,233,255,.13),transparent 35%), #060b17;
     }
-
-    .scanner-modal::before {
-      content:"";
-      position:absolute;
-      inset:0;
-      opacity:.28;
-      background-image:
-        linear-gradient(rgba(86,233,255,.18) 1px,transparent 1px),
-        linear-gradient(90deg,rgba(86,233,255,.18) 1px,transparent 1px);
-      background-size:28px 28px;
+    .scanner-target { position:absolute; width:250px; aspect-ratio:1; border:1px solid rgba(86,233,255,.38); border-radius:50%; box-shadow:0 0 55px rgba(86,233,255,.2); }
+    .scanner-target::before, .scanner-target::after {
+      content:""; position:absolute; inset:18%; border:1px dashed rgba(86,233,255,.45); border-radius:50%; animation:spin 5s linear infinite;
     }
-
-    .scanner-target {
-      position:absolute;
-      width:250px;
-      aspect-ratio:1;
-      border:1px solid rgba(86,233,255,.38);
-      border-radius:50%;
-      box-shadow:0 0 55px rgba(86,233,255,.2);
-    }
-
-    .scanner-target::before,
-    .scanner-target::after {
-      content:"";
-      position:absolute;
-      inset:18%;
-      border:1px dashed rgba(86,233,255,.45);
-      border-radius:50%;
-      animation:spin 5s linear infinite;
-    }
-
-    .scanner-target::after {
-      inset:5%;
-      animation-direction:reverse;
-      animation-duration:9s;
-    }
+    .scanner-target::after { inset:5%; animation-direction:reverse; animation-duration:9s; }
 
     .scan-beam {
-      position:absolute;
-      left:0;
-      right:0;
-      top:0;
-      height:2px;
+      position:absolute; left:0; right:0; top:0; height:2px;
       background:linear-gradient(90deg,transparent,var(--cyan),transparent);
-      box-shadow:0 0 22px 4px rgba(86,233,255,.75);
-      animation:beam 1.55s ease-in-out infinite;
+      box-shadow:0 0 22px 4px rgba(86,233,255,.75); animation:beam 1.55s ease-in-out infinite;
     }
+    @keyframes beam { from { transform:translateY(30px); } to { transform:translateY(460px); } }
 
-    @keyframes beam {
-      from { transform:translateY(30px); }
-      to { transform:translateY(460px); }
-    }
+    .scan-copy { position:relative; z-index:2; }
+    .scan-copy .scan-status { color:var(--cyan); font-size:11px; font-weight:900; letter-spacing:.26em; }
+    .scan-copy h2 { margin:12px 0 3px; font-size:32px; text-transform:uppercase; letter-spacing:.08em; }
+    .scan-copy p { margin:0; color:#9eacc4; font-size:12px; }
 
-    .scan-copy {
-      position:relative;
-      z-index:2;
-    }
-
-    .scan-copy .scan-status {
-      color:var(--cyan);
-      font-size:11px;
-      font-weight:900;
-      letter-spacing:.26em;
-    }
-
-    .scan-copy h2 {
-      margin:12px 0 3px;
-      font-size:32px;
-      text-transform:uppercase;
-      letter-spacing:.08em;
-    }
-
-    .scan-copy p {
-      margin:0;
-      color:#9eacc4;
-      font-size:12px;
-    }
-
-    /* FULLSCREEN VIDEO OVERLAY */
     #video-overlay {
-      position:fixed !important;
-      z-index:999999 !important;
-      inset:0 !important;
-      width:100% !important;
-      height:100% !important;
-      margin:0 !important;
-      padding:0 !important;
-      display:none !important;
-      align-items:center !important;
-      justify-content:center !important;
-      background:#000 !important;
-      backdrop-filter:none !important;
-      overflow:hidden !important;
+      position:fixed !important; z-index:999999 !important; inset:0 !important;
+      width:100% !important; height:100% !important; display:none !important;
+      align-items:center !important; justify-content:center !important; background:#000 !important; overflow:hidden !important;
     }
-
-    #video-overlay.visible {
-      display:flex !important;
+    #video-overlay.visible { display:flex !important; }
+    #video-overlay .video-modal, #video-overlay .video-shell {
+      position:absolute !important; inset:0 !important; width:100% !important; height:100% !important; display:flex !important; align-items:center !important; justify-content:center !important; background:#000 !important;
     }
-
-    #video-overlay .video-modal {
-      position:fixed !important;
-      inset:0 !important;
-      width:100% !important;
-      height:100% !important;
-      margin:0 !important;
-      padding:0 !important;
-      border:0 !important;
-      border-radius:0 !important;
-      background:#000 !important;
-      box-shadow:none !important;
-      overflow:hidden !important;
-      animation:none !important;
-    }
-
-    #video-overlay .video-shell {
-      position:absolute !important;
-      inset:0 !important;
-      width:100% !important;
-      height:100% !important;
-      display:flex !important;
-      align-items:center !important;
-      justify-content:center !important;
-      background:#000 !important;
-      border:0 !important;
-      overflow:hidden !important;
-    }
-
-    #video-overlay #ultimate-video:not([hidden]),
-    #video-overlay #evolution-video:not([hidden]) {
-      position:absolute !important;
-      left:50% !important;
-      top:50% !important;
-      transform:translate(-50%,-50%) !important;
-      display:block !important;
-      width:100% !important;
-      height:100% !important;
-      object-fit:contain !important;
-      background:#000 !important;
-    }
-
-    #video-overlay #ultimate-video[hidden],
-    #video-overlay #evolution-video[hidden] {
-      display:none !important;
-      visibility:hidden !important;
-      opacity:0 !important;
-      pointer-events:none !important;
-    }
-
-    #video-overlay #video-fallback {
-      display:none !important;
-      visibility:hidden !important;
-    }
-
-    @media (min-width:641px) {
-      #video-overlay #ultimate-video:not([hidden]),
-      #video-overlay #evolution-video:not([hidden]) {
-        width:100vw !important;
-        height:100vh !important;
-      }
-    }
-
-    @media (max-width:640px) {
-      #video-overlay,
-      #video-overlay .video-modal,
-      #video-overlay .video-shell {
-        width:100vw !important;
-        height:100vh !important;
-      }
-      #video-overlay #ultimate-video:not([hidden]),
-      #video-overlay #evolution-video:not([hidden]) {
-        width:100% !important;
-        height:100% !important;
-      }
+    #video-overlay #ultimate-video:not([hidden]), #video-overlay #evolution-video:not([hidden]) {
+      position:absolute !important; left:50% !important; top:50% !important; transform:translate(-50%,-50%) !important;
+      display:block !important; width:100% !important; height:100% !important; object-fit:contain !important; background:#000 !important;
     }
 
     .toast {
-      position:fixed;
-      z-index:120;
-      left:50%;
-      bottom:89px;
-      transform:translate(-50%,20px);
-      min-width:min(90vw,330px);
-      padding:13px 15px;
-      border:1px solid rgba(86,233,255,.3);
-      border-radius:13px;
-      color:#eaf5ff;
-      background:rgba(9,16,31,.95);
-      box-shadow:
-        0 14px 35px rgba(0,0,0,.45),
-        0 0 25px rgba(86,233,255,.13);
-      opacity:0;
-      pointer-events:none;
-      transition:.25s ease;
-      text-align:center;
-      font-size:12px;
+      position:fixed; z-index:120; left:50%; bottom:89px; transform:translate(-50%,20px);
+      min-width:min(90vw,330px); padding:13px 15px; border:1px solid rgba(86,233,255,.3); border-radius:13px;
+      color:#eaf5ff; background:rgba(9,16,31,.95); box-shadow:0 14px 35px rgba(0,0,0,.45), 0 0 25px rgba(86,233,255,.13);
+      opacity:0; pointer-events:none; transition:.25s ease; text-align:center; font-size:12px;
     }
-
-    .toast.show {
-      opacity:1;
-      transform:translate(-50%,0);
-    }
-
-    .toast.error {
-      border-color:rgba(255,107,129,.55);
-    }
-
-    .toast b {
-      display:block;
-      color:var(--cyan);
-      font-size:10px;
-      letter-spacing:.14em;
-      margin-bottom:3px;
-    }
-
-    .toast.error b {
-      color:var(--danger);
-    }
+    .toast.show { opacity:1; transform:translate(-50%,0); }
+    .toast.error { border-color:rgba(255,107,129,.55); }
+    .toast b { display:block; color:var(--cyan); font-size:10px; letter-spacing:.14em; margin-bottom:3px; }
 
     .loading-screen {
-      position:fixed;
-      z-index:200;
-      inset:0;
-      display:grid;
-      place-items:center;
-      background:#050710;
-      transition:opacity .45s ease,visibility .45s;
+      position:fixed; z-index:200; inset:0; display:grid; place-items:center; background:#050710; transition:opacity .45s ease,visibility .45s;
     }
+    .loading-screen.done { opacity:0; visibility:hidden; pointer-events:none; }
+    .loading-inner { width:min(88vw,360px); text-align:center; }
+    .loading-logo { font-size:35px; font-weight:950; letter-spacing:.18em; color:var(--cyan); text-shadow:0 0 30px rgba(86,233,255,.5); }
+    .loading-line { height:5px; margin:24px 0 11px; border-radius:99px; background:rgba(255,255,255,.1); overflow:hidden; }
+    .loading-line i { display:block; width:0; height:100%; background:linear-gradient(90deg,var(--cyan),var(--violet)); box-shadow:0 0 16px var(--cyan); animation:load 1.55s ease-out forwards; }
+    @keyframes load { to { width:100%; } }
+    .loading-copy { color:#93a3bf; font:10px ui-monospace,monospace; letter-spacing:.13em; }
 
-    .loading-screen.done {
-      opacity:0;
-      visibility:hidden;
-      pointer-events:none;
-    }
-
-    .loading-inner {
-      width:min(88vw,360px);
-      text-align:center;
-    }
-
-    .loading-logo {
-      font-size:35px;
-      font-weight:950;
-      letter-spacing:.18em;
-      color:var(--cyan);
-      text-shadow:0 0 30px rgba(86,233,255,.5);
-    }
-
-    .loading-line {
-      height:5px;
-      margin:24px 0 11px;
-      border-radius:99px;
-      background:rgba(255,255,255,.1);
-      overflow:hidden;
-    }
-
-    .loading-line i {
-      display:block;
-      width:0;
-      height:100%;
-      background:linear-gradient(90deg,var(--cyan),var(--violet));
-      box-shadow:0 0 16px var(--cyan);
-      animation:load 1.55s ease-out forwards;
-    }
-
-    @keyframes load {
-      to { width:100%; }
-    }
-
-    .loading-copy {
-      color:#93a3bf;
-      font:10px ui-monospace,SFMono-Regular,Menlo,monospace;
-      letter-spacing:.13em;
-    }
-
-    .shake {
-      animation:shake .5s ease;
-    }
-
+    .shake { animation:shake .5s ease; }
     @keyframes shake {
       15%,85% { transform:translateX(-2px); }
       30%,70% { transform:translateX(4px); }
@@ -1356,169 +487,22 @@
     }
 
     @media (max-width:980px) {
-      .layout {
-        grid-template-columns:1fr;
-      }
-      .side-stack {
-        display:grid;
-        grid-template-columns:1fr 1fr;
-      }
-      .card-grid {
-        grid-template-columns:repeat(4,minmax(0,1fr));
-        gap:0;
-      }
+      .layout { grid-template-columns:1fr; }
+      .side-stack { display:grid; grid-template-columns:1fr 1fr; }
+      .card-grid { grid-template-columns:repeat(4,minmax(0,1fr)); }
     }
 
     @media (max-width:640px) {
-      .app-shell {
-        padding:12px 12px 102px;
-      }
-      .topbar {
-        margin-bottom:14px;
-      }
-      .brand-mark {
-        width:37px;
-        height:37px;
-        border-radius:11px;
-      }
-      .brand h1 { font-size:17px; }
-      .brand p { font-size:8px; }
-      .hud-profile { display:none; }
-      
-      .hero {
-        min-height:0;
-        border-radius:22px;
-        padding:16px;
-      }
+      .app-shell { padding:12px 12px 102px; }
+      .hero { min-height:0; border-radius:22px; padding:16px; }
       .hero-head h2 { font-size:27px; }
-      .status-pill {
-        font-size:8px;
-        padding:7px 8px;
-      }
-      .character-stage {
-        min-height:260px;
-      }
-
-      /* Adjust character image sizes appropriately */
-      .character-image {
-        width:72%;
-        max-height:245px;
-      }
-      .scanner-image {
-        width: 150px;
-      }
-      .pikachu-container.profile-art {
-        height: 105px;
-      }
-
-      .hero-bottom {
-        grid-template-columns:1fr;
-      }
-      .actions {
-        min-width:0;
-        display:grid;
-        grid-template-columns:1fr 1fr;
-      }
-      .actions .primary-btn {
-        grid-column:span 2;
-      }
-      .quick-stats {
-        margin-top:16px;
-      }
-      .stat-tile {
-        padding:8px;
-      }
-      .stat-tile b {
-        font-size:16px;
-      }
-      .side-stack {
-        display:flex;
-      }
-      .panel {
-        padding:15px;
-      }
-      .card-grid {
-        grid-template-columns:repeat(2,minmax(0,1fr));
-        gap:0;
-      }
-      .collection-card {
-        min-height:0;
-        aspect-ratio:896 / 1165;
-        padding:0;
-        border-radius:0;
-      }
-      .collection-card .card-top {
-        position:absolute;
-        left:7px;
-        right:7px;
-        top:7px;
-        z-index:3;
-      }
-      .collection-card .card-art {
-        width:100%;
-        height:auto;
-      }
-      .card-name {
-        position:absolute;
-        left:8px;
-        right:8px;
-        bottom:19px;
-        margin:0;
-        font-size:11px;
-        z-index:3;
-        text-shadow:0 2px 8px #000;
-      }
-      .card-meta {
-        position:absolute;
-        left:8px;
-        right:8px;
-        bottom:6px;
-        font-size:8px;
-        z-index:3;
-        text-shadow:0 2px 8px #000;
-      }
-      .collection-toolbar {
-        align-items:stretch;
-        flex-wrap:wrap;
-      }
-      .search {
-        flex-basis:100%;
-      }
-      .filter-select {
-        flex:1;
-      }
-      .bottom-nav {
-        width:calc(100% - 24px);
-        justify-content:space-around;
-      }
-      .nav-btn {
-        flex:1;
-        min-width:0;
-      }
-      .profile-hero {
-        grid-template-columns:105px 1fr;
-      }
-      .profile-art {
-        height:105px;
-      }
-      .profile-hero h3 {
-        font-size:21px;
-      }
-      .profile-grid {
-        grid-template-columns:1fr;
-      }
-      .scanner-modal {
-        min-height:460px;
-      }
-    }
-
-    @media (prefers-reduced-motion:reduce) {
-      *, *::before, *::after {
-        animation-duration:.001ms!important;
-        animation-iteration-count:1!important;
-        scroll-behavior:auto!important;
-        transition-duration:.001ms!important;
-      }
+      .character-stage { min-height:260px; }
+      .hero-bottom { grid-template-columns:1fr; }
+      .actions { min-width:0; display:grid; grid-template-columns:1fr 1fr; }
+      .actions .primary-btn { grid-column:span 2; }
+      .card-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .bottom-nav { width:calc(100% - 24px); justify-content:space-around; }
+      .nav-btn { flex:1; min-width:0; }
     }
   </style>
 </head>
@@ -1535,7 +519,6 @@
   </div>
 
   <div id="app" class="app-shell" aria-live="polite">
-
     <header class="topbar">
       <div class="brand">
         <div class="brand-mark">BB</div>
@@ -1553,8 +536,8 @@
             <small id="hud-level">LV. 07 // ONLINE</small>
           </div>
         </div>
-        <button class="icon-btn" id="sound-toggle" type="button" title="Toggle sound" aria-label="Toggle sound">◖</button>
-        <button class="icon-btn" id="settings-button" type="button" title="Player profile" aria-label="Player profile">⚙</button>
+        <button class="icon-btn" id="sound-toggle" type="button" title="Toggle sound">◖</button>
+        <button class="icon-btn" id="settings-button" type="button" title="Player profile">⚙</button>
       </div>
     </header>
 
@@ -1563,12 +546,8 @@
         <section id="hero-card" class="hero glass" style="--char-glow:rgba(255,200,87,.24);--char-accent:#ffc857;--rarity:#ffc857;">
           <div class="hero-head">
             <div>
-              <div class="eyebrow">
-                ACTIVE CHARACTER // <span id="char-code">#025</span>
-              </div>
-              <h2 id="hero-title">
-                TARGET <span>READY</span>
-              </h2>
+              <div class="eyebrow">ACTIVE CHARACTER // <span id="char-code">#025</span></div>
+              <h2 id="hero-title">TARGET <span>READY</span></h2>
             </div>
             <div class="status-pill">
               <i class="status-dot"></i>
@@ -1580,10 +559,7 @@
             <div class="stage-grid"></div>
             <div class="energy-ring"></div>
             <div class="scan-corners"></div>
-
-            <!-- Wrapper penampung render gambar dari JS secara langsung -->
             <div id="char-image-container" style="display:contents;"></div>
-
           </div>
 
           <div class="hero-bottom">
@@ -1594,35 +570,17 @@
               <p id="char-desc">Loading character data...</p>
 
               <div class="quick-stats">
-                <div class="stat-tile">
-                  <b id="stat-hp">120</b>
-                  <span>HP</span>
-                </div>
-                <div class="stat-tile">
-                  <b id="stat-attack">85</b>
-                  <span>ATTACK</span>
-                </div>
-                <div class="stat-tile">
-                  <b id="stat-defense">60</b>
-                  <span>DEFENSE</span>
-                </div>
-                <div class="stat-tile">
-                  <b id="stat-speed">110</b>
-                  <span>SPEED</span>
-                </div>
+                <div class="stat-tile"><b id="stat-hp">120</b><span>HP</span></div>
+                <div class="stat-tile"><b id="stat-attack">85</b><span>ATTACK</span></div>
+                <div class="stat-tile"><b id="stat-defense">60</b><span>DEFENSE</span></div>
+                <div class="stat-tile"><b id="stat-speed">110</b><span>SPEED</span></div>
               </div>
             </div>
 
             <div class="actions">
-              <button id="ultimate-button" class="primary-btn" type="button">
-                ⚡ KELUARKAN ULTIMATE
-              </button>
-              <button id="scan-button" class="secondary-btn" type="button">
-                ⌁ SCAN CHARACTER
-              </button>
-              <button id="profile-button" class="secondary-btn" type="button">
-                ▣ VIEW PROFILE
-              </button>
+              <button id="ultimate-button" class="primary-btn" type="button">⚡ KELUARKAN ULTIMATE</button>
+              <button id="scan-button" class="secondary-btn" type="button">⌁ SCAN CHARACTER</button>
+              <button id="profile-button" class="secondary-btn" type="button">▣ VIEW PROFILE</button>
             </div>
           </div>
         </section>
@@ -1633,26 +591,17 @@
               <h3>Player Progress</h3>
               <small id="collection-count">10 / 10</small>
             </div>
-
             <div class="progress-wrap">
               <div class="level-orb">
-                <div>
-                  <small>LEVEL</small>
-                  <span id="player-level">07</span>
-                </div>
+                <div><small>LEVEL</small><span id="player-level">07</span></div>
               </div>
-
               <div style="flex:1">
                 <div class="progress-label">
                   <span>EXP CORE</span>
                   <span id="player-exp-label">640 / 1000</span>
                 </div>
-                <div class="progress">
-                  <i id="player-exp-bar" style="--value:64%"></i>
-                </div>
-                <p style="color:var(--muted);font-size:10px;margin:9px 0 0">
-                  Arena sync active · progress autosaved
-                </p>
+                <div class="progress"><i id="player-exp-bar" style="--value:64%"></i></div>
+                <p style="color:var(--muted);font-size:10px;margin:9px 0 0">Arena sync active · progress autosaved</p>
               </div>
             </div>
           </section>
@@ -1671,22 +620,10 @@
               <small>LIVE</small>
             </div>
             <div class="metric-grid">
-              <div class="metric">
-                <strong id="viewed-count">0</strong>
-                <span>Viewed</span>
-              </div>
-              <div class="metric">
-                <strong id="ultimate-count">0</strong>
-                <span>Ultimates</span>
-              </div>
-              <div class="metric">
-                <strong id="evolution-count">0</strong>
-                <span>Evolutions</span>
-              </div>
-              <div class="metric">
-                <strong>10</strong>
-                <span>Unlocked</span>
-              </div>
+              <div class="metric"><strong id="viewed-count">0</strong><span>Viewed</span></div>
+              <div class="metric"><strong id="ultimate-count">0</strong><span>Ultimates</span></div>
+              <div class="metric"><strong id="evolution-count">0</strong><span>Evolutions</span></div>
+              <div class="metric"><strong>10</strong><span>Unlocked</span></div>
             </div>
           </section>
         </aside>
@@ -1696,9 +633,7 @@
         <div class="panel-head">
           <div>
             <div class="eyebrow">DATABASE // 001–010</div>
-            <h2 style="margin:4px 0 0;font-size:22px;letter-spacing:.08em">
-              MY COLLECTION
-            </h2>
+            <h2 style="margin:4px 0 0;font-size:22px;letter-spacing:.08em">MY COLLECTION</h2>
           </div>
           <small>Tap a card to scan</small>
         </div>
@@ -1722,9 +657,7 @@
         </div>
 
         <div id="character-list" class="card-grid"></div>
-        <div id="empty-state" class="empty-state">
-          No character matches this scan filter.
-        </div>
+        <div id="empty-state" class="empty-state">No character matches this scan filter.</div>
       </section>
     </main>
   </div>
@@ -1739,13 +672,9 @@
   <div id="scanner-overlay" class="overlay">
     <div class="modal scanner-modal">
       <button class="close-btn" data-close="scanner-overlay" type="button" aria-label="Close scanner">×</button>
-      
       <div class="scan-beam"></div>
       <div class="scanner-target"></div>
-
-      <!-- Wadah dinamis untuk Scan Art -->
       <div id="scanner-image-container" style="display:contents;"></div>
-
       <div class="scan-copy">
         <div id="scan-status" class="scan-status">SCANNING...</div>
         <h2 id="scan-name">TARGET</h2>
@@ -1767,7 +696,6 @@
     </div>
   </div>
 
-  <!-- FULLSCREEN VIDEO OVERLAY -->
   <div id="video-overlay" class="overlay">
     <div class="modal video-modal">
       <div class="video-shell">
@@ -1788,521 +716,201 @@
 
     const characters = {
       pikachu:{
-        id:'pikachu',
-        name:'Pikachu',
-        pokedex:'#025',
-        types:['Electric'],
-        rarity:'Rare',
-        level:12,
-        exp:720,
-        maxExp:1000,
-        hp:120,
-        attack:85,
-        defense:60,
-        speed:110,
-        specialAttack:95,
-        specialDefense:70,
-        ability:'Static',
-        specialMove:'Thunder Impact',
+        id:'pikachu', name:'Pikachu', pokedex:'#025', types:['Electric'], rarity:'Rare',
+        level:12, exp:720, maxExp:1000, hp:120, attack:85, defense:60, speed:110,
+        specialAttack:95, specialDefense:70, ability:'Static', specialMove:'Thunder Impact',
         description:'Mengumpulkan energi listrik di kantong pipinya untuk melepaskan sengatan dahsyat.',
         lore:'Pikachu membaca arus energi di arena sebelum mengubah kecepatannya menjadi kilatan petir.',
-        height:'0.4 m',
-        weight:'6.0 kg',
-        category:'Mouse Pokémon',
-        habitat:'Urban / Forest',
-        evolution:'Pichu → Pikachu → Raichu',
-        weakness:'Ground',
-        strength:'Water · Flying',
-        image:'assets/images/pikachu-pose-1-16.jpg',
-        video:'pikachu-animasi.webm',
-        sound:'assets/audio/ultimate.mp3',
-        themeColor:'#ffc857',
-        accentColor:'#56e9ff',
-        rarityColor:'#ffc857',
-        evolutionLevel:22,
-        nextEvolution:'Raichu',
-        previousEvolution:'Pichu',
-        battleStyle:'Fast burst damage with chain lightning.'
+        height:'0.4 m', weight:'6.0 kg', category:'Mouse Pokémon', habitat:'Urban / Forest',
+        evolution:'Pichu → Pikachu → Raichu', weakness:'Ground', strength:'Water · Flying',
+        image:'assets/images/pikachu-pose-1-16.jpg', video:'pikachu-animasi.webm', sound:'assets/audio/ultimate.mp3',
+        themeColor:'#ffc857', accentColor:'#56e9ff', rarityColor:'#ffc857'
       },
-
       charizard:{
-        id:'charizard',
-        name:'Charizard',
-        pokedex:'#006',
-        types:['Fire','Dragon'],
-        rarity:'Epic',
-        level:18,
-        exp:880,
-        maxExp:1200,
-        hp:180,
-        attack:125,
-        defense:95,
-        speed:100,
-        specialAttack:130,
-        specialDefense:105,
-        ability:'Blaze',
-        specialMove:'Inferno Wing',
+        id:'charizard', name:'Charizard', pokedex:'#006', types:['Fire','Dragon'], rarity:'Epic',
+        level:18, exp:880, maxExp:1200, hp:180, attack:125, defense:95, speed:100,
+        specialAttack:130, specialDefense:105, ability:'Blaze', specialMove:'Inferno Wing',
         description:'Menghembuskan api pijar bersuhu tinggi yang mampu melelehkan batu besar.',
         lore:'Sayapnya membelah udara panas dan meninggalkan jalur bara di setiap serangan udara.',
-        height:'1.7 m',
-        weight:'90.5 kg',
-        category:'Flame Pokémon',
-        habitat:'Volcanic Peak',
-        evolution:'Charmander → Charmeleon → Charizard',
-        weakness:'Water · Rock',
-        strength:'Grass · Bug',
-        image:'assets/images/charizard.png',
-        video:'charizard-animasi.webm',
-        sound:'assets/audio/ultimate.mp3',
-        themeColor:'#ff7b61',
-        accentColor:'#ff9b57',
-        rarityColor:'#ff8a69',
-        evolutionLevel:36,
-        nextEvolution:'—',
-        previousEvolution:'Charmeleon',
-        battleStyle:'Aerial pressure and area fire damage.'
+        height:'1.7 m', weight:'90.5 kg', category:'Flame Pokémon', habitat:'Volcanic Peak',
+        evolution:'Charmander → Charmeleon → Charizard', weakness:'Water · Rock', strength:'Grass · Bug',
+        image:'assets/images/charizard.png', video:'charizard-animasi.webm', sound:'assets/audio/ultimate.mp3',
+        themeColor:'#ff7b61', accentColor:'#ff9b57', rarityColor:'#ff8a69'
       },
-
       greninja:{
-        id:'greninja',
-        name:'Greninja',
-        pokedex:'#658',
-        types:['Water'],
-        rarity:'Epic',
-        level:17,
-        exp:940,
-        maxExp:1200,
-        hp:150,
-        attack:120,
-        defense:82,
-        speed:135,
-        specialAttack:115,
-        specialDefense:88,
-        ability:'Torrent',
-        specialMove:'Aqua Shuriken',
+        id:'greninja', name:'Greninja', pokedex:'#658', types:['Water'], rarity:'Epic',
+        level:17, exp:940, maxExp:1200, hp:150, attack:120, defense:82, speed:135,
+        specialAttack:115, specialDefense:88, ability:'Torrent', specialMove:'Aqua Shuriken',
         description:'Bergerak secepat bayangan dan melempar shuriken air bertekanan tinggi.',
         lore:'Gerakannya menghilang di antara kabut, menyisakan hanya kilau air di target.',
-        height:'1.5 m',
-        weight:'40.0 kg',
-        category:'Ninja Pokémon',
-        habitat:'Riverside',
-        evolution:'Froakie → Frogadier → Greninja',
-        weakness:'Electric · Grass',
-        strength:'Fire · Rock',
-        image:'assets/images/greninja.png',
-        video:'greninja-animasi.webm',
-        sound:'assets/audio/ultimate.mp3',
-        themeColor:'#54c9ff',
-        accentColor:'#6ea7ff',
-        rarityColor:'#ff8a69',
-        evolutionLevel:36,
-        nextEvolution:'—',
-        previousEvolution:'Frogadier',
-        battleStyle:'Stealth mobility with multi-hit projectiles.'
+        height:'1.5 m', weight:'40.0 kg', category:'Ninja Pokémon', habitat:'Riverside',
+        evolution:'Froakie → Frogadier → Greninja', weakness:'Electric · Grass', strength:'Fire · Rock',
+        image:'assets/images/greninja.png', video:'greninja-animasi.webm', sound:'assets/audio/ultimate.mp3',
+        themeColor:'#54c9ff', accentColor:'#6ea7ff', rarityColor:'#ff8a69'
       },
-
       mewtwo:{
-        id:'mewtwo',
-        name:'Mewtwo',
-        pokedex:'#150',
-        types:['Psychic'],
-        rarity:'Legendary',
-        level:32,
-        exp:1260,
-        maxExp:1600,
-        hp:210,
-        attack:145,
-        defense:110,
-        speed:130,
-        specialAttack:155,
-        specialDefense:125,
-        ability:'Pressure',
-        specialMove:'Psystrike Nova',
+        id:'mewtwo', name:'Mewtwo', pokedex:'#150', types:['Psychic'], rarity:'Legendary',
+        level:32, exp:1260, maxExp:1600, hp:210, attack:145, defense:110, speed:130,
+        specialAttack:155, specialDefense:125, ability:'Pressure', specialMove:'Psystrike Nova',
         description:'Memanfaatkan kekuatan psikokinesis tingkat tinggi untuk melumpuhkan musuh.',
         lore:'Sinyal psikisnya menekan seluruh arena, menjadikan setiap gerakan lawan terasa terlambat.',
-        height:'2.0 m',
-        weight:'122.0 kg',
-        category:'Genetic Pokémon',
-        habitat:'Unknown',
-        evolution:'Mew → Mewtwo // anomaly',
-        weakness:'Bug · Ghost',
-        strength:'Fighting · Poison',
-        image:'assets/images/mewtwo.png',
-        video:'mewtwo-animasi.webm',
-        sound:'assets/audio/ultimate.mp3',
-        themeColor:'#bf8cff',
-        accentColor:'#ca83ff',
-        rarityColor:'#ffdc75',
-        evolutionLevel:99,
-        nextEvolution:'Unknown',
-        previousEvolution:'Mew',
-        battleStyle:'Control, psychic burst, and arena denial.'
+        height:'2.0 m', weight:'122.0 kg', category:'Genetic Pokémon', habitat:'Unknown',
+        evolution:'Mew → Mewtwo // anomaly', weakness:'Bug · Ghost', strength:'Fighting · Poison',
+        image:'assets/images/mewtwo.png', video:'mewtwo-animasi.webm', sound:'assets/audio/ultimate.mp3',
+        themeColor:'#bf8cff', accentColor:'#ca83ff', rarityColor:'#ffdc75'
       },
-
       bulbasaur:{
-        id:'bulbasaur',
-        name:'Bulbasaur',
-        pokedex:'#001',
-        types:['Grass'],
-        rarity:'Uncommon',
-        level:8,
-        exp:390,
-        maxExp:700,
-        hp:115,
-        attack:62,
-        defense:68,
-        speed:45,
-        specialAttack:72,
-        specialDefense:72,
-        ability:'Overgrow',
-        specialMove:'Solar Vine',
+        id:'bulbasaur', name:'Bulbasaur', pokedex:'#001', types:['Grass'], rarity:'Uncommon',
+        level:8, exp:390, maxExp:700, hp:115, attack:62, defense:68, speed:45,
+        specialAttack:72, specialDefense:72, ability:'Overgrow', specialMove:'Solar Vine',
         description:'Menggunakan cambuk tanaman dan menyerap energi matahari untuk menyerang.',
         lore:'Benih di punggungnya menyimpan energi matahari dan melepaskannya dalam denyut hijau.',
-        height:'0.7 m',
-        weight:'6.9 kg',
-        category:'Seed Pokémon',
-        habitat:'Grassland',
-        evolution:'Bulbasaur → Ivysaur → Venusaur',
-        weakness:'Fire · Ice',
-        strength:'Water · Ground',
-        image:'assets/images/bulbasaur.png',
-        video:'bulbasaur-animasi.webm',
-        sound:'assets/audio/ultimate.mp3',
-        themeColor:'#7ee69d',
-        accentColor:'#77e0a4',
-        rarityColor:'#73e7b0',
-        evolutionLevel:16,
-        nextEvolution:'Ivysaur',
-        previousEvolution:'—',
-        battleStyle:'Sustain, root control, and solar damage.'
+        height:'0.7 m', weight:'6.9 kg', category:'Seed Pokémon', habitat:'Grassland',
+        evolution:'Bulbasaur → Ivysaur → Venusaur', weakness:'Fire · Ice', strength:'Water · Ground',
+        image:'assets/images/bulbasaur.png', video:'bulbasaur-animasi.webm', sound:'assets/audio/ultimate.mp3',
+        themeColor:'#7ee69d', accentColor:'#77e0a4', rarityColor:'#73e7b0'
       },
-
       squirtle:{
-        id:'squirtle',
-        name:'Squirtle',
-        pokedex:'#007',
-        types:['Water'],
-        rarity:'Uncommon',
-        level:9,
-        exp:450,
-        maxExp:700,
-        hp:125,
-        attack:64,
-        defense:82,
-        speed:43,
-        specialAttack:65,
-        specialDefense:75,
-        ability:'Torrent',
-        specialMove:'Tidal Shell',
+        id:'squirtle', name:'Squirtle', pokedex:'#007', types:['Water'], rarity:'Uncommon',
+        level:9, exp:450, maxExp:700, hp:125, attack:64, defense:82, speed:43,
+        specialAttack:65, specialDefense:75, ability:'Torrent', specialMove:'Tidal Shell',
         description:'Menyemburkan air bertekanan tinggi dari dalam cangkangnya ke arah lawan.',
         lore:'Cangkang kokoh memantulkan serangan dan mengubah arus air menjadi tameng bergerak.',
-        height:'0.5 m',
-        weight:'9.0 kg',
-        category:'Tiny Turtle Pokémon',
-        habitat:'Freshwater',
-        evolution:'Squirtle → Wartortle → Blastoise',
-        weakness:'Electric · Grass',
-        strength:'Fire · Rock',
-        image:'assets/images/squirtle.png',
-        video:'squirtle-animasi.webm',
-        sound:'assets/audio/ultimate.mp3',
-        themeColor:'#72dfff',
-        accentColor:'#56cfff',
-        rarityColor:'#73e7b0',
-        evolutionLevel:16,
-        nextEvolution:'Wartortle',
-        previousEvolution:'—',
-        battleStyle:'Defense-first counterplay with water bursts.'
+        height:'0.5 m', weight:'9.0 kg', category:'Tiny Turtle Pokémon', habitat:'Freshwater',
+        evolution:'Squirtle → Wartortle → Blastoise', weakness:'Electric · Grass', strength:'Fire · Rock',
+        image:'assets/images/squirtle.png', video:'squirtle-animasi.webm', sound:'assets/audio/ultimate.mp3',
+        themeColor:'#72dfff', accentColor:'#56cfff', rarityColor:'#73e7b0'
       },
-
       lucario:{
-        id:'lucario',
-        name:'Lucario',
-        pokedex:'#448',
-        types:['Fighting'],
-        rarity:'Epic',
-        level:20,
-        exp:870,
-        maxExp:1400,
-        hp:165,
-        attack:130,
-        defense:90,
-        speed:95,
-        specialAttack:112,
-        specialDefense:90,
-        ability:'Inner Focus',
-        specialMove:'Aura Sphere',
+        id:'lucario', name:'Lucario', pokedex:'#448', types:['Fighting'], rarity:'Epic',
+        level:20, exp:870, maxExp:1400, hp:165, attack:130, defense:90, speed:95,
+        specialAttack:112, specialDefense:90, ability:'Inner Focus', specialMove:'Aura Sphere',
         description:'Mendeteksi aura makhluk hidup dan melepaskan gelombang energi bola aura.',
         lore:'Lucario membaca niat lawan lewat aura, lalu memukul tepat di celah pertahanan.',
-        height:'1.2 m',
-        weight:'54.0 kg',
-        category:'Aura Pokémon',
-        habitat:'Mountain Ruins',
-        evolution:'Riolu → Lucario',
-        weakness:'Flying · Psychic',
-        strength:'Rock · Dark',
-        image:'assets/images/lucario.png',
-        video:'lucario-animasi.webm',
-        sound:'assets/audio/ultimate.mp3',
-        themeColor:'#5fafff',
-        accentColor:'#58c5ff',
-        rarityColor:'#ff8a69',
-        evolutionLevel:99,
-        nextEvolution:'—',
-        previousEvolution:'Riolu',
-        battleStyle:'Aura sensing with precise melee finishers.'
+        height:'1.2 m', weight:'54.0 kg', category:'Aura Pokémon', habitat:'Mountain Ruins',
+        evolution:'Riolu → Lucario', weakness:'Flying · Psychic', strength:'Rock · Dark',
+        image:'assets/images/lucario.png', video:'lucario-animasi.webm', sound:'assets/audio/ultimate.mp3',
+        themeColor:'#5fafff', accentColor:'#58c5ff', rarityColor:'#ff8a69'
       },
-
       gengar:{
-        id:'gengar',
-        name:'Gengar',
-        pokedex:'#094',
-        types:['Ghost'],
-        rarity:'Epic',
-        level:19,
-        exp:1030,
-        maxExp:1400,
-        hp:155,
-        attack:105,
-        defense:70,
-        speed:118,
-        specialAttack:140,
-        specialDefense:75,
-        ability:'Cursed Body',
-        specialMove:'Shadow Ambush',
+        id:'gengar', name:'Gengar', pokedex:'#094', types:['Ghost'], rarity:'Epic',
+        level:19, exp:1030, maxExp:1400, hp:155, attack:105, defense:70, speed:118,
+        specialAttack:140, specialDefense:75, ability:'Cursed Body', specialMove:'Shadow Ambush',
         description:'Bersembunyi di dalam bayangan dan menebar teror malam kepada musuhnya.',
         lore:'Bayangannya bergerak lebih dulu, membuat musuh bertarung melawan ketakutannya sendiri.',
-        height:'1.5 m',
-        weight:'40.5 kg',
-        category:'Shadow Pokémon',
-        habitat:'Haunted Zone',
-        evolution:'Gastly → Haunter → Gengar',
-        weakness:'Ghost · Dark',
-        strength:'Psychic · Ghost',
-        image:'assets/images/gengar.png',
-        video:'gengar-animasi.webm',
-        sound:'assets/audio/ultimate.mp3',
-        themeColor:'#a883ff',
-        accentColor:'#bf87ff',
-        rarityColor:'#ff8a69',
-        evolutionLevel:99,
-        nextEvolution:'—',
-        previousEvolution:'Haunter',
-        battleStyle:'Burst ambushes and debuff pressure.'
+        height:'1.5 m', weight:'40.5 kg', category:'Shadow Pokémon', habitat:'Haunted Zone',
+        evolution:'Gastly → Haunter → Gengar', weakness:'Ghost · Dark', strength:'Psychic · Ghost',
+        image:'assets/images/gengar.png', video:'gengar-animasi.webm', sound:'assets/audio/ultimate.mp3',
+        themeColor:'#a883ff', accentColor:'#bf87ff', rarityColor:'#ff8a69'
       },
-
       rayquaza:{
-        id:'rayquaza',
-        name:'Rayquaza',
-        pokedex:'#384',
-        types:['Dragon'],
-        rarity:'Legendary',
-        level:39,
-        exp:1500,
-        maxExp:1800,
-        hp:260,
-        attack:165,
-        defense:120,
-        speed:145,
-        specialAttack:150,
-        specialDefense:125,
-        ability:'Air Lock',
-        specialMove:'Sky Rupture',
+        id:'rayquaza', name:'Rayquaza', pokedex:'#384', types:['Dragon'], rarity:'Legendary',
+        level:39, exp:1500, maxExp:1800, hp:260, attack:165, defense:120, speed:145,
+        specialAttack:150, specialDefense:125, ability:'Air Lock', specialMove:'Sky Rupture',
         description:'Penguasa langit yang hidup di lapisan ozon dan mengamuk dengan kekuatan naga.',
         lore:'Rayquaza menjaga keseimbangan langit dari lapisan ozon, turun hanya ketika energi arena retak.',
-        height:'7.0 m',
-        weight:'206.5 kg',
-        category:'Sky High Pokémon',
-        habitat:'Ozone Layer',
-        evolution:'Rayquaza // apex form',
-        weakness:'Ice · Dragon',
-        strength:'Fire · Water · Grass',
-        image:'assets/images/rayquaza.png',
-        video:'rayquaza-animasi.webm',
-        sound:'assets/audio/ultimate.mp3',
-        themeColor:'#66e29b',
-        accentColor:'#72f0bd',
-        rarityColor:'#ffdc75',
-        evolutionLevel:99,
-        nextEvolution:'Apex',
-        previousEvolution:'—',
-        battleStyle:'Legendary aerial control and sky rupture.'
+        height:'7.0 m', weight:'206.5 kg', category:'Sky High Pokémon', habitat:'Ozone Layer',
+        evolution:'Rayquaza // apex form', weakness:'Ice · Dragon', strength:'Fire · Water · Grass',
+        image:'assets/images/rayquaza.png', video:'rayquaza-animasi.webm', sound:'assets/audio/ultimate.mp3',
+        themeColor:'#66e29b', accentColor:'#72f0bd', rarityColor:'#ffdc75'
       },
-
       eevee:{
-        id:'eevee',
-        name:'Eevee',
-        pokedex:'#133',
-        types:['Normal'],
-        rarity:'Rare',
-        level:11,
-        exp:610,
-        maxExp:900,
-        hp:130,
-        attack:72,
-        defense:68,
-        speed:88,
-        specialAttack:65,
-        specialDefense:75,
-        ability:'Adaptability',
-        specialMove:'Genome Shift',
+        id:'eevee', name:'Eevee', pokedex:'#133', types:['Normal'], rarity:'Rare',
+        level:11, exp:610, maxExp:900, hp:130, attack:72, defense:68, speed:88,
+        specialAttack:65, specialDefense:75, ability:'Adaptability', specialMove:'Genome Shift',
         description:'Memiliki kode genetik tidak stabil yang memungkinkannya beradaptasi dengan cepat.',
         lore:'Eevee menyimpan banyak kemungkinan evolusi, menunggu resonansi energi yang tepat.',
-        height:'0.3 m',
-        weight:'6.5 kg',
-        category:'Evolution Pokémon',
-        habitat:'Meadow',
-        evolution:'Eevee → Evolution Paths',
-        weakness:'Fighting',
-        strength:'—',
-        image:'assets/images/eevee.png',
-        video:'eevee-animasi.webm',
-        sound:'assets/audio/ultimate.mp3',
-        themeColor:'#f2bd7b',
-        accentColor:'#ffd080',
-        rarityColor:'#ffc857',
-        evolutionLevel:99,
-        nextEvolution:'Evolution Paths',
-        previousEvolution:'—',
-        battleStyle:'Adaptive toolkit with branching potential.'
+        height:'0.3 m', weight:'6.5 kg', category:'Evolution Pokémon', habitat:'Meadow',
+        evolution:'Eevee → Evolution Paths', weakness:'Fighting', strength:'—',
+        image:'assets/images/eevee.png', video:'eevee-animasi.webm', sound:'assets/audio/ultimate.mp3',
+        themeColor:'#f2bd7b', accentColor:'#ffd080', rarityColor:'#ffc857'
       }
     };
 
-    Object.values(characters).forEach(c=>{
-      if(!('evolutionVideo' in c)){
-        c.evolutionVideo='';
-      }
-    });
-
-    const state={
-      currentKey:'pikachu',
-      characterState:'idle',
-      soundOn:true,
-
-      player:{
-        level:7,
-        exp:640,
-        viewed:[],
-        ultimateUsed:0,
-        evolutionUnlocked:0
-      },
-
-      scannerTimer:null,
-      toastTimer:null
+    const state = {
+      currentKey: 'pikachu',
+      characterState: 'idle',
+      soundOn: true,
+      player: { level: 7, exp: 640, viewed: [], ultimateUsed: 0, evolutionUnlocked: 0 }
     };
 
-    const $=(id)=>document.getElementById(id);
+    const $ = (id) => document.getElementById(id);
 
-    const AudioManager={
-      cache:new Map(),
-      music:null,
-
-      init(){
-        this.music=new Audio('assets/audio/bg-music.mp3');
-        this.music.loop=true;
-        this.music.volume=.18;
+    const AudioManager = {
+      cache: new Map(),
+      music: null,
+      init() {
+        this.music = new Audio('assets/audio/bg-music.mp3');
+        this.music.loop = true;
+        this.music.volume = .18;
       },
-
-      play(name,volume=.55){
-        if(!state.soundOn)return;
-        try{
-          let a=this.cache.get(name);
-          if(!a){
-            a=new Audio(`assets/audio/${name}.mp3`);
-            this.cache.set(name,a);
+      play(name, volume = .55) {
+        if (!state.soundOn) return;
+        try {
+          let a = this.cache.get(name);
+          if (!a) {
+            a = new Audio(`assets/audio/${name}.mp3`);
+            this.cache.set(name, a);
           }
-          a.currentTime=0;
-          a.volume=volume;
+          a.currentTime = 0;
+          a.volume = volume;
           a.play().catch(()=>{});
-        }catch(e){}
+        } catch(e){}
       },
-
-      startMusic(){
-        if(state.soundOn && this.music){
-          this.music.play().catch(()=>{});
-        }
-      },
-
-      stopAll(){
-        if(this.music){
-          this.music.pause();
-          this.music.currentTime=0;
-        }
-        this.cache.forEach(a=>{
-          a.pause();
-          a.currentTime=0;
-        });
+      startMusic() { if (state.soundOn && this.music) this.music.play().catch(()=>{}); },
+      stopAll() {
+        if (this.music) { this.music.pause(); this.music.currentTime = 0; }
+        this.cache.forEach(a => { a.pause(); a.currentTime = 0; });
       }
     };
-
     AudioManager.init();
 
-    function vibrate(pattern){
-      try{
-        if(navigator.vibrate){
-          navigator.vibrate(pattern);
-        }
-      }catch(e){}
-    }
+    function isPikachu(c) { return c && c.id === 'pikachu'; }
 
-    function saveGameState(){
-      localStorage.setItem('biipbattle-state', JSON.stringify(state.player));
-      localStorage.setItem('biipbattle-sound', String(state.soundOn));
-    }
+    function renderCharacterCard(c) {
+      $('char-code').textContent = c.pokedex;
+      $('char-name').textContent = c.name;
+      $('char-desc').textContent = c.description;
 
-    function loadGameState(){
-      try{
-        const saved=JSON.parse(localStorage.getItem('biipbattle-state')||'null');
-        if(saved){
-          state.player={ ...state.player, ...saved };
-        }
-        state.soundOn = localStorage.getItem('biipbattle-sound') !== 'false';
-      }catch(e){
-        showToast('SAVE ERROR', 'Progress reset to safe defaults.', true);
+      const heroContainer = $('char-image-container');
+      if (isPikachu(c)) {
+        heroContainer.innerHTML = `
+          <div class="pikachu-container character-image" role="img" aria-label="${c.name}">
+            <div class="pikachu-sprite"></div>
+          </div>
+        `;
+      } else {
+        heroContainer.innerHTML = `<img class="character-image" src="${c.image}" alt="${c.name}" />`;
       }
+
+      $('type-row').innerHTML = c.types.map(t => `<span class="type-chip">${t}</span>`).join('') +
+        `<span class="rarity-badge" style="--rarity:${c.rarityColor}">${c.rarity}</span>`;
+
+      $('hero-title').innerHTML = `TARGET <span>${c.name}</span>`;
+      colorizeHero(c);
+      renderStats(c);
     }
 
-    function playSound(name,pattern){
-      AudioManager.play(name);
-      if(pattern){
-        vibrate(pattern);
-      }
-    }
-
-    function setCharacterState(next){
-      state.characterState=next;
-      $('state-label').textContent = `${next.toUpperCase()} STATE`;
-    }
-
-    function getCurrent(){
-      return characters[state.currentKey]||characters.pikachu;
-    }
-
-    function colorizeHero(c){
+    function colorizeHero(c) {
       $('hero-card').style.setProperty('--char-glow', `${c.themeColor}35`);
-      $('hero-card').style.setProperty('--char-accent', c.accentColor);
-      $('hero-card').style.setProperty('--rarity', c.rarityColor);
-      $('rarity-label').textContent=c.rarity.toUpperCase();
-      $('rarity-label').style.color=c.rarityColor;
+      $('hero-card').style.setProperty('--char-accent', c.accentColor);$('hero-card').style.setProperty('--rarity', c.rarityColor);
+      $('rarity-label').textContent = c.rarity.toUpperCase();$('rarity-label').style.color = c.rarityColor;
     }
 
-    function renderStats(c){
-      $('stat-hp').textContent=c.hp;
-      $('stat-attack').textContent=c.attack;
-      $('stat-defense').textContent=c.defense;
-      $('stat-speed').textContent=c.speed;
+    function renderStats(c) {
+      $('stat-hp').textContent = c.hp;
+      $('stat-attack').textContent = c.attack;
+      $('stat-defense').textContent = c.defense;
+      $('stat-speed').textContent = c.speed;
 
-      const stats=[
-        ['HP',c.hp,300],
-        ['ATTACK',c.attack,180],
-        ['DEFENSE',c.defense,180],
-        ['SPEED',c.speed,180],
-        ['SP. ATTACK',c.specialAttack,180],
-        ['SP. DEFENSE',c.specialDefense,180]
+      const stats = [
+        ['HP', c.hp, 300], ['ATTACK', c.attack, 180],
+        ['DEFENSE', c.defense, 180], ['SPEED', c.speed, 180],
+        ['SP. ATTACK', c.specialAttack, 180], ['SP. DEFENSE', c.specialDefense, 180]
       ];
 
-      $('stat-list').innerHTML=stats.map(
-        ([n,v,max])=>
+      $('stat-list').innerHTML = stats.map(
+        ([n,v,max]) =>
           `<div class="stat-row">
             <span>${n}</span>
             <div class="progress">
@@ -2313,89 +921,42 @@
       ).join('');
     }
 
-    function isPikachu(c) {
-      return c && c.id === 'pikachu';
-    }
-
-    function renderCharacterCard(c){
-      $('char-code').textContent=c.pokedex;
-      $('char-name').textContent=c.name;
-      $('char-desc').textContent=c.description;
-
-      const heroContainer = $('char-image-container');
-      
-      if(isPikachu(c)) {
-        heroContainer.innerHTML = `
-          <div class="pikachu-container character-image" role="img" aria-label="${c.name}">
-            <div class="pikachu-sprite"></div>
-          </div>
-        `;
-      } else {
-        heroContainer.innerHTML = `
-          <img class="character-image" src="${c.image}" alt="${c.name}" onerror="showToast('IMAGE ERROR', 'Character artwork could not be loaded.', true);" />
-        `;
-      }
-
-      $('type-row').innerHTML=c.types.map(t=>`<span class="type-chip">${t}</span>`).join('')+
-        `<span class="rarity-badge" style="--rarity:${c.rarityColor}">${c.rarity}</span>`;
-
-      $('hero-title').innerHTML=`TARGET <span>${c.name}</span>`;
-
-      colorizeHero(c);
-      renderStats(c);
-    }
-
-    function loadCharacter(key,options={}){
-      state.currentKey=characters[key]?key:'pikachu';
-      const c=getCurrent();
-
+    function loadCharacter(key, options = {}) {
+      state.currentKey = characters[key] ? key : 'pikachu';
+      const c = getCurrent();
       renderCharacterCard(c);
-
-      if(!state.player.viewed.includes(c.id)){
+      if (!state.player.viewed.includes(c.id)) {
         state.player.viewed.push(c.id);
-        saveGameState();
       }
-
       updatePlayerProgress();
       renderCollection();
-
-      if(!options.silent){
-        window.history.replaceState({},'',`?char=${c.id}`);
-      }
     }
 
-    function updatePlayerProgress(){
-      const p=state.player;
-      const next=p.level*1000;
+    function getCurrent() { return characters[state.currentKey] || characters.pikachu; }
 
-      $('player-level').textContent=String(p.level).padStart(2,'0');
-      $('hud-level').textContent=`LV. ${String(p.level).padStart(2,'0')} // ONLINE`;
-      $('player-exp-label').textContent=`${p.exp} / ${next}`;
-      $('player-exp-bar').style.setProperty('--value',`${Math.min(100,p.exp/next*100)}%`);
-
-      $('viewed-count').textContent=p.viewed.length;
-      $('ultimate-count').textContent=p.ultimateUsed;
-      $('evolution-count').textContent=p.evolutionUnlocked;
-      $('collection-count').textContent=`${p.viewed.length} / 10`;
+    function updatePlayerProgress() {
+      const p = state.player;
+      const next = p.level * 1000;
+      $('player-level').textContent = String(p.level).padStart(2,'0');$('hud-level').textContent = `LV. ${String(p.level).padStart(2,'0')} // ONLINE`;
+      $('player-exp-label').textContent = `${p.exp} / ${next}`;
+      $('player-exp-bar').style.setProperty('--value', `${Math.min(100,p.exp/next*100)}%`);
+      $('viewed-count').textContent = p.viewed.length;
+      $('ultimate-count').textContent = p.ultimateUsed;
+      $('evolution-count').textContent = p.evolutionUnlocked;
+      $('collection-count').textContent = `${p.viewed.length} / 10`;
     }
 
-    function renderCollection(){
-      const query=$('search-input').value.trim().toLowerCase();
-      const filter=$('type-filter').value;
+    function renderCollection() {
+      const query = $('search-input').value.trim().toLowerCase();
+      const filter = $('type-filter').value;
 
-      const list=Object.values(characters).filter(
-        c=>
-          (!query||c.name.toLowerCase().includes(query)||c.types.some(t=>t.toLowerCase().includes(query)))&&
-          (filter==='all'||c.types.some(t=>t.toLowerCase()===filter))
+      const list = Object.values(characters).filter(
+        c => (!query || c.name.toLowerCase().includes(query)) && (filter === 'all' || c.types.some(t => t.toLowerCase() === filter))
       );
 
-      $('character-list').innerHTML=list.map(c=>{
+      $('character-list').innerHTML = list.map(c => {
         const art = isPikachu(c)
-          ? `
-            <div class="pikachu-container card-art" role="img" aria-label="${c.name}">
-              <div class="pikachu-sprite"></div>
-            </div>
-            `
+          ? `<div class="pikachu-container card-art" style="width:100%; aspect-ratio:896/1165;"><div class="pikachu-sprite"></div></div>`
           : `<img class="card-art" loading="lazy" src="${c.image}" alt="${c.name}" />`;
 
         return `
@@ -2406,440 +967,24 @@
             </div>
             ${art}
             <div class="card-name">${c.name}</div>
-            <div class="card-meta">
-              <span>LV. ${c.level}</span>
-              <span>${c.types[0]}</span>
-            </div>
+            <div class="card-meta"><span>LV. ${c.level}</span><span>${c.types[0]}</span></div>
           </button>
         `;
       }).join('');
 
-      $('empty-state').style.display=list.length?'none':'block';
+      $('empty-state').style.display = list.length ? 'none' : 'block';
 
-      document.querySelectorAll('[data-character]').forEach(btn=>
-        btn.addEventListener('click',()=>{
-          loadCharacter(btn.dataset.character);
-          startScan();
-        })
+      document.querySelectorAll('[data-character]').forEach(btn =>
+        btn.addEventListener('click', () => loadCharacter(btn.dataset.character))
       );
     }
 
-    function openOverlay(id){
-      $(id).classList.add('visible');
-      if(id==='video-overlay'){
-        document.documentElement.style.overflow='hidden';
-        document.body.style.overflow='hidden';
-      }
+    function boot() {
+      loadCharacter('pikachu', { silent: true });
+      setTimeout(() => $('loading-screen').classList.add('done'), 260);
     }
-
-    function closeOverlay(id){
-      $(id).classList.remove('visible');
-      if(id==='video-overlay'){
-        document.documentElement.style.overflow='';
-        document.body.style.overflow='';
-      }
-    }
-
-    function showToast(title,message,error=false){
-      $('toast-title').textContent=title;
-      $('toast-message').textContent=message;
-      $('toast').classList.toggle('error',error);$('toast').classList.add('show');
-
-      clearTimeout(state.toastTimer);
-      state.toastTimer=setTimeout(()=>$('toast').classList.remove('show'),3200);
-    }
-
-    function openScanner(){
-      playSound('scan',[30]);
-      openOverlay('scanner-overlay');
-      startScan();
-    }
-
-    function startScan(){
-      const c = getCurrent();
-      clearTimeout(state.scannerTimer);
-      setCharacterState('scanning');
-
-      const scannerContainer = $('scanner-image-container');
-      if (isPikachu(c)) {
-        scannerContainer.innerHTML = `
-          <div class="pikachu-container scanner-image" role="img" aria-label="Scanning character">
-            <div class="pikachu-sprite"></div>
-          </div>
-        `;
-      } else {
-        scannerContainer.innerHTML = `
-          <img class="scanner-image" src="${c.image}" alt="${c.name}" />
-        `;
-      }
-
-      $('scan-status').textContent='SCANNING...';
-      $('scan-name').textContent='TARGET ACQUIRING';$('scan-details').textContent='Reading battle signature // please wait';
-
-      state.scannerTimer=setTimeout(showDetected,1550);
-    }
-
-    function showDetected(){
-      const c=getCurrent();
-      setCharacterState('detected');
-      playSound('detected',[45]);
-
-      $('scan-status').textContent='TARGET DETECTED';$('scan-name').textContent=c.name;
-      $('scan-details').textContent=`${c.pokedex} // ${c.types.join(' / ')} TYPE // ${c.rarity.toUpperCase()}`;
-      showToast('CHARACTER DETECTED',`${c.name} profile unlocked.`);
-
-      setTimeout(()=>{
-        closeOverlay('scanner-overlay');
-        openProfile();
-      },780);
-    }
-
-    function evolutionMarkup(c){
-      const parts=c.evolution.split('→').map(v=>v.trim());
-      return `
-        <div class="evolution-track">
-          ${parts.map((p,i)=>`${i?'<span>→</span>':''}<span class="evo-node">${p}</span>`).join('')}
-        </div>
-      `;
-    }
-
-    function renderProfile(c){
-      const profileArtwork = isPikachu(c)
-        ? `
-          <div class="pikachu-container profile-art" role="img" aria-label="${c.name}">
-            <div class="pikachu-sprite"></div>
-          </div>
-          `
-        : `<img class="profile-art" src="${c.image}" alt="${c.name}" />`;
-
-      $('profile-content').innerHTML=`
-        <div class="profile-hero" style="--char-glow:${c.themeColor}55">
-          ${profileArtwork}
-          <div>
-            <div class="eyebrow">${c.pokedex} // LV. ${c.level}</div>
-            <h3>${c.name}</h3>
-            <div class="type-row">
-              ${c.types.map(t=>`<span class="type-chip">${t}</span>`).join('')}
-              <span class="rarity-badge" style="--rarity:${c.rarityColor}">${c.rarity}</span>
-            </div>
-            <p>${c.description}</p>
-          </div>
-        </div>
-
-        <div class="profile-grid">
-          <div class="profile-block">
-            <h4>Base Stats</h4>
-            <div class="stat-list">
-              ${[['HP',c.hp],['Attack',c.attack],['Defense',c.defense],['Speed',c.speed],['Sp. Attack',c.specialAttack],['Sp. Defense',c.specialDefense]].map(
-                ([n,v])=>
-                  `<div class="stat-row">
-                    <span>${n}</span>
-                    <div class="progress">
-                      <i style="--value:${Math.min(100,v/180*100)}%;background:linear-gradient(90deg,${c.accentColor},${c.rarityColor})"></i>
-                    </div>
-                    <b>${v}</b>
-                  </div>`
-              ).join('')}
-            </div>
-          </div>
-
-          <div class="profile-block">
-            <h4>Bio / Lore</h4>
-            <p>${c.lore}</p>
-            <p style="margin-top:10px;color:#8493ad">${c.category} · ${c.height} · ${c.weight}<br>Habitat: ${c.habitat}</p>
-          </div>
-
-          <div class="profile-block">
-            <h4>Ability / Battle Style</h4>
-            <p><strong style="color:#f5f7ff">${c.ability}</strong><br>${c.battleStyle}</p>
-          </div>
-
-          <div class="profile-block">
-            <h4>Special Move</h4>
-            <p style="font-size:17px;color:#f5f7ff;font-weight:900">${c.specialMove}</p>
-            <p style="margin-top:7px;color:#8493ad">Strength: ${c.strength}<br>Weakness: ${c.weakness}</p>
-          </div>
-
-          <div class="profile-block" style="grid-column:1/-1">
-            <h4>Evolution Path</h4>
-            ${evolutionMarkup(c)}
-            <div style="display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap">
-              <button class="secondary-btn" id="level-up-button" type="button">＋ LEVEL UP</button>
-              <button class="primary-btn" id="evolve-button" type="button">✦ EVOLVE</button>
-            </div>
-          </div>
-        </div>`;
-
-      $('level-up-button').addEventListener('click',levelUpCharacter);$('evolve-button').addEventListener('click',()=>playEvolution(c));
-    }
-
-    function openProfile(){
-      renderProfile(getCurrent());
-      openOverlay('profile-overlay');
-    }
-
-    function videoCandidates(c,isEvolution=false){
-      const file = isEvolution ? `${c.id}-evolution.webm` : c.video;
-      return isEvolution
-        ? [`assets/videos/evolution/${file}`, file]
-        : [`assets/videos/ultimate/${file}`, `assets/videos/${file}`, file];
-    }
-
-    function playVideoSequence(c,isEvolution=false){
-      const video=isEvolution?$('evolution-video'):$('ultimate-video');
-      const other=isEvolution?$('ultimate-video'):$('evolution-video');
-
-      other.pause();
-      other.hidden=true;
-      other.removeAttribute('src');
-      other.load();
-
-      video.hidden=false;
-      video.className='';
-
-      let index=0;
-      const candidates=videoCandidates(c,isEvolution);
-
-      const tryNext=()=>{
-        if(index>=candidates.length){
-          video.onerror=null;
-          video.hidden=true;
-          $('video-fallback').style.display='none';
-          showToast(
-            isEvolution?'EVOLUTION VIDEO NOT AVAILABLE':'ANIMATION UNAVAILABLE',
-            isEvolution?'Evolution sequence is locked.':'Video ultimate untuk karakter ini belum tersedia.',
-            true
-          );
-          closeUltimate();
-          return;
-        }
-
-        video.hidden=false;
-        video.src=candidates[index++];
-        video.load();
-
-        const playPromise=video.play();
-        if(playPromise){
-          playPromise.catch(()=>{
-            if(index<candidates.length){
-              tryNext();
-            }
-          });
-        }
-      };
-
-      video.onerror=tryNext;
-      $('video-fallback').style.display='none';
-      tryNext();
-    }
-
-    function triggerUltimate(){
-      const c=getCurrent();
-      setCharacterState('ultimate');
-      state.player.ultimateUsed++;
-      saveGameState();
-      updatePlayerProgress();
-      playSound('ultimate',[80]);
-      openOverlay('video-overlay');
-      playVideoSequence(c,false);
-    }
-
-    function closeUltimate(){
-      closeOverlay('video-overlay');
-      $('ultimate-video').pause();$('evolution-video').pause();
-
-      try{
-        $('ultimate-video').currentTime=0;
-        $('evolution-video').currentTime=0;
-      }catch(e){}
-
-      $('ultimate-video').hidden=false;
-      $('evolution-video').hidden=true;
-      setCharacterState('idle');
-      playSound('close');
-    }
-
-    function levelUpCharacter(){
-      const c=getCurrent();
-      const cost=260;
-
-      if(state.player.exp<cost){
-        playSound('error');
-        showToast('NOT ENOUGH EXP',`Need ${cost} EXP to level up this character.`,true);
-        return;
-      }
-
-      const old=c.level;
-      c.level++;
-      c.exp=Math.min(c.maxExp,c.exp+130);
-      c.attack+=4;
-      c.defense+=3;
-      c.speed+=2;
-      state.player.exp-=cost;
-      
-      saveGameState();
-      updatePlayerProgress();
-      renderCharacterCard(c);
-      renderProfile(c);
-      setCharacterState('levelup');
-      playSound('levelup',[50]);
-
-      $('hero-card').classList.remove('shake');
-      void $('hero-card').offsetWidth;
-      $('hero-card').classList.add('shake');
-
-      showToast('LEVEL UP!',`${c.name} // LV. ${old} → LV. ${c.level}`);
-      setTimeout(()=>setCharacterState('idle'),700);
-    }
-
-    function checkEvolution(c){
-      return c.evolutionVideo||false;
-    }
-
-    function playEvolution(c){
-      setCharacterState('evolution');
-      playSound('evolution',[50,30,100]);
-      state.player.evolutionUnlocked++;
-      saveGameState();
-      updatePlayerProgress();
-
-      if(!checkEvolution(c)){
-        showToast(
-          'EVOLUTION SEQUENCE IS LOCKED',
-          'Add an evolution WebM in assets/videos/evolution to unlock it.',
-          true
-        );
-        setTimeout(()=>setCharacterState('idle'),700);
-        return;
-      }
-
-      openOverlay('video-overlay');
-      playVideoSequence(c,true);
-    }
-
-    function toggleSound(){
-      state.soundOn=!state.soundOn;
-      $('sound-toggle').textContent=state.soundOn?'◖':'◌';
-
-      if(state.soundOn){
-        playSound('click');
-        AudioManager.startMusic();
-        showToast('SOUND ON','Audio systems online.');
-      }else{
-        AudioManager.stopAll();
-        showToast('SOUND OFF','All audio systems muted.');
-      }
-      saveGameState();
-    }
-
-    function addButtonFeedback(){
-      document.querySelectorAll('button').forEach(btn=>{
-        btn.addEventListener('pointerdown',()=>btn.style.transform='scale(.97)');
-        btn.addEventListener('pointerup',()=>btn.style.transform='');
-        btn.addEventListener('pointerleave',()=>btn.style.transform='');
-      });
-    }
-
-    function initTilt(){
-      const card=$('hero-card');
-      const move=(e)=>{
-        if(matchMedia('(pointer:coarse)').matches)return;
-        const r=card.getBoundingClientRect();
-        const x=(e.clientX-r.left)/r.width-.5;
-        const y=(e.clientY-r.top)/r.height-.5;
-        card.style.transform=`perspective(1100px) rotateY(${x*3}deg) rotateX(${y*-3}deg)`;
-      };
-
-      card.addEventListener('pointermove',move);
-      card.addEventListener('pointerleave',()=>card.style.transform='');
-    }
-
-    function bindEvents(){
-      $('ultimate-button').addEventListener('click',triggerUltimate);
-      $('scan-button').addEventListener('click',openScanner);$('profile-button').addEventListener('click',openProfile);
-      $('sound-toggle').addEventListener('click',toggleSound);$('settings-button').addEventListener('click',openProfile);
-      $('ultimate-video').addEventListener('ended',closeUltimate);$('evolution-video').addEventListener('ended',closeUltimate);
-      $('search-input').addEventListener('input',renderCollection);$('type-filter').addEventListener('change',renderCollection);
-
-      document.querySelectorAll('[data-close]').forEach(btn=>
-        btn.addEventListener('click',()=>{
-          const id=btn.dataset.close;
-          if(id==='video-overlay'){
-            closeUltimate();
-          }else{
-            closeOverlay(id);
-          }
-        })
-      );
-
-      document.querySelectorAll('.overlay').forEach(o=>
-        o.addEventListener('click',e=>{
-          if(e.target===o){
-            if(o.id==='video-overlay')return;
-            closeOverlay(o.id);
-          }
-        })
-      );
-
-      document.querySelectorAll('[data-nav]').forEach(btn=>
-        btn.addEventListener('click',()=>{
-          document.querySelectorAll('.nav-btn').forEach(n=>n.classList.remove('active'));
-          btn.classList.add('active');
-          const target=btn.dataset.nav;
-
-          if(target==='collection'){
-            document.querySelector('.collection-section').scrollIntoView({behavior:'smooth'});
-          }
-          if(target==='scan'){
-            openScanner();
-          }
-          if(target==='profile'){
-            openProfile();
-          }
-          if(target==='home'){
-            window.scrollTo({top:0,behavior:'smooth'});
-          }
-          playSound('click',[20]);
-        })
-      );
-
-      document.addEventListener('pointerdown',()=>AudioManager.startMusic(),{once:true});
-      addButtonFeedback();
-      initTilt();
-    }
-
-    function boot(){
-      loadGameState();
-      const key=new URLSearchParams(location.search).get('char')||'pikachu';
-      loadCharacter(key,{silent:true});
-      $('sound-toggle').textContent=state.soundOn?'◖':'◌';
-      bindEvents();
-
-      const messages=[
-        'INITIALIZING...',
-        'LOAD CHARACTER DATABASE...',
-        'LOAD AUDIO...',
-        'LOAD ANIMATION...',
-        'READY'
-      ];
-      let i=0;
-      const timer=setInterval(()=>{
-        $('loading-copy').textContent=messages[Math.min(i++,messages.length-1)];
-        if(i>=messages.length){
-          clearInterval(timer);
-          setTimeout(()=>$('loading-screen').classList.add('done'),260);
-        }
-      },290);
-    }
-
-    window.addEventListener('popstate',()=>loadCharacter(new URLSearchParams(location.search).get('char')||'pikachu',{silent:true}));
-    window.triggerUltimate=triggerUltimate;
-    window.closeUltimate=closeUltimate;
-    window.loadCharacter=loadCharacter;
-    window.playEvolution=playEvolution;
 
     boot();
   </script>
 </body>
 </html>
-
