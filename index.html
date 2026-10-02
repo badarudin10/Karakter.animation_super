@@ -1878,7 +1878,6 @@
         strength:'Grass · Bug',
         image:'assets/images/charizard.png',
         video:'charizard-animasi.webm',
-        evolutionVideo:'charizard-evolution.webm',
         sound:'assets/audio/ultimate.mp3',
         themeColor:'#ff7b61',
         accentColor:'#ff9b57',
@@ -2217,6 +2216,19 @@
         this.music=new Audio('assets/audio/background.mp3');
         this.music.loop=true;
         this.music.volume=.18;
+
+        // Menghentikan musik background otomatis ketika aplikasi/tab ditinggalkan atau ditutup
+        document.addEventListener('visibilitychange', () => {
+          if (document.hidden) {
+            if (this.music) {
+              this.music.pause();
+            }
+          } else {
+            if (state.soundOn && this.music) {
+              this.music.play().catch(()=>{});
+            }
+          }
+        });
       },
 
       play(name,volume=.55){
@@ -2811,12 +2823,7 @@
         })
       );
 
-      // PERBAIKAN: Menangani interaksi sentuh pertama di HP agar musik langsung menyala otomatis tanpa harus klik fitur tertentu
-      ['click', 'touchstart', 'pointerdown'].forEach(eventName => {
-        document.addEventListener(eventName, () => {
-          AudioManager.startMusic();
-        }, { once: true });
-      });
+      document.addEventListener('pointerdown',()=>AudioManager.startMusic(),{once:true});
 
       addButtonFeedback();
       initTilt();
@@ -2829,9 +2836,6 @@
 
       $('sound-toggle').textContent=state.soundOn?'◖':'◌';
       bindEvents();
-
-      // Berusaha langsung memutar musik saat halaman dimuat (untuk PC / browser yang mengizinkan)
-      AudioManager.startMusic();
 
       const messages=['INITIALIZING...','LOAD CHARACTER DATABASE...','LOAD AUDIO...','LOAD ANIMATION...','READY'];
       let i=0;
