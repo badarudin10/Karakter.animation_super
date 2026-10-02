@@ -1100,6 +1100,55 @@
       font-size:12px;
     }
 
+    /* Styling untuk QTE Arena / Mini Battle */
+    .battle-arena-modal {
+      text-align: center;
+      background: radial-gradient(circle at center, rgba(122,63,255,.2), #070b19);
+      border: 1px solid rgba(86,233,255,.4);
+    }
+    .battle-counter {
+      font-size: 48px;
+      font-weight: 950;
+      color: var(--cyan);
+      margin: 15px 0;
+      text-shadow: 0 0 20px rgba(86,233,255,.6);
+    }
+    .tap-target-btn {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--cyan), var(--violet));
+      color: #06101b;
+      font-weight: 950;
+      font-size: 16px;
+      letter-spacing: 0.1em;
+      box-shadow: 0 0 35px rgba(86,233,255,.5);
+      margin: 20px auto;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: transform 0.1s ease;
+    }
+    .tap-target-btn:active {
+      transform: scale(0.9);
+    }
+
+    /* Floating Damage Text */
+    .floating-dmg {
+      position: absolute;
+      z-index: 1000;
+      font-weight: 950;
+      font-size: 24px;
+      color: var(--amber);
+      text-shadow: 0 0 10px rgba(255,200,87,.8);
+      pointer-events: none;
+      animation: float-up 0.8s ease-out forwards;
+    }
+    @keyframes float-up {
+      0% { opacity: 1; transform: translateY(0) scale(0.8); }
+      100% { opacity: 0; transform: translateY(-70px) scale(1.3); }
+    }
+
     #video-overlay {
       position:fixed !important;
       z-index:999999 !important;
@@ -1795,6 +1844,18 @@
     </div>
   </div>
 
+  <!-- Overlay untuk Mini Battle / QTE Ultimate -->
+  <div id="battle-overlay" class="overlay">
+    <div class="modal battle-arena-modal">
+      <div class="eyebrow">QUICK TIME EVENT // CHARGE POWER</div>
+      <h2 id="battle-title" style="margin:8px 0; font-size:24px;">ENERGY OVERLOAD</h2>
+      <p style="color:var(--muted); font-size:12px;">Ketuk tombol SEBANYAK MUNGKIN sebelum waktu habis!</p>
+      <div id="battle-timer" class="battle-counter">3.0s</div>
+      <button id="tap-strike-btn" class="tap-target-btn" type="button">TAP!</button>
+      <div style="font-size: 13px; color: var(--cyan); font-weight: bold;">TAPS: <span id="tap-count">0</span></div>
+    </div>
+  </div>
+
   <div id="video-overlay" class="overlay">
     <div class="modal video-modal">
       <div class="video-shell">
@@ -2204,7 +2265,10 @@
         evolutionUnlocked:0
       },
       scannerTimer:null,
-      toastTimer:null
+      toastTimer:null,
+      battleActive:false,
+      tapCount:0,
+      battleTimerInterval:null
     };
 
     const $=(id)=>document.getElementById(id);
@@ -2218,7 +2282,6 @@
         this.music.loop=true;
         this.music.volume=.18;
 
-        // Menghentikan musik background otomatis ketika aplikasi/tab ditinggalkan atau ditutup
         document.addEventListener('visibilitychange', () => {
           if (document.hidden) {
             if (this.music) {
@@ -2291,7 +2354,6 @@
       }
     }
 
-    /* Menggunakan aset audio valid yang ada di repository */
     function playSound(name,pattern){
       AudioManager.play(name);
       if(pattern){
@@ -2392,7 +2454,8 @@
       const p=state.player;
       const next=p.level*1000;
 
-      $('player-level').textContent=String(p.level).padStart(2,'0');$('hud-level').textContent=`LV. ${String(p.level).padStart(2,'0')} // ONLINE`;
+      $('player-level').textContent=String(p.level).padStart(2,'0');
+      $('hud-level').textContent=`LV. ${String(p.level).padStart(2,'0')} // ONLINE`;
       $('player-exp-label').textContent=`${p.exp} / ${next}`;
       $('player-exp-bar').style.setProperty('--value',`${Math.min(100,p.exp/next*100)}%`);
       $('viewed-count').textContent=p.viewed.length;
@@ -2648,12 +2711,52 @@
       tryNext();
     }
 
+    /* Fungsi Mini-Battle QTE Ultimate Interaktif */
     function triggerUltimate(){
+      state.tapCount=0;
+      $('tap-count').textContent='0';$('battle-timer').textContent='3.0s';
+      openOverlay('battle-overlay');
+      playSound('scan',[40]);
+
+      let timeLeft=3.0;
+      clearInterval(state.battleTimerInterval);
+
+      state.battleTimerInterval=setInterval(()=>{
+        timeLeft=(timeLeft-0.1);
+        if(timeLeft<=0){
+          timeLeft=0;
+          clearInterval(state.battleTimerInterval);
+          closeOverlay('battle-overlay');
+          executeUltimateVideo(state.tapCount);
+        }
+        $('battle-timer').textContent=timeLeft.toFixed(1)+'s';
+      },100);
+    }
+
+    function handleQteTap(e){
+      state.tapCount++;
+      $('tap-count').textContent=state.tapCount;
+      playSound('button',[15]);
+
+      // Membuat Floating Damage / Hit text interaktif saat ditap
+      const dmgPopup=document.createElement('div');
+      dmgPopup.className='floating-dmg';
+      dmgPopup.textContent=`+${Math.floor(Math.random()*150)+50}`;
+      dmgPopup.style.left=`${e.clientX||(window.innerWidth/2)}px`;
+      dmgPopup.style.top=`${(e.clientY||(window.innerHeight/2))-30}px`;
+      document.body.appendChild(dmgPopup);
+      setTimeout(()=>dmgPopup.remove(),800);
+    }
+
+    function executeUltimateVideo(taps){
       const c=getCurrent();
       setCharacterState('ultimate');
       state.player.ultimateUsed++;
       saveGameState();
       updatePlayerProgress();
+
+      const calculatedDmg=c.attack+(taps*25);
+      showToast('ULTIMATE CHARGED!',`Total Taps: ${taps} // Damage Output: ${calculatedDmg}`);
 
       playSound('ultimate',[80]);
       openOverlay('video-overlay');
@@ -2750,7 +2853,6 @@
         btn.addEventListener('pointerdown',()=>btn.style.transform='scale(.97)');
         btn.addEventListener('pointerup',()=>btn.style.transform='');
         btn.addEventListener('pointerleave',()=>btn.style.transform='');
-        /* Menambahkan efek suara hover menggunakan aset hover.mp3 */
         btn.addEventListener('pointerenter',()=>playSound('hover', [10]));
       });
     }
@@ -2770,7 +2872,7 @@
     }
 
     function bindEvents(){
-      $('ultimate-button').addEventListener('click',triggerUltimate);
+      $('ultimate-button').addEventListener('click',triggerUltimate);$('tap-strike-btn').addEventListener('click',handleQteTap);
       $('scan-button').addEventListener('click',openScanner);$('profile-button').addEventListener('click',openProfile);
       $('sound-toggle').addEventListener('click',toggleSound);$('settings-button').addEventListener('click',openProfile);
 
@@ -2795,7 +2897,7 @@
       document.querySelectorAll('.overlay').forEach(o=>
         o.addEventListener('click',e=>{
           if(e.target===o){
-            if(o.id==='video-overlay'){return;}
+            if(o.id==='video-overlay'||o.id==='battle-overlay'){return;}
             closeOverlay(o.id);
           }
         })
