@@ -476,15 +476,18 @@
       letter-spacing:.14em;
     }
 
+    /* PERBAIKAN: Menggunakan flex column yang aman dan bersih agar tombol tidak bertabrakan */
     .actions {
       display:flex;
       flex-direction:column;
-      gap:9px;
-      min-width:210px;
+      gap:10px;
+      width:220px;
+      flex-shrink:0;
     }
 
     .primary-btn,
     .secondary-btn {
+      width:100%;
       min-height:46px;
       padding:0 15px;
       border-radius:12px;
@@ -1237,6 +1240,12 @@
         object-fit:contain !important;
         object-position:center center !important;
       }
+      .hero-bottom {
+        grid-template-columns:1fr;
+      }
+      .actions {
+        width:100%;
+      }
     }
 
     .toast {
@@ -1368,114 +1377,6 @@
       }
       .card-grid {
         grid-template-columns:repeat(4,minmax(0,1fr));
-      }
-    }
-
-    @media (max-width:640px) {
-      .app-shell {
-        padding:12px 12px 102px;
-      }
-      .topbar {
-        margin-bottom:14px;
-      }
-      .brand-mark {
-        width:37px;
-        height:37px;
-        border-radius:11px;
-      }
-      .brand h1 {
-        font-size:17px;
-      }
-      .brand p {
-        font-size:8px;
-      }
-      .hud-profile {
-        display:none;
-      }
-      .hero {
-        min-height:0;
-        border-radius:22px;
-        padding:16px;
-      }
-      .hero-head h2 {
-        font-size:27px;
-      }
-      .status-pill {
-        font-size:8px;
-        padding:7px 8px;
-      }
-      .character-stage {
-        min-height:260px;
-      }
-      .character-image {
-        width:72%;
-        max-height:245px;
-      }
-      .hero-bottom {
-        grid-template-columns:1fr;
-      }
-      .actions {
-        min-width:0;
-        display:grid;
-        grid-template-columns:1fr 1fr;
-      }
-      .actions .primary-btn {
-        grid-column:span 2;
-      }
-      .quick-stats {
-        margin-top:16px;
-      }
-      .stat-tile {
-        padding:8px;
-      }
-      .stat-tile b {
-        font-size:16px;
-      }
-      .side-stack {
-        display:flex;
-      }
-      .panel {
-        padding:15px;
-      }
-      .card-grid {
-        grid-template-columns:repeat(2,minmax(0,1fr));
-        gap:8px;
-      }
-      .collection-card {
-        min-height:172px;
-      }
-      .collection-toolbar {
-        align-items:stretch;
-        flex-wrap:wrap;
-      }
-      .search {
-        flex-basis:100%;
-      }
-      .filter-select {
-        flex:1;
-      }
-      .bottom-nav {
-        width:calc(100% - 24px);
-        justify-content:space-around;
-      }
-      .nav-btn {
-        flex:1;
-        min-width:0;
-      }
-      .profile-hero {
-        grid-template-columns:105px 1fr;
-      }
-      .profile-art {
-        height:105px;
-      }
-      .profile-hero h3 {
-        font-size:21px;
-      }
-      .profile-grid {
-        grid-template-columns:1fr;
-      }
-      .scanner-modal {
-        min-height:460px;
       }
     }
 
@@ -2277,7 +2178,6 @@
       }
     }
 
-    /* Menggunakan aset audio valid yang ada di repository */
     function playSound(name,pattern){
       AudioManager.play(name);
       if(pattern){
@@ -2736,8 +2636,7 @@
         btn.addEventListener('pointerdown',()=>btn.style.transform='scale(.97)');
         btn.addEventListener('pointerup',()=>btn.style.transform='');
         btn.addEventListener('pointerleave',()=>btn.style.transform='');
-        /* Menambahkan efek suara hover menggunakan aset hover.mp3 */
-        btn.addEventListener('pointerenter',()=>playSound('hover', [10]));
+        btn.addEventListener('pointerenter',()=>playSound('hover',[10]));
       });
     }
 
@@ -2810,7 +2709,10 @@
         })
       );
 
-      document.addEventListener('pointerdown',()=>AudioManager.startMusic(),{once:true});
+      // Memastikan background music aktif saat pertama kali user melakukan interaksi (tap/klik) di halaman
+      document.addEventListener('pointerdown', () => {
+        AudioManager.startMusic();
+      }, { once: true });
 
       addButtonFeedback();
       initTilt();
