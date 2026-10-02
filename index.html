@@ -1844,12 +1844,12 @@
     </div>
   </div>
 
-  <!-- Overlay untuk Mini Battle / QTE Ultimate -->
+  <!-- Overlay untuk Mini Battle / QTE Ultimate & Evolution -->
   <div id="battle-overlay" class="overlay">
     <div class="modal battle-arena-modal">
-      <div class="eyebrow">QUICK TIME EVENT // CHARGE POWER</div>
+      <div class="eyebrow" id="qte-eyebrow">QUICK TIME EVENT // CHARGE POWER</div>
       <h2 id="battle-title" style="margin:8px 0; font-size:24px;">ENERGY OVERLOAD</h2>
-      <p style="color:var(--muted); font-size:12px;">Ketuk tombol SEBANYAK MUNGKIN sebelum waktu habis!</p>
+      <p id="battle-desc" style="color:var(--muted); font-size:12px;">Ketuk tombol SEBANYAK MUNGKIN sebelum waktu habis!</p>
       <div id="battle-timer" class="battle-counter">3.0s</div>
       <button id="tap-strike-btn" class="tap-target-btn" type="button">TAP!</button>
       <div style="font-size: 13px; color: var(--cyan); font-weight: bold;">TAPS: <span id="tap-count">0</span></div>
@@ -2268,7 +2268,8 @@
       toastTimer:null,
       battleActive:false,
       tapCount:0,
-      battleTimerInterval:null
+      battleTimerInterval:null,
+      qteMode:'ultimate' // 'ultimate' atau 'evolution'
     };
 
     const $=(id)=>document.getElementById(id);
@@ -2528,7 +2529,8 @@
     function showToast(title,message,error=false){
       $('toast-title').textContent=title;
       $('toast-message').textContent=message;
-      $('toast').classList.toggle('error',error);$('toast').classList.add('show');
+      $('toast').classList.toggle('error',error);
+      $('toast').classList.add('show');
       clearTimeout(state.toastTimer);
       state.toastTimer=setTimeout(()=>$('toast').classList.remove('show'),3200);
     }
@@ -2545,7 +2547,8 @@
       setCharacterState('scanning');
       $('scanner-image').src=c.image;
       $('scan-status').textContent='SCANNING...';
-      $('scan-name').textContent='TARGET ACQUIRING';$('scan-details').textContent='Reading battle signature // please wait';
+      $('scan-name').textContent='TARGET ACQUIRING';
+      $('scan-details').textContent='Reading battle signature // please wait';
 
       state.scannerTimer=setTimeout(showDetected,1550);
     }
@@ -2555,7 +2558,8 @@
       setCharacterState('detected');
       playSound('success',[45]);
 
-      $('scan-status').textContent='TARGET DETECTED';$('scan-name').textContent=c.name;
+      $('scan-status').textContent='TARGET DETECTED';
+      $('scan-name').textContent=c.name;
       $('scan-details').textContent=`${c.pokedex} // ${c.types.join(' / ')} TYPE // ${c.rarity.toUpperCase()}`;
 
       showToast('CHARACTER DETECTED',`${c.name} profile unlocked.`);
@@ -2650,7 +2654,7 @@
           </div>
         </div>`;
 
-      $('level-up-button').addEventListener('click',levelUpCharacter);$('evolve-button').addEventListener('click',()=>playEvolution(c));
+      $('level-up-button').addEventListener('click',levelUpCharacter);$('evolve-button').addEventListener('click',()=>initiateEvolutionQTE(getCurrent()));
     }
 
     function openProfile(){
@@ -2711,9 +2715,12 @@
       tryNext();
     }
 
-    /* Fungsi Mini-Battle QTE Ultimate Interaktif */
+    /* Memulai Mini-Battle QTE untuk Ultimate */
     function triggerUltimate(){
+      state.qteMode='ultimate';
       state.tapCount=0;
+      $('qte-eyebrow').textContent='QUICK TIME EVENT // CHARGE POWER';
+      $('battle-title').textContent='ENERGY OVERLOAD';$('battle-desc').textContent='Ketuk tombol SEBANYAK MUNGKIN sebelum waktu habis!';
       $('tap-count').textContent='0';$('battle-timer').textContent='3.0s';
       openOverlay('battle-overlay');
       playSound('scan',[40]);
@@ -2733,15 +2740,46 @@
       },100);
     }
 
+    /* Memulai Mini-Battle QTE untuk Evolution */
+    function initiateEvolutionQTE(c){
+      if(!checkEvolution(c)){
+        playSound('error');
+        showToast('EVOLUTION SEQUENCE IS LOCKED','Add an evolution WebM in assets/videos/evolution to unlock it.',true);
+        return;
+      }
+
+      closeOverlay('profile-overlay');
+      state.qteMode='evolution';
+      state.tapCount=0;
+      $('qte-eyebrow').textContent='GENOME RESONANCE // EVOLUTION SYNC';
+      $('battle-title').textContent='EVOLVE SEQUENCE';$('battle-desc').textContent='Ketuk secepat mungkin untuk menyelaraskan energi evolusi!';
+      $('tap-count').textContent='0';$('battle-timer').textContent='3.0s';
+      openOverlay('battle-overlay');
+      playSound('evolution',[50]);
+
+      let timeLeft=3.0;
+      clearInterval(state.battleTimerInterval);
+
+      state.battleTimerInterval=setInterval(()=>{
+        timeLeft=(timeLeft-0.1);
+        if(timeLeft<=0){
+          timeLeft=0;
+          clearInterval(state.battleTimerInterval);
+          closeOverlay('battle-overlay');
+          executeEvolutionVideo(state.tapCount);
+        }
+        $('battle-timer').textContent=timeLeft.toFixed(1)+'s';
+      },100);
+    }
+
     function handleQteTap(e){
       state.tapCount++;
       $('tap-count').textContent=state.tapCount;
       playSound('button',[15]);
 
-      // Membuat Floating Damage / Hit text interaktif saat ditap
       const dmgPopup=document.createElement('div');
       dmgPopup.className='floating-dmg';
-      dmgPopup.textContent=`+${Math.floor(Math.random()*150)+50}`;
+      dmgPopup.textContent=state.qteMode==='ultimate'?`+${Math.floor(Math.random()*150)+50}`:`+SYNC`;
       dmgPopup.style.left=`${e.clientX||(window.innerWidth/2)}px`;
       dmgPopup.style.top=`${(e.clientY||(window.innerHeight/2))-30}px`;
       document.body.appendChild(dmgPopup);
@@ -2761,6 +2799,19 @@
       playSound('ultimate',[80]);
       openOverlay('video-overlay');
       playVideoSequence(c,false);
+    }
+
+    function executeEvolutionVideo(taps){
+      const c=getCurrent();
+      setCharacterState('evolution');
+      state.player.evolutionUnlocked++;
+      saveGameState();
+      updatePlayerProgress();
+
+      showToast('EVOLUTION RESONANCE SUCCESS!',`Resonance Taps: ${taps} // DNA Unlocked!`);
+      playSound('evolution',[50,30,100]);
+      openOverlay('video-overlay');
+      playVideoSequence(c,true);
     }
 
     function closeUltimate(){
@@ -2814,23 +2865,6 @@
 
     function checkEvolution(c){
       return c.evolutionVideo||false;
-    }
-
-    function playEvolution(c){
-      setCharacterState('evolution');
-      playSound('evolution',[50,30,100]);
-      state.player.evolutionUnlocked++;
-      saveGameState();
-      updatePlayerProgress();
-
-      if(!checkEvolution(c)){
-        showToast('EVOLUTION SEQUENCE IS LOCKED','Add an evolution WebM in assets/videos/evolution to unlock it.',true);
-        setTimeout(()=>setCharacterState('idle'),700);
-        return;
-      }
-
-      openOverlay('video-overlay');
-      playVideoSequence(c,true);
     }
 
     function toggleSound(){
@@ -2956,7 +2990,7 @@
     window.triggerUltimate=triggerUltimate;
     window.closeUltimate=closeUltimate;
     window.loadCharacter=loadCharacter;
-    window.playEvolution=playEvolution;
+    window.initiateEvolutionQTE=initiateEvolutionQTE;
 
     boot();
   </script>
