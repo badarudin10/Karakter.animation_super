@@ -2552,17 +2552,17 @@
 
     const AudioManager={
 
-      cache:new Map(),
-      music:null,
+  cache:new Map(),
+  music:null,
 
-      init(){
-        this.music=new Audio(
-          'assets/audio/bg-music.mp3'
-        );
+  init(){
+    this.music=new Audio(
+      'assets/audio/background.mp3'
+    );
 
-        this.music.loop=true;
-        this.music.volume=.18;
-      },
+    this.music.loop=true;
+    this.music.volume=.18;
+  },
 
       play(name,volume=.55){
 
