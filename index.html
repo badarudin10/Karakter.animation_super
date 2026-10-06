@@ -316,6 +316,35 @@
       margin:4px 0 -4px;
     }
 
+    /* Tombol Navigasi Geser Karakter di Panggung Utama */
+    .stage-nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(86, 233, 255, 0.4);
+      color: var(--cyan);
+      font-size: 18px;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      backdrop-filter: blur(6px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+      transition: all 0.2s ease;
+    }
+    .stage-nav-btn:hover {
+      background: var(--cyan);
+      color: #06101b;
+      box-shadow: 0 0 20px var(--cyan);
+      transform: translateY(-50%) scale(1.1);
+    }
+    #prev-char-btn { left: 10px; }
+    #next-char-btn { right: 10px; }
+
     .stage-grid {
       position:absolute;
       width:min(82%,530px);
@@ -978,7 +1007,6 @@
       line-height:1.55;
     }
 
-    /* Style Baru untuk Evolution Path Interaktif */
     .evolution-track {
       display:flex;
       align-items:center;
@@ -1131,7 +1159,6 @@
       font-size:12px;
     }
 
-    /* QTE Arena / Mini Battle yang Bersih & Profesional */
     .battle-arena-modal {
       text-align: center;
       background: radial-gradient(circle at center, rgba(122,63,255,.2), #070b19);
@@ -1172,7 +1199,6 @@
       box-shadow: 0 0 15px rgba(86,233,255,.6);
     }
 
-    /* Floating Damage Text */
     .floating-dmg {
       position: absolute;
       z-index: 1000;
@@ -1658,6 +1684,10 @@
           </div>
 
           <div class="character-stage">
+            <!-- Tombol Navigasi Geser Karakter Kiri/Kanan -->
+            <button id="prev-char-btn" class="stage-nav-btn" type="button" aria-label="Karakter Sebelumnya">◀</button>
+            <button id="next-char-btn" class="stage-nav-btn" type="button" aria-label="Karakter Berikutnya">▶</button>
+
             <div class="stage-grid"></div>
             <div class="energy-ring"></div>
             <div class="scan-corners"></div>
@@ -1697,7 +1727,6 @@
             </div>
 
             <div class="actions">
-              <!-- TOMBOL MASUK ARENA -->
               <button
                 id="arena-button"
                 class="primary-btn"
@@ -1893,7 +1922,6 @@
     </div>
   </div>
 
-  <!-- Overlay untuk Mini Battle / QTE Ultimate & Evolution -->
   <div id="battle-overlay" class="overlay">
     <div class="modal battle-arena-modal">
       <div class="eyebrow" id="qte-eyebrow">QUICK TIME EVENT // CHARGE POWER</div>
@@ -1923,7 +1951,6 @@
   <script>
     'use strict';
 
-    /* UPDATE DATABASE: Karakter diubah merepresentasikan wujud awal (Base Form) */
     const characters = {
       pichu:{
         id:'pichu',
@@ -1957,6 +1984,72 @@
         accentColor:'#56e9ff',
         rarityColor:'#ffc857',
         battleStyle:'Fast burst damage with chain lightning.'
+      },
+      pikachu:{
+        id:'pikachu',
+        name:'Pikachu',
+        pokedex:'#025',
+        types:['Electric'],
+        rarity:'Rare',
+        level:12,
+        exp:820,
+        maxExp:1200,
+        hp:140,
+        attack:105,
+        defense:70,
+        speed:130,
+        specialAttack:110,
+        specialDefense:80,
+        ability:'Static',
+        specialMove:'Thunderbolt',
+        description:'Pokémon tikus listrik yang sangat populer dengan ekor berbentuk petir.',
+        lore:'Ketika Pikachu berkumpul, mereka dapat memicu sambaran petir yang dahsyat.',
+        height:'0.4 m',
+        weight:'6.0 kg',
+        category:'Mouse Pokémon',
+        habitat:'Forest',
+        evolution:'Pichu → Pikachu → Raichu',
+        image:'assets/images/pikachu.png',
+        video:'pikachu-animasi.webm',
+        evolutionVideo:'pikachu-evolution.webm',
+        sound:'assets/audio/ultimate.mp3',
+        themeColor:'#ffc857',
+        accentColor:'#56e9ff',
+        rarityColor:'#ffc857',
+        battleStyle:'High agility electric shocks.'
+      },
+      raichu:{
+        id:'raichu',
+        name:'Raichu',
+        pokedex:'#026',
+        types:['Electric'],
+        rarity:'Rare',
+        level:25,
+        exp:1100,
+        maxExp:1500,
+        hp:180,
+        attack:130,
+        defense:90,
+        speed:140,
+        specialAttack:135,
+        specialDefense:100,
+        ability:'Static',
+        specialMove:'Thunder',
+        description:'Ekornya yang panjang berfungsi sebagai ground untuk melindungi dirinya dari sengatan sendiri.',
+        lore:'Cahaya lemah terpancar dari tubuhnya di tempat gelap akibat listrik berlebih.',
+        height:'0.8 m',
+        weight:'30.0 kg',
+        category:'Mouse Pokémon',
+        habitat:'Forest / City',
+        evolution:'Pichu → Pikachu → Raichu',
+        image:'assets/images/raichu.png',
+        video:'raichu-animasi.webm',
+        evolutionVideo:'raichu-evolution.webm',
+        sound:'assets/audio/ultimate.mp3',
+        themeColor:'#ffaa33',
+        accentColor:'#56e9ff',
+        rarityColor:'#ffc857',
+        battleStyle:'Devastating high voltage discharges.'
       },
       charmander:{
         id:'charmander',
@@ -2398,7 +2491,7 @@
     }
 
     function getActiveStageId(c) {
-      return (c.currentEvolution || c.name).toLowerCase().replace(/[^a-z0-9]/g, '');
+      return (c.currentEvolution || c.id).toLowerCase().replace(/[^a-z0-9]/g, '');
     }
 
     function getActiveStageName(c) {
@@ -2492,6 +2585,19 @@
       }
     }
 
+    /* Fungsi Navigasi Geser Karakter Berikutnya / Sebelumnya */
+    function shiftCharacter(direction) {
+      const keys = Object.keys(characters);
+      let currentIndex = keys.indexOf(state.currentKey);
+      if (currentIndex === -1) currentIndex = 0;
+      
+      currentIndex = (currentIndex + direction + keys.length) % keys.length;
+      const nextKey = keys[currentIndex];
+      
+      playSound('select', [15]);
+      loadCharacter(nextKey);
+    }
+
     function updatePlayerProgress(){
       const p=state.player;
       const next=p.level*1000;
@@ -2503,7 +2609,7 @@
       $('viewed-count').textContent=p.viewed.length;
       $('ultimate-count').textContent=p.ultimateUsed;
       $('evolution-count').textContent=p.evolutionUnlocked;
-      $('collection-count').textContent=`${p.viewed.length} / 10`;
+      $('collection-count').textContent=`${p.viewed.length} / ${Object.keys(characters).length}`;
     }
 
     function renderCollection(){
@@ -2962,7 +3068,9 @@
     }
 
     function bindEvents(){
-      // TOMBOL NAVIGASI MENU KE ARENA
+      // Tombol Navigasi Geser Karakter Kiri / Kanan
+      $('prev-char-btn').addEventListener('click', () => shiftCharacter(-1));$('next-char-btn').addEventListener('click', () => shiftCharacter(1));
+
       $('arena-button').addEventListener('click',()=>{
         playSound('success');
         window.location.href=`arena.html?char=${state.currentKey}`;
@@ -3058,3 +3166,4 @@
   </script>
 </body>
 </html>
+
