@@ -64,10 +64,9 @@
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
 
-    // 1. MUAT GAMBAR SPRITE SHEET
+    // 1. MUAT GAMBAR SPRITE SHEET DENGAN PATH YANG BENAR
     const spritePikachu = new Image();
-    // GANTI NAMA FILE DI BAWAH INI DENGAN NAMA GAMBAR ANDA (CONTOH: '1000064344.png')
-    spritePikachu.src = 'pikachu-sprite.png'; 
+    spritePikachu.src = 'assets/pikachu-spritesheet.png'; 
 
     const GRAVITY = 0.6;
     const FLOOR_Y = 350;
@@ -240,3 +239,4 @@
   </script>
 </body>
 </html>
+
