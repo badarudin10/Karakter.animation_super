@@ -3,88 +3,86 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>BIIPBATTLE // FOREST ARENA</title>
+  <title>BIIPBATTLE // AUDIO-ENABLED STADIUM</title>
   <style>
     :root {
-      --bg: #050b08;
+      --bg: #020604;
       --cyan: #56e9ff;
       --green: #22c55e;
       --danger: #ef4444;
-      --panel: rgba(10, 20, 15, 0.85);
     }
     * { box-sizing: border-box; user-select: none; }
     body {
       margin: 0; padding: 0; background: var(--bg); color: white; font-family: Inter, system-ui, sans-serif;
-      overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: space-between; height: 100vh; height: 100dvh;
+      overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; height: 100vh; height: 100dvh;
     }
 
-    /* Header Profesional */
     .arena-header {
-      width: 100%; max-width: 900px; display: flex; justify-content: space-between; align-items: center;
-      padding: 10px 16px; background: rgba(5, 15, 10, 0.6); border-bottom: 1px solid rgba(34, 197, 94, 0.2); backdrop-filter: blur(8px);
+      position: absolute; top: 0; left: 0; right: 0; z-index: 60;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 20px; background: linear-gradient(to bottom, rgba(2,6,4,0.85), transparent);
     }
     .brand-title {
-      font-size: 12px; font-weight: 900; letter-spacing: 0.2em; color: var(--green); text-shadow: 0 0 10px rgba(34,197,194,0.4);
+      font-size: 11px; font-weight: 900; letter-spacing: 0.25em; color: #4ade80; text-shadow: 0 0 12px rgba(74,222,128,0.6);
     }
-    .header-icons { display: flex; gap: 8px; }
+    .header-actions { display: flex; gap: 8px; }
+    .action-link-btn {
+      background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.5); color: #fca5a5;
+      padding: 5px 12px; border-radius: 8px; font-size: 10px; font-weight: 800; letter-spacing: 0.1em;
+      cursor: pointer; text-decoration: none; display: flex; align-items: center; gap: 4px; backdrop-filter: blur(4px);
+    }
     .icon-btn {
-      width: 34px; height: 34px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15);
-      color: #fff; font-size: 14px; display: grid; place-items:center; cursor: pointer;
+      width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2);
+      color: #fff; font-size: 13px; display: grid; place-items: center; cursor: pointer; backdrop-filter: blur(4px);
     }
 
-    /* Game Container & Canvas */
     #game-container {
-      position: relative; width: 100%; max-width: 900px; flex: 1; display: flex; align-items: center; justify-content: center; padding: 6px;
+      position: relative; width: 100vw; height: 100vh; height: 100dvh; display: block; background: #020604;
     }
     canvas {
-      background: linear-gradient(to bottom, #1b382b 0%, #0d1f16 60%, #060f0a 100%);
-      border: 1px solid rgba(34, 197, 94, 0.35); border-radius: 14px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.8); width: 100%; max-height: 100%; object-fit: contain; display: block;
+      width: 100%; height: 100%; display: block; object-fit: cover;
     }
 
-    /* HUD Combat Modern (Darah Dua Warna) */
     .hud-overlay {
-      position: absolute; top: 16px; left: 24px; right: 24px; display: flex; justify-content: space-between; align-items: flex-start; pointer-events: none;
+      position: absolute; top: 55px; left: 20px; right: 20px; display: flex; justify-content: space-between; align-items: flex-start; pointer-events: none; z-index: 40;
     }
     .fighter-box {
-      background: var(--panel); border: 1px solid rgba(255,255,255,0.15); padding: 8px 12px; border-radius: 10px; width: 210px; backdrop-filter: blur(6px);
+      background: rgba(6, 18, 12, 0.8); border: 1px solid rgba(255,255,255,0.15); padding: 8px 14px; border-radius: 12px; width: 220px; backdrop-filter: blur(8px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
     }
-    .fighter-name { font-size: 11px; font-weight: 900; letter-spacing: 0.1em; margin-bottom: 4px; display: flex; justify-content: space-between; }
+    .fighter-name { font-size: 11px; font-weight: 900; letter-spacing: 0.1em; margin-bottom: 5px; display: flex; justify-content: space-between; }
     
-    /* Dual Color HP Bar (Hijau ke Merah) */
-    .hp-bar-bg { width: 100%; height: 9px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); border-radius: 5px; overflow: hidden; position: relative; }
-    .hp-bar-fill { width: 100%; height: 100%; background: var(--green); transition: width 0.2s ease, background 0.3s ease; }
+    .hp-bar-bg { width: 100%; height: 8px; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; overflow: hidden; }
+    .hp-bar-fill { width: 100%; height: 100%; background: var(--green); transition: width 0.2s ease, background 0.3s ease; box-shadow: 0 0 10px currentColor; }
 
-    /* Overlay Hitung Mundur & Menang/Kalah */
     .announcement-overlay {
-      position: absolute; inset: 0; background: rgba(3, 7, 5, 0.8); backdrop-filter: blur(5px);
-      display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 50; transition: opacity 0.3s;
+      position: absolute; inset: 0; background: rgba(2, 6, 4, 0.85); backdrop-filter: blur(8px);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 70; transition: opacity 0.3s;
     }
     .announcement-overlay.hidden { opacity: 0; pointer-events: none; }
-    .ann-title { font-size: 42px; font-weight: 950; letter-spacing: 0.15em; color: #fff; text-shadow: 0 0 20px rgba(34,197,94,0.6); margin-bottom: 5px; text-align: center; }
-    .ann-sub { font-size: 13px; color: #94a3b8; letter-spacing: 0.1em; text-transform: uppercase; }
+    .ann-title { font-size: 52px; font-weight: 950; letter-spacing: 0.15em; color: #fff; text-shadow: 0 0 30px rgba(34,197,94,0.8); margin-bottom: 5px; text-align: center; }
+    .ann-sub { font-size: 13px; color: #94a3b8; letter-spacing: 0.1em; text-transform: uppercase; text-align: center; line-height: 1.5; }
 
-    /* Kontrol Gamepad Transparan Profesional */
     .controls {
-      display: flex; justify-content: space-between; width: 100%; max-width: 900px;
-      padding: 10px 16px 16px; box-sizing: border-box; align-items: center;
+      position: absolute; bottom: 20px; left: 0; right: 0; z-index: 50;
+      display: flex; justify-content: space-between; padding: 0 24px; box-sizing: border-box; align-items: center;
+      pointer-events: none;
     }
-    .d-pad, .action-pad { display: flex; gap: 12px; }
+    .d-pad, .action-pad { display: flex; gap: 14px; pointer-events: auto; }
     .game-btn {
-      width: 58px; height: 58px; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.18);
-      border-radius: 50%; color: #fff; font-size: 18px; font-weight: 900;
+      width: 64px; height: 64px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 50%; color: #fff; font-size: 20px; font-weight: 900;
       display: flex; align-items: center; justify-content: center; user-select: none; touch-action: manipulation;
-      backdrop-filter: blur(4px); box-shadow: 0 6px 15px rgba(0,0,0,0.4); transition: transform 0.1s, background 0.1s;
+      backdrop-filter: blur(6px); box-shadow: 0 8px 25px rgba(0,0,0,0.6); transition: transform 0.1s, background 0.1s;
     }
-    .game-btn:active { background: rgba(34, 197, 94, 0.4); border-color: var(--green); transform: scale(0.9); }
-    .btn-action { border-radius: 18px; width: 78px; background: rgba(34, 197, 94, 0.12); border-color: rgba(34, 197, 94, 0.4); color: var(--green); }
+    .game-btn:active { background: rgba(34, 197, 94, 0.5); border-color: var(--green); transform: scale(0.9); }
+    .btn-action { border-radius: 20px; width: 88px; background: rgba(34, 197, 94, 0.18); border-color: rgba(34, 197, 94, 0.5); color: var(--green); }
 
-    /* Modal Informasi Kontrol */
     .modal-info {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; place-items: center; z-index: 100; padding: 20px;
+      position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; place-items: center; z-index: 100; padding: 20px; backdrop-filter: blur(6px);
     }
     .modal-info.show { display: grid; }
-    .modal-card { background: #0c1c14; border: 1px solid var(--green); border-radius: 16px; padding: 20px; max-width: 360px; width: 100%; text-align: center; }
+    .modal-card { background: #06140e; border: 1px solid var(--green); border-radius: 18px; padding: 22px; max-width: 360px; width: 100%; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
     .modal-card h3 { margin-top: 0; color: var(--green); letter-spacing: 0.1em; }
     .modal-card p { font-size: 12px; color: #cbd5e1; line-height: 1.6; }
   </style>
@@ -92,19 +90,18 @@
 <body>
 
   <header class="arena-header">
-    <div class="brand-title">BIIPBATTLE // FOREST STADIUM</div>
-    <div class="header-icons">
-      <button class="icon-btn" id="info-btn" title="Informasi Game">ℹ️</button>
-      <button class="icon-btn" onclick="location.href='index.html'" title="Keluar ke Menu">🏠</button>
+    <div class="brand-title" id="arena-title-header">BIIPBATTLE // STADIUM</div>
+    <div class="header-actions">
+      <a href="index.html" class="action-link-btn" onclick="AudioManager.stopAll()">🚪 KELUAR</a>
+      <button class="icon-btn" id="info-btn" title="Informasi">ℹ️</button>
     </div>
   </header>
 
   <div id="game-container">
-    <canvas id="gameCanvas" width="800" height="400"></canvas>
+    <canvas id="gameCanvas"></canvas>
     
     <div class="hud-overlay">
-      <!-- Player HUD -->
-      <div class="fighter-box" style="border-color: rgba(34,197,94,0.4);">
+      <div class="fighter-box" style="border-color: rgba(34,197,94,0.5);">
         <div class="fighter-name">
           <span id="player-name-hud" style="color: var(--green);">PICHU</span>
           <span id="player-hp-txt">100%</span>
@@ -112,8 +109,7 @@
         <div class="hp-bar-bg"><div id="player-hp-fill" class="hp-bar-fill"></div></div>
       </div>
 
-      <!-- Boss / Enemy HUD -->
-      <div class="fighter-box" style="border-color: rgba(239,68,68,0.4);">
+      <div class="fighter-box" style="border-color: rgba(239,68,68,0.5);">
         <div class="fighter-name">
           <span style="color: var(--danger);">[ ? ] OPPONENT</span>
           <span id="enemy-hp-txt">100%</span>
@@ -122,10 +118,9 @@
       </div>
     </div>
 
-    <!-- Overlay Hitung Mundur / Hasil Pertandingan -->
     <div id="announcement" class="announcement-overlay">
       <div id="ann-title" class="ann-title">3</div>
-      <div id="ann-sub" class="ann-sub">Mempersiapkan Arena Hutan...</div>
+      <div id="ann-sub" class="ann-sub">Mempersiapkan Pertarungan...</div>
     </div>
   </div>
 
@@ -140,14 +135,12 @@
     </div>
   </div>
 
-  <!-- Modal Info Panduan -->
   <div id="info-modal" class="modal-info">
     <div class="modal-card">
-      <h3>PANDUAN KONTROL</h3>
-      <p><b>Kiblat HP (Lanskap):</b> Miringkan HP Anda untuk pandangan luas.<br>
-      <b>Keyboard PC:</b> Panah Kiri/Kanan (Gerak), Panah Atas (Lompat), Spasi (Serang).<br>
-      <b>Aturan:</b> Habiskan HP musuh warna hijau ke merah untuk menang dan raih poin!</p>
-      <button class="game-btn btn-action" style="margin: 15px auto 0; width: 100px; height: 40px; font-size:12px;" id="close-modal">TUTUP</button>
+      <h3>PANDUAN KONTROL & AUDIO</h3>
+      <p><b>Audio Aktif:</b> Musik latar dan efek suara serangan otomatis menyala saat Anda berinteraksi dengan layar.<br>
+      <b>Aturan:</b> Habiskan HP musuh untuk menang dan kembali ke profil!</p>
+      <button class="game-btn btn-action" style="margin: 15px auto 0; width: 110px; height: 42px; font-size:12px;" id="close-modal">TUTUP</button>
     </div>
   </div>
 
@@ -155,11 +148,19 @@
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
 
-    // Ambil nama karakter dari parameter URL (contoh: ?char=charmander)
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
     const urlParams = new URLSearchParams(window.location.search);
     const charKey = urlParams.get('char') || 'pichu';
+    const arenaChoice = urlParams.get('arena') || '1';
     
-    // Mapping nama kapital karakter
+    document.getElementById('arena-title-header').textContent = `BIIPBATTLE // ARENA ${arenaChoice}`;
+
     const characterNames = {
       pichu: 'PICHU', charmander: 'CHARMANDER', froakie: 'FROAKIE', mew: 'MEW',
       bulbasaur: 'BULBASAUR', squirtle: 'SQUIRTLE', riolu: 'RIOLU', gastly: 'GASTLY',
@@ -168,44 +169,92 @@
     const activePlayerName = characterNames[charKey] || 'PICHU';
     document.getElementById('player-name-hud').textContent = activePlayerName;
 
+    // --- PENGELOLA AUDIO (AUDIO MANAGER) ---
+    const AudioManager = {
+      cache: new Map(),
+      music: null,
+
+      init() {
+        this.music = new Audio('assets/audio/background.mp3');
+        this.music.loop = true;
+        this.music.volume = 0.2;
+      },
+
+      play(name, volume = 0.55) {
+        try {
+          let a = this.cache.get(name);
+          if (!a) {
+            a = new Audio(`assets/audio/${name}.mp3`);
+            this.cache.set(name, a);
+          }
+          a.currentTime = 0;
+          a.volume = volume;
+          a.play().catch(() => {});
+        } catch (e) {}
+      },
+
+      startMusic() {
+        if (this.music) {
+          this.music.play().catch(() => {});
+        }
+      },
+
+      stopAll() {
+        if (this.music) {
+          this.music.pause();
+          this.music.currentTime = 0;
+        }
+        this.cache.forEach(a => {
+          a.pause();
+          a.currentTime = 0;
+        });
+      }
+    };
+
+    AudioManager.init();
+
+    // Memulai musik latar saat ada interaksi pertama di layar
+    document.addEventListener('pointerdown', () => {
+      AudioManager.startMusic();
+    }, { once: true });
+
+    const arenaBg = new Image();
+    arenaBg.src = arenaChoice === '2' ? 'assets/arena-forestbattle-2.png' : 'assets/arena-forest.png';
+
     const spritePikachu = new Image();
-    // Mengarahkan sprite berdasarkan pilihan karakter atau default pikachu-spritesheet
     spritePikachu.src = 'assets/pikachu-spritesheet.png';
 
     const GRAVITY = 0.55;
-    const FLOOR_Y = 310;
 
-    let gameState = 'COUNTDOWN'; // COUNTDOWN, PLAYING, GAMEOVER
+    let gameState = 'COUNTDOWN';
     let countdownVal = 3;
-    let matchScore = 0;
+    let matchScore = 350;
 
     const keys = { left: false, right: false, jump: false, attack: false };
 
     const player = {
-      x: 100, y: 190, width: 85, height: 85,
-      velocityX: 0, velocityY: 0, speed: 5.5, jumpPower: -11,
+      x: 150, y: 0, width: 95, height: 95,
+      velocityX: 0, velocityY: 0, speed: 6, jumpPower: -12,
       isGrounded: false, facingRight: true, cooldown: 0,
       hp: 100, maxHp: 100,
       frameX: 0, frameY: 0, maxFrame: 5, staggerFrames: 6, gameFrame: 0
     };
 
     const enemy = {
-      x: 620, y: FLOOR_Y - 70, width: 50, height: 70,
-      color: '#ef4444', hp: 100, maxHp: 100, flashTimer: 0, velocityX: 1.5
+      x: 0, y: 0, width: 60, height: 85,
+      color: '#ef4444', hp: 100, maxHp: 100, flashTimer: 0, velocityX: 2
     };
 
     const projectiles = [];
-    const forestTrees = [
-      { x: 50, w: 70, h: 180 }, { x: 220, w: 90, h: 220 },
-      { x: 480, w: 80, h: 200 }, { x: 700, w: 100, h: 240 }
-    ];
 
-    // Event Listeners Kontrol
     window.addEventListener('keydown', (e) => {
       if (e.code === 'ArrowLeft') keys.left = true;
       if (e.code === 'ArrowRight') keys.right = true;
       if (e.code === 'ArrowUp') keys.jump = true;
-      if (e.code === 'Space') keys.attack = true;
+      if (e.code === 'Space') {
+        keys.attack = true;
+        triggerAttackAction();
+      }
     });
     window.addEventListener('keyup', (e) => {
       if (e.code === 'ArrowLeft') keys.left = false;
@@ -214,22 +263,44 @@
       if (e.code === 'Space') keys.attack = false;
     });
 
-    function bindTouch(id, keyName) {
+    function bindTouch(id, keyName, isAction = false) {
       const btn = document.getElementById(id);
       if(!btn) return;
-      btn.addEventListener('touchstart', (e) => { e.preventDefault(); keys[keyName] = true; });
-      btn.addEventListener('touchend', (e) => { e.preventDefault(); keys[keyName] = false; });
-      btn.addEventListener('mousedown', () => { keys[keyName] = true; });
-      btn.addEventListener('mouseup', () => { keys[keyName] = false; });
+      const activate = (e) => {
+        e.preventDefault();
+        keys[keyName] = true;
+        if(isAction) triggerAttackAction();
+      };
+      const deactivate = (e) => {
+        e.preventDefault();
+        keys[keyName] = false;
+      };
+      btn.addEventListener('touchstart', activate);
+      btn.addEventListener('touchend', deactivate);
+      btn.addEventListener('mousedown', activate);
+      btn.addEventListener('mouseup', deactivate);
     }
-    bindTouch('btn-left', 'left'); bindTouch('btn-right', 'right');
-    bindTouch('btn-jump', 'jump'); bindTouch('btn-attack', 'attack');
+    bindTouch('btn-left', 'left'); 
+    bindTouch('btn-right', 'right');
+    bindTouch('btn-jump', 'jump'); 
+    bindTouch('btn-attack', 'attack', true);
 
-    // Info Modal Toggle
+    function triggerAttackAction() {
+      if (gameState !== 'PLAYING') return;
+      if (player.cooldown === 0) {
+        // Efek suara serangan / ultimate saat tombol ATK ditekan
+        AudioManager.play('ultimate', 0.6);
+        projectiles.push({
+          x: player.facingRight ? player.x + player.width - 15 : player.x,
+          y: player.y + 30, width: 22, height: 14, speedX: player.facingRight ? 14 : -14, isPlayer: true
+        });
+        player.cooldown = 18;
+      }
+    }
+
     document.getElementById('info-btn').onclick = () => document.getElementById('info-modal').classList.add('show');
     document.getElementById('close-modal').onclick = () => document.getElementById('info-modal').classList.remove('show');
 
-    // Logika Hitung Mundur Otomatis
     function startCountdown() {
       const ann = document.getElementById('announcement');
       const title = document.getElementById('ann-title');
@@ -239,9 +310,11 @@
         countdownVal--;
         if (countdownVal > 0) {
           title.textContent = countdownVal;
+          AudioManager.play('button', 0.4);
         } else if (countdownVal === 0) {
           title.textContent = 'FIGHT!';
-          sub.textContent = 'Mulai Pertarungan Hutan!';
+          sub.textContent = `Pertarungan Arena ${arenaChoice} Dimulai!`;
+          AudioManager.play('success', 0.7);
         } else {
           clearInterval(timer);
           ann.classList.add('hidden');
@@ -259,25 +332,29 @@
       fillEl.style.width = pct + '%';
       txtEl.textContent = pct + '%';
 
-      // Logika Warna Darah: Hijau (>50%), Kuning/Oranye (25-50%), Merah (<25%)
       if (pct > 50) {
-        fillEl.style.background = '#22c55e'; // Hijau
+        fillEl.style.background = '#22c55e';
       } else if (pct > 25) {
-        fillEl.style.background = '#eab308'; // Kuning
+        fillEl.style.background = '#eab308';
       } else {
-        fillEl.style.background = '#ef4444'; // Merah
+        fillEl.style.background = '#ef4444';
       }
     }
 
     function update() {
       if (gameState !== 'PLAYING') return;
 
-      // Pergerakan Player
+      const FLOOR_Y = canvas.height - 120;
+
       if (keys.left) { player.velocityX = -player.speed; player.facingRight = false; }
       else if (keys.right) { player.velocityX = player.speed; player.facingRight = true; }
       else { player.velocityX = 0; }
 
-      if (keys.jump && player.isGrounded) { player.velocityY = player.jumpPower; player.isGrounded = false; }
+      if (keys.jump && player.isGrounded) { 
+        player.velocityY = player.jumpPower; 
+        player.isGrounded = false; 
+        AudioManager.play('button', 0.3);
+      }
 
       player.velocityY += GRAVITY;
       player.x += player.velocityX;
@@ -286,24 +363,17 @@
       if (player.y + player.height >= FLOOR_Y) {
         player.y = FLOOR_Y - player.height; player.velocityY = 0; player.isGrounded = true;
       }
-      if (player.x < 10) player.x = 10;
-      if (player.x + player.width > canvas.width - 10) player.x = canvas.width - 10 - player.width;
+      if (player.x < 50) player.x = 50;
+      if (player.x + player.width > canvas.width - 50) player.x = canvas.width - 50 - player.width;
 
-      // Serangan / Tembakan Player
       if (player.cooldown > 0) player.cooldown--;
-      if (keys.attack && player.cooldown === 0) {
-        projectiles.push({
-          x: player.facingRight ? player.x + player.width - 15 : player.x,
-          y: player.y + 25, width: 20, height: 12, speedX: player.facingRight ? 12 : -12, isPlayer: true
-        });
-        player.cooldown = 20;
-      }
 
-      // Pergerakan AI Musuh Sederhana
+      if (enemy.x === 0) enemy.x = canvas.width - 200;
+      enemy.y = FLOOR_Y - enemy.height;
+
       enemy.x += enemy.velocityX;
-      if (enemy.x <= 400 || enemy.x >= canvas.width - 70) enemy.velocityX *= -1;
+      if (enemy.x <= canvas.width / 2 || enemy.x >= canvas.width - 120) enemy.velocityX *= -1;
 
-      // Animasi Sprite State
       if (keys.attack) { player.frameY = 2; }
       else if (!player.isGrounded) { player.frameY = 1; player.frameX = 3; }
       else if (keys.left || keys.right) { player.frameY = 1; }
@@ -317,15 +387,18 @@
       }
       player.gameFrame++;
 
-      // Deteksi Tabrakan Proyektil
       for (let i = projectiles.length - 1; i >= 0; i--) {
         let p = projectiles[i];
         p.x += p.speedX;
 
         if (p.isPlayer) {
-          // Kena Musuh
           if (p.x < enemy.x + enemy.width && p.x + p.width > enemy.x && p.y < enemy.y + enemy.height && p.y + p.height > enemy.y) {
-            enemy.hp -= 12; enemy.flashTimer = 8; projectiles.splice(i, 1);
+            enemy.hp -= 12; 
+            enemy.flashTimer = 8; 
+            projectiles.splice(i, 1);
+            
+            // Efek suara ketika musuh terkena serangan
+            AudioManager.play('scan', 0.5);
             updateHPBar(enemy.hp, enemy.maxHp, 'enemy-hp-fill', 'enemy-hp-txt');
 
             if (enemy.hp <= 0) {
@@ -341,58 +414,50 @@
     }
 
     function triggerWinScreen() {
-      matchScore += 350; // Poin bonus kemenangan
+      AudioManager.play('success', 0.8);
       const ann = document.getElementById('announcement');
       const title = document.getElementById('ann-title');
       const sub = document.getElementById('ann-sub');
 
       ann.classList.remove('hidden');
       title.textContent = 'YOU WIN!';
-      sub.innerHTML = `Pertarungan Berhasil! Poin Diperoleh: <b style="color:#22c55e;">+${matchScore} PTS</b><br><span style="font-size:10px; cursor:pointer; text-decoration:underline;" onclick="location.reload()">[ Main Lagi ]</span>`;
+      sub.innerHTML = `Pertarungan Selesai!<br>Poin Diperoleh: <b style="color:#22c55e;">+${matchScore} PTS</b><br><span style="font-size:11px; color:#56e9ff;">Kembali ke profil utama...</span>`;
+
+      setTimeout(() => {
+        AudioManager.stopAll();
+        window.location.href = `index.html?char=${charKey}`;
+      }, 3000);
     }
 
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
-      // 1. Latar Belakang Hutan Estetik (Pohon & Kanopi)
-      forestTrees.forEach(t => {
-        ctx.fillStyle = '#091c12';
-        ctx.fillRect(t.x, FLOOR_Y - t.h, t.w, t.h);
-        // Daun rimbun atas pohon
-        ctx.fillStyle = '#133822';
-        ctx.beginPath();
-        ctx.arc(t.x + t.w/2, FLOOR_Y - t.h, t.w * 0.8, 0, Math.PI * 2);
-        ctx.fill();
-      });
+      if (arenaBg.complete && arenaBg.naturalHeight !== 0) {
+        ctx.drawImage(arenaBg, 0, 0, canvas.width, canvas.height);
+      } else {
+        ctx.fillStyle = '#07150e';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
 
-      // 2. Lantai Hutan (Rumput & Tanah)
-      ctx.fillStyle = '#081710';
-      ctx.fillRect(0, FLOOR_Y, canvas.width, canvas.height - FLOOR_Y);
-      ctx.fillStyle = '#22c55e';
-      ctx.fillRect(0, FLOOR_Y, canvas.width, 3); // Garis rumput hijau tipis
-
-      // 3. Render Musuh / Opponent [ ? ]
       ctx.save();
-      ctx.shadowBlur = enemy.flashTimer > 0 ? 20 : 8;
+      ctx.shadowBlur = enemy.flashTimer > 0 ? 25 : 10;
       ctx.shadowColor = enemy.flashTimer > 0 ? '#fff' : '#ef4444';
       ctx.fillStyle = enemy.flashTimer > 0 ? '#fff' : enemy.color;
       ctx.beginPath();
-      ctx.roundRect(enemy.x, enemy.y, enemy.width, enemy.height, [6]);
+      ctx.roundRect(enemy.x, enemy.y, enemy.width, enemy.height, [8]);
       ctx.fill();
-      // Label [ ? ] di atas musuh
       ctx.fillStyle = '#fff';
-      ctx.font = 'bold 10px sans-serif';
-      ctx.fillText('[ ? ] BOSS', enemy.x - 2, enemy.y - 8);
+      ctx.font = 'bold 11px sans-serif';
+      ctx.fillText('[ ? ] BOSS', enemy.x - 4, enemy.y - 10);
       ctx.restore();
 
-      // 4. Render Karakter Pemain dari Sprite Sheet
       if (spritePikachu.complete && spritePikachu.naturalHeight !== 0) {
         const frameW = spritePikachu.width / 6;  
         const frameH = spritePikachu.height / 3; 
         
         ctx.save();
-        ctx.shadowBlur = 10;
-        ctx.shadowColor = 'rgba(34, 197, 94, 0.5)';
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = 'rgba(34, 197, 94, 0.6)';
 
         if (!player.facingRight) {
           ctx.translate(player.x + player.width, player.y);
@@ -407,12 +472,11 @@
         ctx.fillRect(player.x, player.y, player.width, player.height);
       }
 
-      // 5. Render Proyektil Serangan
       for (let p of projectiles) {
         ctx.save();
         ctx.fillStyle = '#56e9ff';
-        ctx.shadowBlur = 12; ctx.shadowColor = '#56e9ff';
-        ctx.beginPath(); ctx.arc(p.x + p.width/2, p.y + p.height/2, p.height * 0.8, 0, Math.PI * 2); ctx.fill();
+        ctx.shadowBlur = 15; ctx.shadowColor = '#56e9ff';
+        ctx.beginPath(); ctx.arc(p.x + p.width/2, p.y + p.height/2, p.height * 0.9, 0, Math.PI * 2); ctx.fill();
         ctx.restore();
       }
     }
