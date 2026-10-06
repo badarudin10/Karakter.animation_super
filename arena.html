@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>BiipBattle Arena - Prototype</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #060914;
+      color: white;
+      font-family: sans-serif;
+      overflow: hidden; /* Mencegah scroll di HP */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+    }
+    
+    /* Area Kanvas Game */
+    #game-container {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      margin-top: 20px;
+    }
+    
+    canvas {
+      background: linear-gradient(to bottom, #1a2a42, #0d1626);
+      border: 2px solid #56e9ff;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(86,233,255,0.2);
+      width: 100%;
+      display: block;
+    }
+
+    /* UI Darah Musuh (Health Bar) */
+    .hud {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      text-align: right;
+    }
+    .hp-bar-bg {
+      width: 150px;
+      height: 15px;
+      background: rgba(255,0,0,0.3);
+      border: 2px solid white;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .hp-bar-fill {
+      width: 100%;
+      height: 100%;
+      background: #64e6a4;
+      transition: width 0.2s;
+    }
+
+    /* Kontrol Sentuh (Untuk Mobile) */
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 800px;
+      padding: 20px;
+      box-sizing: border-box;
+      flex: 1;
+      align-items: flex-end;
+      padding-bottom: 40px;
+    }
+
+    .d-pad, .action-pad {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      width: 60px;
+      height: 60px;
+      background: rgba(86,233,255,0.2);
+      border: 2px solid #56e9ff;
+      border-radius: 50%;
+      color: #56e9ff;
+      font-size: 24px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      touch-action: manipulation; /* Optimasi sentuhan HP */
+    }
+    
+    .btn:active {
+      background: #56e9ff;
+      color: #000;
+      transform: scale(0.9);
+    }
+  </style>
+</head>
+<body>
+
+  <h2>BIIPBATTLE // TRAINING ARENA</h2>
+  <p style="font-size: 12px; color: #8c9ab3; margin-top: -10px;">Keyboard: Panah Kiri/Kanan, Panah Atas (Lompat), Spasi (Serang)</p>
+
+  <div id="game-container">
+    <canvas id="gameCanvas" width="800" height="400"></canvas>
+    
+    <div class="hud">
+      <div style="font-size: 12px; font-weight: bold; margin-bottom: 5px;">BOSS HP</div>
+      <div class="hp-bar-bg">
+        <div id="enemy-hp" class="hp-bar-fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tombol Mobile -->
+  <div class="controls">
+    <div class="d-pad">
+      <div class="btn" id="btn-left">◁</div>
+      <div class="btn" id="btn-right">▷</div>
+    </div>
+    <div class="action-pad">
+      <div class="btn" id="btn-jump">△</div>
+      <div class="btn" style="border-radius: 12px; width: 80px;" id="btn-attack">ATK</div>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Variabel Fisika Global
+    const GRAVITY = 0.6;
+    const FLOOR_Y = 350; // Posisi tanah Y (bawah kanvas)
+
+    // Deteksi Input Controller
+    const keys = {
+      left: false,
+      right: false,
+      jump: false,
+      attack: false
+    };
+
+    // Objek Pemain (Player)
+    const player = {
+      x: 100,
+      y: 200,
+      width: 40,
+      height: 40,
+      color: '#56e9ff', // Warna cyan
+      velocityX: 0,
+      velocityY: 0,
+      speed: 5,
+      jumpPower: -12,
+      isGrounded: false,
+      facingRight: true, // Menentukan arah hadap tembakan
+      cooldown: 0      // Jeda antar serangan
+    };
+
+    // Objek Musuh (Boss Dummy)
+    const enemy = {
+      x: 600,
+      y: FLOOR_Y - 80,
+      width: 60,
+      height: 80,
+      color: '#ff6b81', // Warna merah
+      hp: 100,
+      maxHp: 100,
+      flashTimer: 0 // Efek kedip saat terkena serangan
+    };
+
+    // Array untuk menyimpan tembakan (Proyektil)
+    const projectiles = [];
+
+    // --- LOGIKA INPUT KEYBOARD ---
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'ArrowLeft') keys.left = true;
+      if (e.code === 'ArrowRight') keys.right = true;
+      if (e.code === 'ArrowUp') keys.jump = true;
+      if (e.code === 'Space') keys.attack = true;
+    });
+
+    window.addEventListener('keyup', (e) => {
+      if (e.code === 'ArrowLeft') keys.left = false;
+      if (e.code === 'ArrowRight') keys.right = false;
+      if (e.code === 'ArrowUp') keys.jump = false;
+      if (e.code === 'Space') keys.attack = false;
+    });
+
+    // --- LOGIKA INPUT SENTUH (MOBILE) ---
+    function bindTouch(id, keyName) {
+      const btn = document.getElementById(id);
+      btn.addEventListener('touchstart', (e) => { e.preventDefault(); keys[keyName] = true; });
+      btn.addEventListener('touchend', (e) => { e.preventDefault(); keys[keyName] = false; });
+      btn.addEventListener('mousedown', () => keys[keyName] = true);
+      btn.addEventListener('mouseup', () => keys[keyName] = false);
+      btn.addEventListener('mouseleave', () => keys[keyName] = false);
+    }
+    
+    bindTouch('btn-left', 'left');
+    bindTouch('btn-right', 'right');
+    bindTouch('btn-jump', 'jump');
+    bindTouch('btn-attack', 'attack');
+
+    // --- FUNGSI UPDATE FISIKA & LOGIKA ---
+    function update() {
+      // 1. Pergerakan Horizontal Player
+      if (keys.left) {
+        player.velocityX = -player.speed;
+        player.facingRight = false;
+      } else if (keys.right) {
+        player.velocityX = player.speed;
+        player.facingRight = true;
+      } else {
+        player.velocityX = 0; // Berhenti jika tidak ditekan
+      }
+
+      // 2. Logika Lompat
+      if (keys.jump && player.isGrounded) {
+        player.velocityY = player.jumpPower;
+        player.isGrounded = false;
+      }
+
+      // 3. Terapkan Fisika & Gravitasi ke Posisi
+      player.velocityY += GRAVITY;
+      player.x += player.velocityX;
+      player.y += player.velocityY;
+
+      // 4. Deteksi Tabrakan dengan Tanah (Lantai)
+      if (player.y + player.height >= FLOOR_Y) {
+        player.y = FLOOR_Y - player.height;
+        player.velocityY = 0;
+        player.isGrounded = true;
+      }
+
+      // 5. Batas Layar Kiri & Kanan
+      if (player.x < 0) player.x = 0;
+      if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
+
+      // 6. Logika Menyerang (Menembakkan Proyektil)
+      if (player.cooldown > 0) player.cooldown--;
+      
+      if (keys.attack && player.cooldown === 0) {
+        projectiles.push({
+          x: player.facingRight ? player.x + player.width : player.x,
+          y: player.y + 15,
+          width: 15,
+          height: 10,
+          speedX: player.facingRight ? 10 : -10,
+          color: '#ffc857'
+        });
+        player.cooldown = 15; // Beri jeda 15 frame sebelum bisa nembak lagi
+      }
+
+      // 7. Update Posisi Proyektil & Cek Kena Musuh (Hitbox Collision)
+      for (let i = projectiles.length - 1; i >= 0; i--) {
+        let p = projectiles[i];
+        p.x += p.speedX;
+
+        // Cek tabrakan: Apakah proyektil (Hitbox) mengenai Musuh (Hurtbox)?
+        if (p.x < enemy.x + enemy.width &&
+            p.x + p.width > enemy.x &&
+            p.y < enemy.y + enemy.height &&
+            p.y + p.height > enemy.y) {
+            
+            // Jika kena!
+            enemy.hp -= 5;
+            enemy.flashTimer = 10; // Musuh kedip putih selama 10 frame
+            projectiles.splice(i, 1); // Hapus proyektil yang sudah kena target
+            
+            // Update bar darah UI
+            let hpPercentage = Math.max(0, (enemy.hp / enemy.maxHp) * 100);
+            document.getElementById('enemy-hp').style.width = hpPercentage + '%';
+            
+            // Jika musuh mati, reset (Respawn)
+            if (enemy.hp <= 0) {
+              enemy.hp = enemy.maxHp;
+              enemy.x = Math.random() * (canvas.width - 200) + 100; // Pindah tempat
+            }
+            continue;
+        }
+
+        // Hapus proyektil jika keluar dari layar
+        if (p.x < 0 || p.x > canvas.width) {
+          projectiles.splice(i, 1);
+        }
+      }
+      
+      // Update Timer Kedip Musuh
+      if (enemy.flashTimer > 0) enemy.flashTimer--;
+    }
+
+    // --- FUNGSI MENGGAMBAR (RENDER) ---
+    function draw() {
+      // 1. Bersihkan Canvas (Hapus frame sebelumnya)
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // 2. Gambar Lantai Arena
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(0, FLOOR_Y, canvas.width, canvas.height - FLOOR_Y);
+      
+      // Garis lantai bersinar
+      ctx.beginPath();
+      ctx.moveTo(0, FLOOR_Y);
+      ctx.lineTo(canvas.width, FLOOR_Y);
+      ctx.strokeStyle = 'rgba(86,233,255,0.3)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // 3. Gambar Musuh
+      ctx.fillStyle = enemy.flashTimer > 0 ? 'white' : enemy.color;
+      ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+
+      // 4. Gambar Pemain (Kotak Biru)
+      ctx.fillStyle = player.color;
+      ctx.fillRect(player.x, player.y, player.width, player.height);
+      
+      // Gambar mata pemain (untuk indikator arah hadap)
+      ctx.fillStyle = 'black';
+      if (player.facingRight) {
+        ctx.fillRect(player.x + 25, player.y + 10, 5, 5);
+      } else {
+        ctx.fillRect(player.x + 10, player.y + 10, 5, 5);
+      }
+
+      // 5. Gambar Semua Proyektil (Peluru/Jurus)
+      for (let p of projectiles) {
+        ctx.fillStyle = p.color;
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = p.color; // Efek bersinar (Glow)
+        ctx.fillRect(p.x, p.y, p.width, p.height);
+        ctx.shadowBlur = 0; // Reset shadow agar objek lain tidak ikut bersinar
+      }
+    }
+
+    // --- GAME LOOP UTAMA ---
+    function gameLoop() {
+      update(); // Hitung matematika posisi
+      draw();   // Gambar di layar
+      requestAnimationFrame(gameLoop); // Panggil fungsi ini berulang-ulang secepat mungkin (60 FPS)
+    }
+
+    // Mulai Game Loop!
+    gameLoop();
+  </script>
+</body>
+</html>
