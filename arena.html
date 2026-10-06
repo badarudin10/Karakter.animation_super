@@ -3,109 +3,151 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>BIIPBATTLE // PRO ARENA</title>
+  <title>BIIPBATTLE // FOREST ARENA</title>
   <style>
     :root {
-      --bg: #030712;
+      --bg: #050b08;
       --cyan: #56e9ff;
-      --violet: #9a7bff;
-      --danger: #ff6b81;
-      --panel: rgba(15, 23, 42, 0.75);
+      --green: #22c55e;
+      --danger: #ef4444;
+      --panel: rgba(10, 20, 15, 0.85);
     }
+    * { box-sizing: border-box; user-select: none; }
     body {
       margin: 0; padding: 0; background: var(--bg); color: white; font-family: Inter, system-ui, sans-serif;
-      overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh;
+      overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: space-between; height: 100vh; height: 100dvh;
     }
+
+    /* Header Profesional */
     .arena-header {
-      text-align: center; margin-bottom: 8px;
+      width: 100%; max-width: 900px; display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 16px; background: rgba(5, 15, 10, 0.6); border-bottom: 1px solid rgba(34, 197, 94, 0.2); backdrop-filter: blur(8px);
     }
-    .arena-header h2 {
-      margin: 0; font-size: 14px; letter-spacing: 0.25em; color: var(--cyan); text-shadow: 0 0 10px rgba(86,233,255,0.5);
+    .brand-title {
+      font-size: 12px; font-weight: 900; letter-spacing: 0.2em; color: var(--green); text-shadow: 0 0 10px rgba(34,197,194,0.4);
     }
-    .arena-header p {
-      margin: 2px 0 0; font-size: 9px; color: #64748b; letter-spacing: 0.1em; text-transform: uppercase;
+    .header-icons { display: flex; gap: 8px; }
+    .icon-btn {
+      width: 34px; height: 34px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15);
+      color: #fff; font-size: 14px; display: grid; place-items:center; cursor: pointer;
     }
+
+    /* Game Container & Canvas */
     #game-container {
-      position: relative; width: 100%; max-width: 820px; padding: 0 10px; box-sizing: border-box;
+      position: relative; width: 100%; max-width: 900px; flex: 1; display: flex; align-items: center; justify-content: center; padding: 6px;
     }
     canvas {
-      background: radial-gradient(circle at 50% 30%, #1e1b4b 0%, #090d16 70%, #02040a 100%);
-      border: 1px solid rgba(86, 233, 255, 0.35); border-radius: 18px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 0 30px rgba(86,233,255,0.1);
-      width: 100%; display: block; aspect-ratio: 2/1;
+      background: linear-gradient(to bottom, #1b382b 0%, #0d1f16 60%, #060f0a 100%);
+      border: 1px solid rgba(34, 197, 94, 0.35); border-radius: 14px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.8); width: 100%; max-height: 100%; object-fit: contain; display: block;
     }
-    
-    /* HUD UI Modern */
+
+    /* HUD Combat Modern (Darah Dua Warna) */
     .hud-overlay {
-      position: absolute; top: 12px; left: 22px; right: 22px; display: flex; justify-content: space-between; align-items: center; pointer-events: none;
+      position: absolute; top: 16px; left: 24px; right: 24px; display: flex; justify-content: space-between; align-items: flex-start; pointer-events: none;
     }
-    .boss-hud {
-      background: rgba(10, 15, 30, 0.85); border: 1px solid rgba(255,107,129,0.4); padding: 8px 12px; border-radius: 10px; backdrop-filter: blur(8px);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.4); width: 220px;
+    .fighter-box {
+      background: var(--panel); border: 1px solid rgba(255,255,255,0.15); padding: 8px 12px; border-radius: 10px; width: 210px; backdrop-filter: blur(6px);
     }
-    .hud-title {
-      display: flex; justify-content: space-between; font-size: 9px; font-weight: 900; letter-spacing: 0.15em; color: var(--danger); margin-bottom: 4px;
-    }
-    .hp-bar-bg {
-      width: 100%; height: 8px; background: rgba(255,0,0,0.2); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; overflow: hidden;
-    }
-    .hp-bar-fill { width: 100%; height: 100%; background: linear-gradient(90deg, #ff4757, #ff6b81); transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 8px var(--danger); }
+    .fighter-name { font-size: 11px; font-weight: 900; letter-spacing: 0.1em; margin-bottom: 4px; display: flex; justify-content: space-between; }
+    
+    /* Dual Color HP Bar (Hijau ke Merah) */
+    .hp-bar-bg { width: 100%; height: 9px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); border-radius: 5px; overflow: hidden; position: relative; }
+    .hp-bar-fill { width: 100%; height: 100%; background: var(--green); transition: width 0.2s ease, background 0.3s ease; }
 
-    .player-hud {
-      background: rgba(10, 15, 30, 0.85); border: 1px solid rgba(86,233,255,0.4); padding: 8px 12px; border-radius: 10px; backdrop-filter: blur(8px); font-size: 10px; font-weight: 800; letter-spacing: 0.1em; color: var(--cyan);
+    /* Overlay Hitung Mundur & Menang/Kalah */
+    .announcement-overlay {
+      position: absolute; inset: 0; background: rgba(3, 7, 5, 0.8); backdrop-filter: blur(5px);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 50; transition: opacity 0.3s;
     }
+    .announcement-overlay.hidden { opacity: 0; pointer-events: none; }
+    .ann-title { font-size: 42px; font-weight: 950; letter-spacing: 0.15em; color: #fff; text-shadow: 0 0 20px rgba(34,197,94,0.6); margin-bottom: 5px; text-align: center; }
+    .ann-sub { font-size: 13px; color: #94a3b8; letter-spacing: 0.1em; text-transform: uppercase; }
 
-    /* Kontrol Pad Futuristik */
+    /* Kontrol Gamepad Transparan Profesional */
     .controls {
-      display: flex; justify-content: space-between; width: 100%; max-width: 820px;
-      padding: 14px 10px 0; box-sizing: border-box; align-items: center;
+      display: flex; justify-content: space-between; width: 100%; max-width: 900px;
+      padding: 10px 16px 16px; box-sizing: border-box; align-items: center;
     }
     .d-pad, .action-pad { display: flex; gap: 12px; }
-    .btn {
-      width: 62px; height: 62px; background: rgba(255,255,255,0.04); border: 1px solid rgba(86,233,255,0.3);
-      border-radius: 16px; color: var(--cyan); font-size: 20px; font-weight: 900;
+    .game-btn {
+      width: 58px; height: 58px; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 50%; color: #fff; font-size: 18px; font-weight: 900;
       display: flex; align-items: center; justify-content: center; user-select: none; touch-action: manipulation;
-      backdrop-filter: blur(5px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); transition: all 0.1s ease;
+      backdrop-filter: blur(4px); box-shadow: 0 6px 15px rgba(0,0,0,0.4); transition: transform 0.1s, background 0.1s;
     }
-    .btn:active { background: var(--cyan); color: #000; transform: scale(0.92); box-shadow: 0 0 15px var(--cyan); }
-    .btn-action {
-      border-radius: 16px; width: 85px; background: linear-gradient(135deg, rgba(86,233,255,0.15), rgba(154,123,255,0.15)); border-color: rgba(154,123,255,0.4); color: #fff;
+    .game-btn:active { background: rgba(34, 197, 94, 0.4); border-color: var(--green); transform: scale(0.9); }
+    .btn-action { border-radius: 18px; width: 78px; background: rgba(34, 197, 94, 0.12); border-color: rgba(34, 197, 94, 0.4); color: var(--green); }
+
+    /* Modal Informasi Kontrol */
+    .modal-info {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; place-items: center; z-index: 100; padding: 20px;
     }
-    .btn-action:active { background: linear-gradient(135deg, var(--cyan), var(--violet)); color: #000; }
+    .modal-info.show { display: grid; }
+    .modal-card { background: #0c1c14; border: 1px solid var(--green); border-radius: 16px; padding: 20px; max-width: 360px; width: 100%; text-align: center; }
+    .modal-card h3 { margin-top: 0; color: var(--green); letter-spacing: 0.1em; }
+    .modal-card p { font-size: 12px; color: #cbd5e1; line-height: 1.6; }
   </style>
 </head>
 <body>
 
-  <div class="arena-header">
-    <h2>BIIPBATTLE // PRO CYBER ARENA</h2>
-    <p>Navigasi: Panah Kiri/Kanan · Lompat: Panah Atas · Serang: Spasi / ATK</p>
-  </div>
+  <header class="arena-header">
+    <div class="brand-title">BIIPBATTLE // FOREST STADIUM</div>
+    <div class="header-icons">
+      <button class="icon-btn" id="info-btn" title="Informasi Game">ℹ️</button>
+      <button class="icon-btn" onclick="location.href='index.html'" title="Keluar ke Menu">🏠</button>
+    </div>
+  </header>
 
   <div id="game-container">
     <canvas id="gameCanvas" width="800" height="400"></canvas>
     
     <div class="hud-overlay">
-      <div class="player-hud">
-        <span>PLAYER // ACTIVE</span>
-      </div>
-      <div class="boss-hud">
-        <div class="hud-title">
-          <span>TARGET BOSS</span>
-          <span id="boss-hp-text">100%</span>
+      <!-- Player HUD -->
+      <div class="fighter-box" style="border-color: rgba(34,197,94,0.4);">
+        <div class="fighter-name">
+          <span id="player-name-hud" style="color: var(--green);">PICHU</span>
+          <span id="player-hp-txt">100%</span>
         </div>
-        <div class="hp-bar-bg"><div id="enemy-hp" class="hp-bar-fill"></div></div>
+        <div class="hp-bar-bg"><div id="player-hp-fill" class="hp-bar-fill"></div></div>
       </div>
+
+      <!-- Boss / Enemy HUD -->
+      <div class="fighter-box" style="border-color: rgba(239,68,68,0.4);">
+        <div class="fighter-name">
+          <span style="color: var(--danger);">[ ? ] OPPONENT</span>
+          <span id="enemy-hp-txt">100%</span>
+        </div>
+        <div class="hp-bar-bg"><div id="enemy-hp-fill" class="hp-bar-fill" style="background: var(--danger);"></div></div>
+      </div>
+    </div>
+
+    <!-- Overlay Hitung Mundur / Hasil Pertandingan -->
+    <div id="announcement" class="announcement-overlay">
+      <div id="ann-title" class="ann-title">3</div>
+      <div id="ann-sub" class="ann-sub">Mempersiapkan Arena Hutan...</div>
     </div>
   </div>
 
   <div class="controls">
     <div class="d-pad">
-      <div class="btn" id="btn-left">◀</div>
-      <div class="btn" id="btn-right">▶</div>
+      <div class="game-btn" id="btn-left">◀</div>
+      <div class="game-btn" id="btn-right">▶</div>
     </div>
     <div class="action-pad">
-      <div class="btn" id="btn-jump">▲</div>
-      <div class="btn btn-action" id="btn-attack">ATK</div>
+      <div class="game-btn" id="btn-jump">▲</div>
+      <div class="game-btn btn-action" id="btn-attack">ATK</div>
+    </div>
+  </div>
+
+  <!-- Modal Info Panduan -->
+  <div id="info-modal" class="modal-info">
+    <div class="modal-card">
+      <h3>PANDUAN KONTROL</h3>
+      <p><b>Kiblat HP (Lanskap):</b> Miringkan HP Anda untuk pandangan luas.<br>
+      <b>Keyboard PC:</b> Panah Kiri/Kanan (Gerak), Panah Atas (Lompat), Spasi (Serang).<br>
+      <b>Aturan:</b> Habiskan HP musuh warna hijau ke merah untuk menang dan raih poin!</p>
+      <button class="game-btn btn-action" style="margin: 15px auto 0; width: 100px; height: 40px; font-size:12px;" id="close-modal">TUTUP</button>
     </div>
   </div>
 
@@ -113,33 +155,52 @@
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
 
+    // Ambil nama karakter dari parameter URL (contoh: ?char=charmander)
+    const urlParams = new URLSearchParams(window.location.search);
+    const charKey = urlParams.get('char') || 'pichu';
+    
+    // Mapping nama kapital karakter
+    const characterNames = {
+      pichu: 'PICHU', charmander: 'CHARMANDER', froakie: 'FROAKIE', mew: 'MEW',
+      bulbasaur: 'BULBASAUR', squirtle: 'SQUIRTLE', riolu: 'RIOLU', gastly: 'GASTLY',
+      rayquaza: 'RAYQUAZA', eevee: 'EEVEE'
+    };
+    const activePlayerName = characterNames[charKey] || 'PICHU';
+    document.getElementById('player-name-hud').textContent = activePlayerName;
+
     const spritePikachu = new Image();
-    spritePikachu.src = 'assets/pikachu-spritesheet.png'; 
+    // Mengarahkan sprite berdasarkan pilihan karakter atau default pikachu-spritesheet
+    spritePikachu.src = 'assets/pikachu-spritesheet.png';
 
     const GRAVITY = 0.55;
-    const FLOOR_Y = 320;
+    const FLOOR_Y = 310;
+
+    let gameState = 'COUNTDOWN'; // COUNTDOWN, PLAYING, GAMEOVER
+    let countdownVal = 3;
+    let matchScore = 0;
 
     const keys = { left: false, right: false, jump: false, attack: false };
 
     const player = {
-      x: 100, y: 200, width: 90, height: 90,
-      velocityX: 0, velocityY: 0, speed: 6, jumpPower: -11.5,
+      x: 100, y: 190, width: 85, height: 85,
+      velocityX: 0, velocityY: 0, speed: 5.5, jumpPower: -11,
       isGrounded: false, facingRight: true, cooldown: 0,
+      hp: 100, maxHp: 100,
       frameX: 0, frameY: 0, maxFrame: 5, staggerFrames: 6, gameFrame: 0
     };
 
-    const enemy = { x: 620, y: FLOOR_Y - 75, width: 55, height: 75, color: '#ff6b81', hp: 100, maxHp: 100, flashTimer: 0 };
+    const enemy = {
+      x: 620, y: FLOOR_Y - 70, width: 50, height: 70,
+      color: '#ef4444', hp: 100, maxHp: 100, flashTimer: 0, velocityX: 1.5
+    };
+
     const projectiles = [];
-    const particles = [];
+    const forestTrees = [
+      { x: 50, w: 70, h: 180 }, { x: 220, w: 90, h: 220 },
+      { x: 480, w: 80, h: 200 }, { x: 700, w: 100, h: 240 }
+    ];
 
-    // Latar belakang bintang/partikel neon mengambang
-    const bgParticles = Array.from({ length: 30 }, () => ({
-      x: Math.random() * canvas.width,
-      y: Math.random() * FLOOR_Y,
-      size: Math.random() * 2 + 1,
-      speed: Math.random() * 0.4 + 0.1
-    }));
-
+    // Event Listeners Kontrol
     window.addEventListener('keydown', (e) => {
       if (e.code === 'ArrowLeft') keys.left = true;
       if (e.code === 'ArrowRight') keys.right = true;
@@ -155,13 +216,63 @@
 
     function bindTouch(id, keyName) {
       const btn = document.getElementById(id);
+      if(!btn) return;
       btn.addEventListener('touchstart', (e) => { e.preventDefault(); keys[keyName] = true; });
       btn.addEventListener('touchend', (e) => { e.preventDefault(); keys[keyName] = false; });
+      btn.addEventListener('mousedown', () => { keys[keyName] = true; });
+      btn.addEventListener('mouseup', () => { keys[keyName] = false; });
     }
     bindTouch('btn-left', 'left'); bindTouch('btn-right', 'right');
     bindTouch('btn-jump', 'jump'); bindTouch('btn-attack', 'attack');
 
+    // Info Modal Toggle
+    document.getElementById('info-btn').onclick = () => document.getElementById('info-modal').classList.add('show');
+    document.getElementById('close-modal').onclick = () => document.getElementById('info-modal').classList.remove('show');
+
+    // Logika Hitung Mundur Otomatis
+    function startCountdown() {
+      const ann = document.getElementById('announcement');
+      const title = document.getElementById('ann-title');
+      const sub = document.getElementById('ann-sub');
+
+      let timer = setInterval(() => {
+        countdownVal--;
+        if (countdownVal > 0) {
+          title.textContent = countdownVal;
+        } else if (countdownVal === 0) {
+          title.textContent = 'FIGHT!';
+          sub.textContent = 'Mulai Pertarungan Hutan!';
+        } else {
+          clearInterval(timer);
+          ann.classList.add('hidden');
+          gameState = 'PLAYING';
+        }
+      }, 1000);
+    }
+    startCountdown();
+
+    function updateHPBar(current, max, fillId, txtId) {
+      const fillEl = document.getElementById(fillId);
+      const txtEl = document.getElementById(txtId);
+      const pct = Math.max(0, Math.round((current / max) * 100));
+      
+      fillEl.style.width = pct + '%';
+      txtEl.textContent = pct + '%';
+
+      // Logika Warna Darah: Hijau (>50%), Kuning/Oranye (25-50%), Merah (<25%)
+      if (pct > 50) {
+        fillEl.style.background = '#22c55e'; // Hijau
+      } else if (pct > 25) {
+        fillEl.style.background = '#eab308'; // Kuning
+      } else {
+        fillEl.style.background = '#ef4444'; // Merah
+      }
+    }
+
     function update() {
+      if (gameState !== 'PLAYING') return;
+
+      // Pergerakan Player
       if (keys.left) { player.velocityX = -player.speed; player.facingRight = false; }
       else if (keys.right) { player.velocityX = player.speed; player.facingRight = true; }
       else { player.velocityX = 0; }
@@ -175,18 +286,22 @@
       if (player.y + player.height >= FLOOR_Y) {
         player.y = FLOOR_Y - player.height; player.velocityY = 0; player.isGrounded = true;
       }
-
       if (player.x < 10) player.x = 10;
       if (player.x + player.width > canvas.width - 10) player.x = canvas.width - 10 - player.width;
 
+      // Serangan / Tembakan Player
       if (player.cooldown > 0) player.cooldown--;
       if (keys.attack && player.cooldown === 0) {
         projectiles.push({
-          x: player.facingRight ? player.x + player.width - 20 : player.x,
-          y: player.y + 28, width: 22, height: 14, speedX: player.facingRight ? 13 : -13, color: '#56e9ff'
+          x: player.facingRight ? player.x + player.width - 15 : player.x,
+          y: player.y + 25, width: 20, height: 12, speedX: player.facingRight ? 12 : -12, isPlayer: true
         });
-        player.cooldown = 18;
+        player.cooldown = 20;
       }
+
+      // Pergerakan AI Musuh Sederhana
+      enemy.x += enemy.velocityX;
+      if (enemy.x <= 400 || enemy.x >= canvas.width - 70) enemy.velocityX *= -1;
 
       // Animasi Sprite State
       if (keys.attack) { player.frameY = 2; }
@@ -202,91 +317,82 @@
       }
       player.gameFrame++;
 
-      // Update Proyektil & Tabrakan
+      // Deteksi Tabrakan Proyektil
       for (let i = projectiles.length - 1; i >= 0; i--) {
         let p = projectiles[i];
         p.x += p.speedX;
-        
-        // Buat jejak partikel cahaya di belakang proyektil
-        particles.push({ x: p.x, y: p.y + 7, size: Math.random() * 3 + 1, alpha: 1, color: '#56e9ff' });
 
-        if (p.x < enemy.x + enemy.width && p.x + p.width > enemy.x && p.y < enemy.y + enemy.height && p.y + p.height > enemy.y) {
-          enemy.hp -= 8; enemy.flashTimer = 8; projectiles.splice(i, 1);
-          
-          let percent = Math.max(0, Math.round((enemy.hp / enemy.maxHp) * 100));
-          document.getElementById('enemy-hp').style.width = percent + '%';
-          document.getElementById('boss-hp-text').textContent = percent + '%';
+        if (p.isPlayer) {
+          // Kena Musuh
+          if (p.x < enemy.x + enemy.width && p.x + p.width > enemy.x && p.y < enemy.y + enemy.height && p.y + p.height > enemy.y) {
+            enemy.hp -= 12; enemy.flashTimer = 8; projectiles.splice(i, 1);
+            updateHPBar(enemy.hp, enemy.maxHp, 'enemy-hp-fill', 'enemy-hp-txt');
 
-          if (enemy.hp <= 0) { 
-            enemy.hp = enemy.maxHp; 
-            enemy.x = Math.random() * 300 + 400; 
+            if (enemy.hp <= 0) {
+              gameState = 'GAMEOVER';
+              triggerWinScreen();
+            }
+            continue;
           }
-          continue;
         }
         if (p.x < 0 || p.x > canvas.width) projectiles.splice(i, 1);
       }
-
       if (enemy.flashTimer > 0) enemy.flashTimer--;
+    }
 
-      // Update Partikel Background & Jejak
-      bgParticles.forEach(pt => {
-        pt.x -= pt.speed;
-        if (pt.x < 0) pt.x = canvas.width;
-      });
+    function triggerWinScreen() {
+      matchScore += 350; // Poin bonus kemenangan
+      const ann = document.getElementById('announcement');
+      const title = document.getElementById('ann-title');
+      const sub = document.getElementById('ann-sub');
 
-      for (let i = particles.length - 1; i >= 0; i--) {
-        let pt = particles[i];
-        pt.alpha -= 0.05;
-        if (pt.alpha <= 0) particles.splice(i, 1);
-      }
+      ann.classList.remove('hidden');
+      title.textContent = 'YOU WIN!';
+      sub.innerHTML = `Pertarungan Berhasil! Poin Diperoleh: <b style="color:#22c55e;">+${matchScore} PTS</b><br><span style="font-size:10px; cursor:pointer; text-decoration:underline;" onclick="location.reload()">[ Main Lagi ]</span>`;
     }
 
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
-      // 1. Latar Belakang Futuristik (Grid & Pilar Cahaya)
-      ctx.strokeStyle = 'rgba(86, 233, 255, 0.04)';
-      ctx.lineWidth = 1;
-      for (let x = 0; x < canvas.width; x += 40) {
-        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, FLOOR_Y); ctx.stroke();
-      }
-
-      // Partikel Bintang / Debu Kosmik
-      bgParticles.forEach(pt => {
-        ctx.fillStyle = 'rgba(86, 233, 255, 0.3)';
-        ctx.fillRect(pt.x, pt.y, pt.size, pt.size);
+      // 1. Latar Belakang Hutan Estetik (Pohon & Kanopi)
+      forestTrees.forEach(t => {
+        ctx.fillStyle = '#091c12';
+        ctx.fillRect(t.x, FLOOR_Y - t.h, t.w, t.h);
+        // Daun rimbun atas pohon
+        ctx.fillStyle = '#133822';
+        ctx.beginPath();
+        ctx.arc(t.x + t.w/2, FLOOR_Y - t.h, t.w * 0.8, 0, Math.PI * 2);
+        ctx.fill();
       });
 
-      // 2. Lantai Arena Bergaya Neon Hologram
-      ctx.fillStyle = '#0a1020';
+      // 2. Lantai Hutan (Rumput & Tanah)
+      ctx.fillStyle = '#081710';
       ctx.fillRect(0, FLOOR_Y, canvas.width, canvas.height - FLOOR_Y);
-      
-      // Garis Neon Lantai Atas
-      ctx.shadowBlur = 15;
-      ctx.shadowColor = '#56e9ff';
-      ctx.strokeStyle = '#56e9ff';
-      ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.moveTo(0, FLOOR_Y); ctx.lineTo(canvas.width, FLOOR_Y); ctx.stroke();
-      ctx.shadowBlur = 0; // Reset shadow
+      ctx.fillStyle = '#22c55e';
+      ctx.fillRect(0, FLOOR_Y, canvas.width, 3); // Garis rumput hijau tipis
 
-      // 3. Render Boss/Target Latihan dengan Efek Hologram
+      // 3. Render Musuh / Opponent [ ? ]
       ctx.save();
-      ctx.shadowBlur = enemy.flashTimer > 0 ? 25 : 10;
-      ctx.shadowColor = enemy.flashTimer > 0 ? '#ffffff' : '#ff6b81';
-      ctx.fillStyle = enemy.flashTimer > 0 ? '#ffffff' : enemy.color;
+      ctx.shadowBlur = enemy.flashTimer > 0 ? 20 : 8;
+      ctx.shadowColor = enemy.flashTimer > 0 ? '#fff' : '#ef4444';
+      ctx.fillStyle = enemy.flashTimer > 0 ? '#fff' : enemy.color;
       ctx.beginPath();
-      ctx.roundRect(enemy.x, enemy.y, enemy.width, enemy.height, [8]);
+      ctx.roundRect(enemy.x, enemy.y, enemy.width, enemy.height, [6]);
       ctx.fill();
+      // Label [ ? ] di atas musuh
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 10px sans-serif';
+      ctx.fillText('[ ? ] BOSS', enemy.x - 2, enemy.y - 8);
       ctx.restore();
 
-      // 4. RENDER SPRITE SHEET KARAKTER DENGAN BERKELAS
+      // 4. Render Karakter Pemain dari Sprite Sheet
       if (spritePikachu.complete && spritePikachu.naturalHeight !== 0) {
         const frameW = spritePikachu.width / 6;  
         const frameH = spritePikachu.height / 3; 
         
         ctx.save();
-        ctx.shadowBlur = 12;
-        ctx.shadowColor = 'rgba(86, 233, 255, 0.4)';
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = 'rgba(34, 197, 94, 0.5)';
 
         if (!player.facingRight) {
           ctx.translate(player.x + player.width, player.y);
@@ -297,31 +403,26 @@
         }
         ctx.restore();
       } else {
-        ctx.fillStyle = '#56e9ff'; 
+        ctx.fillStyle = '#22c55e'; 
         ctx.fillRect(player.x, player.y, player.width, player.height);
       }
 
-      // 5. Render Proyektil & Partikel Jejak Energi
-      particles.forEach(pt => {
-        ctx.fillStyle = `rgba(86, 233, 255, ${pt.alpha})`;
-        ctx.fillRect(pt.x, pt.y, pt.size, pt.size);
-      });
-
+      // 5. Render Proyektil Serangan
       for (let p of projectiles) {
         ctx.save();
-        ctx.fillStyle = p.color; 
-        ctx.shadowBlur = 18; 
-        ctx.shadowColor = p.color;
-        ctx.beginPath(); 
-        ctx.arc(p.x + p.width/2, p.y + p.height/2, p.height * 0.9, 0, Math.PI * 2); 
-        ctx.fill();
+        ctx.fillStyle = '#56e9ff';
+        ctx.shadowBlur = 12; ctx.shadowColor = '#56e9ff';
+        ctx.beginPath(); ctx.arc(p.x + p.width/2, p.y + p.height/2, p.height * 0.8, 0, Math.PI * 2); ctx.fill();
         ctx.restore();
       }
     }
 
-    function gameLoop() { update(); draw(); requestAnimationFrame(gameLoop); }
+    function gameLoop() {
+      update();
+      draw();
+      requestAnimationFrame(gameLoop);
+    }
     gameLoop();
   </script>
 </body>
 </html>
-
