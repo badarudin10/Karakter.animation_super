@@ -3,60 +3,109 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>BiipBattle Arena - Pikachu Sprite</title>
+  <title>BIIPBATTLE // PRO ARENA</title>
   <style>
+    :root {
+      --bg: #030712;
+      --cyan: #56e9ff;
+      --violet: #9a7bff;
+      --danger: #ff6b81;
+      --panel: rgba(15, 23, 42, 0.75);
+    }
     body {
-      margin: 0; padding: 0; background: #060914; color: white; font-family: sans-serif;
-      overflow: hidden; display: flex; flex-direction: column; align-items: center; height: 100vh;
+      margin: 0; padding: 0; background: var(--bg); color: white; font-family: Inter, system-ui, sans-serif;
+      overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh;
+    }
+    .arena-header {
+      text-align: center; margin-bottom: 8px;
+    }
+    .arena-header h2 {
+      margin: 0; font-size: 14px; letter-spacing: 0.25em; color: var(--cyan); text-shadow: 0 0 10px rgba(86,233,255,0.5);
+    }
+    .arena-header p {
+      margin: 2px 0 0; font-size: 9px; color: #64748b; letter-spacing: 0.1em; text-transform: uppercase;
     }
     #game-container {
-      position: relative; width: 100%; max-width: 800px; margin-top: 20px;
+      position: relative; width: 100%; max-width: 820px; padding: 0 10px; box-sizing: border-box;
     }
     canvas {
-      background: linear-gradient(to bottom, #1a2a42, #0d1626);
-      border: 2px solid #56e9ff; border-radius: 12px;
-      box-shadow: 0 0 20px rgba(86,233,255,0.2); width: 100%; display: block;
+      background: radial-gradient(circle at 50% 30%, #1e1b4b 0%, #090d16 70%, #02040a 100%);
+      border: 1px solid rgba(86, 233, 255, 0.35); border-radius: 18px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 0 30px rgba(86,233,255,0.1);
+      width: 100%; display: block; aspect-ratio: 2/1;
     }
-    .hud { position: absolute; top: 15px; right: 20px; text-align: right; }
+    
+    /* HUD UI Modern */
+    .hud-overlay {
+      position: absolute; top: 12px; left: 22px; right: 22px; display: flex; justify-content: space-between; align-items: center; pointer-events: none;
+    }
+    .boss-hud {
+      background: rgba(10, 15, 30, 0.85); border: 1px solid rgba(255,107,129,0.4); padding: 8px 12px; border-radius: 10px; backdrop-filter: blur(8px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4); width: 220px;
+    }
+    .hud-title {
+      display: flex; justify-content: space-between; font-size: 9px; font-weight: 900; letter-spacing: 0.15em; color: var(--danger); margin-bottom: 4px;
+    }
     .hp-bar-bg {
-      width: 150px; height: 15px; background: rgba(255,0,0,0.3); border: 2px solid white; border-radius: 8px; overflow: hidden;
+      width: 100%; height: 8px; background: rgba(255,0,0,0.2); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; overflow: hidden;
     }
-    .hp-bar-fill { width: 100%; height: 100%; background: #64e6a4; transition: width 0.2s; }
+    .hp-bar-fill { width: 100%; height: 100%; background: linear-gradient(90deg, #ff4757, #ff6b81); transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 8px var(--danger); }
+
+    .player-hud {
+      background: rgba(10, 15, 30, 0.85); border: 1px solid rgba(86,233,255,0.4); padding: 8px 12px; border-radius: 10px; backdrop-filter: blur(8px); font-size: 10px; font-weight: 800; letter-spacing: 0.1em; color: var(--cyan);
+    }
+
+    /* Kontrol Pad Futuristik */
     .controls {
-      display: flex; justify-content: space-between; width: 100%; max-width: 800px;
-      padding: 20px; box-sizing: border-box; flex: 1; align-items: flex-end; padding-bottom: 40px;
+      display: flex; justify-content: space-between; width: 100%; max-width: 820px;
+      padding: 14px 10px 0; box-sizing: border-box; align-items: center;
     }
-    .d-pad, .action-pad { display: flex; gap: 10px; }
+    .d-pad, .action-pad { display: flex; gap: 12px; }
     .btn {
-      width: 60px; height: 60px; background: rgba(86,233,255,0.2); border: 2px solid #56e9ff;
-      border-radius: 50%; color: #56e9ff; font-size: 24px; font-weight: bold;
+      width: 62px; height: 62px; background: rgba(255,255,255,0.04); border: 1px solid rgba(86,233,255,0.3);
+      border-radius: 16px; color: var(--cyan); font-size: 20px; font-weight: 900;
       display: flex; align-items: center; justify-content: center; user-select: none; touch-action: manipulation;
+      backdrop-filter: blur(5px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); transition: all 0.1s ease;
     }
-    .btn:active { background: #56e9ff; color: #000; transform: scale(0.9); }
+    .btn:active { background: var(--cyan); color: #000; transform: scale(0.92); box-shadow: 0 0 15px var(--cyan); }
+    .btn-action {
+      border-radius: 16px; width: 85px; background: linear-gradient(135deg, rgba(86,233,255,0.15), rgba(154,123,255,0.15)); border-color: rgba(154,123,255,0.4); color: #fff;
+    }
+    .btn-action:active { background: linear-gradient(135deg, var(--cyan), var(--violet)); color: #000; }
   </style>
 </head>
 <body>
 
-  <h2>BIIPBATTLE // TRAINING ARENA</h2>
-  <p style="font-size: 12px; color: #8c9ab3; margin-top: -10px;">Keyboard: Panah Kiri/Kanan, Panah Atas (Lompat), Spasi (Serang)</p>
+  <div class="arena-header">
+    <h2>BIIPBATTLE // PRO CYBER ARENA</h2>
+    <p>Navigasi: Panah Kiri/Kanan · Lompat: Panah Atas · Serang: Spasi / ATK</p>
+  </div>
 
   <div id="game-container">
     <canvas id="gameCanvas" width="800" height="400"></canvas>
     
-    <div class="hud">
-      <div style="font-size: 12px; font-weight: bold; margin-bottom: 5px;">BOSS HP</div>
-      <div class="hp-bar-bg"><div id="enemy-hp" class="hp-bar-fill"></div></div>
+    <div class="hud-overlay">
+      <div class="player-hud">
+        <span>PLAYER // ACTIVE</span>
+      </div>
+      <div class="boss-hud">
+        <div class="hud-title">
+          <span>TARGET BOSS</span>
+          <span id="boss-hp-text">100%</span>
+        </div>
+        <div class="hp-bar-bg"><div id="enemy-hp" class="hp-bar-fill"></div></div>
+      </div>
     </div>
   </div>
 
   <div class="controls">
     <div class="d-pad">
-      <div class="btn" id="btn-left">◁</div>
-      <div class="btn" id="btn-right">▷</div>
+      <div class="btn" id="btn-left">◀</div>
+      <div class="btn" id="btn-right">▶</div>
     </div>
     <div class="action-pad">
-      <div class="btn" id="btn-jump">△</div>
-      <div class="btn" style="border-radius: 12px; width: 80px;" id="btn-attack">ATK</div>
+      <div class="btn" id="btn-jump">▲</div>
+      <div class="btn btn-action" id="btn-attack">ATK</div>
     </div>
   </div>
 
@@ -64,34 +113,33 @@
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
 
-    // 1. MUAT GAMBAR SPRITE SHEET DENGAN PATH YANG BENAR
     const spritePikachu = new Image();
     spritePikachu.src = 'assets/pikachu-spritesheet.png'; 
 
-    const GRAVITY = 0.6;
-    const FLOOR_Y = 350;
+    const GRAVITY = 0.55;
+    const FLOOR_Y = 320;
 
     const keys = { left: false, right: false, jump: false, attack: false };
 
-    // 2. SETUP PROPERTI PEMAIN & ANIMASI
     const player = {
-      x: 100, y: 200, 
-      width: 100, height: 100, // Ukuran render karakter di game
-      velocityX: 0, velocityY: 0, speed: 6, jumpPower: -12,
+      x: 100, y: 200, width: 90, height: 90,
+      velocityX: 0, velocityY: 0, speed: 6, jumpPower: -11.5,
       isGrounded: false, facingRight: true, cooldown: 0,
-      
-      // Properti Sprite
-      frameX: 0,        // Kolom saat ini (0-5)
-      frameY: 0,        // Baris saat ini (0, 1, atau 2)
-      maxFrame: 5,      // Karena ada 6 kolom, hitungan dimulai dari 0 sampai 5
-      staggerFrames: 6, // Kecepatan animasi (semakin kecil semakin cepat)
-      gameFrame: 0
+      frameX: 0, frameY: 0, maxFrame: 5, staggerFrames: 6, gameFrame: 0
     };
 
-    const enemy = { x: 600, y: FLOOR_Y - 80, width: 60, height: 80, color: '#ff6b81', hp: 100, maxHp: 100, flashTimer: 0 };
+    const enemy = { x: 620, y: FLOOR_Y - 75, width: 55, height: 75, color: '#ff6b81', hp: 100, maxHp: 100, flashTimer: 0 };
     const projectiles = [];
+    const particles = [];
 
-    // Input Keyboard
+    // Latar belakang bintang/partikel neon mengambang
+    const bgParticles = Array.from({ length: 30 }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * FLOOR_Y,
+      size: Math.random() * 2 + 1,
+      speed: Math.random() * 0.4 + 0.1
+    }));
+
     window.addEventListener('keydown', (e) => {
       if (e.code === 'ArrowLeft') keys.left = true;
       if (e.code === 'ArrowRight') keys.right = true;
@@ -105,7 +153,6 @@
       if (e.code === 'Space') keys.attack = false;
     });
 
-    // Input Sentuh
     function bindTouch(id, keyName) {
       const btn = document.getElementById(id);
       btn.addEventListener('touchstart', (e) => { e.preventDefault(); keys[keyName] = true; });
@@ -115,15 +162,12 @@
     bindTouch('btn-jump', 'jump'); bindTouch('btn-attack', 'attack');
 
     function update() {
-      // Pergerakan Kiri/Kanan
       if (keys.left) { player.velocityX = -player.speed; player.facingRight = false; }
       else if (keys.right) { player.velocityX = player.speed; player.facingRight = true; }
       else { player.velocityX = 0; }
 
-      // Lompat
       if (keys.jump && player.isGrounded) { player.velocityY = player.jumpPower; player.isGrounded = false; }
 
-      // Gravitasi & Posisi
       player.velocityY += GRAVITY;
       player.x += player.velocityX;
       player.y += player.velocityY;
@@ -132,33 +176,25 @@
         player.y = FLOOR_Y - player.height; player.velocityY = 0; player.isGrounded = true;
       }
 
-      if (player.x < 0) player.x = 0;
-      if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
+      if (player.x < 10) player.x = 10;
+      if (player.x + player.width > canvas.width - 10) player.x = canvas.width - 10 - player.width;
 
-      // Logika Menyerang & Menembak
       if (player.cooldown > 0) player.cooldown--;
       if (keys.attack && player.cooldown === 0) {
         projectiles.push({
           x: player.facingRight ? player.x + player.width - 20 : player.x,
-          y: player.y + 30, width: 25, height: 15, speedX: player.facingRight ? 12 : -12, color: '#ffeb3b'
+          y: player.y + 28, width: 22, height: 14, speedX: player.facingRight ? 13 : -13, color: '#56e9ff'
         });
-        player.cooldown = 20; // Jeda peluru
+        player.cooldown = 18;
       }
 
-      // --- 3. PENGATURAN STATE ANIMASI SPRITE ---
-      if (keys.attack) {
-        player.frameY = 2; // Baris ke-3: Menyerang
-      } else if (!player.isGrounded) {
-        player.frameY = 1; // Lompat pakai baris ke-2 (Lari)
-        player.frameX = 3; // Kunci di frame tertentu saat melayang
-      } else if (keys.left || keys.right) {
-        player.frameY = 1; // Baris ke-2: Berlari
-      } else {
-        player.frameY = 0; // Baris ke-1: Idle (Diam)
-      }
+      // Animasi Sprite State
+      if (keys.attack) { player.frameY = 2; }
+      else if (!player.isGrounded) { player.frameY = 1; player.frameX = 3; }
+      else if (keys.left || keys.right) { player.frameY = 1; }
+      else { player.frameY = 0; }
 
-      // Penghitung Loop Animasi
-      if (player.isGrounded || keys.attack) { 
+      if (player.isGrounded || keys.attack) {
         if (player.gameFrame % player.staggerFrames === 0) {
           if (player.frameX < player.maxFrame) player.frameX++;
           else player.frameX = 0;
@@ -166,71 +202,120 @@
       }
       player.gameFrame++;
 
-      // Logika Tembakan & Tabrakan Musuh
+      // Update Proyektil & Tabrakan
       for (let i = projectiles.length - 1; i >= 0; i--) {
         let p = projectiles[i];
         p.x += p.speedX;
+        
+        // Buat jejak partikel cahaya di belakang proyektil
+        particles.push({ x: p.x, y: p.y + 7, size: Math.random() * 3 + 1, alpha: 1, color: '#56e9ff' });
+
         if (p.x < enemy.x + enemy.width && p.x + p.width > enemy.x && p.y < enemy.y + enemy.height && p.y + p.height > enemy.y) {
-            enemy.hp -= 5; enemy.flashTimer = 10; projectiles.splice(i, 1);
-            document.getElementById('enemy-hp').style.width = Math.max(0, (enemy.hp / enemy.maxHp) * 100) + '%';
-            if (enemy.hp <= 0) { enemy.hp = enemy.maxHp; enemy.x = Math.random() * (canvas.width - 200) + 100; }
-            continue;
+          enemy.hp -= 8; enemy.flashTimer = 8; projectiles.splice(i, 1);
+          
+          let percent = Math.max(0, Math.round((enemy.hp / enemy.maxHp) * 100));
+          document.getElementById('enemy-hp').style.width = percent + '%';
+          document.getElementById('boss-hp-text').textContent = percent + '%';
+
+          if (enemy.hp <= 0) { 
+            enemy.hp = enemy.maxHp; 
+            enemy.x = Math.random() * 300 + 400; 
+          }
+          continue;
         }
         if (p.x < 0 || p.x > canvas.width) projectiles.splice(i, 1);
       }
+
       if (enemy.flashTimer > 0) enemy.flashTimer--;
+
+      // Update Partikel Background & Jejak
+      bgParticles.forEach(pt => {
+        pt.x -= pt.speed;
+        if (pt.x < 0) pt.x = canvas.width;
+      });
+
+      for (let i = particles.length - 1; i >= 0; i--) {
+        let pt = particles[i];
+        pt.alpha -= 0.05;
+        if (pt.alpha <= 0) particles.splice(i, 1);
+      }
     }
 
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
-      // Gambar Lantai
-      ctx.fillStyle = '#0f172a'; ctx.fillRect(0, FLOOR_Y, canvas.width, canvas.height - FLOOR_Y);
-      ctx.beginPath(); ctx.moveTo(0, FLOOR_Y); ctx.lineTo(canvas.width, FLOOR_Y);
-      ctx.strokeStyle = 'rgba(86,233,255,0.3)'; ctx.lineWidth = 2; ctx.stroke();
-
-      // Gambar Musuh
-      ctx.fillStyle = enemy.flashTimer > 0 ? 'white' : enemy.color;
-      ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
-
-      // --- 4. RENDER GAMBAR SPRITESHEET ---
-      if (spritePikachu.complete && spritePikachu.naturalHeight !== 0) { // Pastikan gambar sudah termuat
-        
-        // Hitung otomatis lebar dan tinggi 1 kotak frame dari file gambar asli
-        const frameW = spritePikachu.width / 6;  // Ada 6 kolom
-        const frameH = spritePikachu.height / 3; // Ada 3 baris
-        
-        ctx.save();
-        
-        if (!player.facingRight) {
-          // Membalikkan gambar ke kiri jika berjalan ke kiri
-          ctx.translate(player.x + player.width, player.y);
-          ctx.scale(-1, 1);
-          ctx.drawImage(
-            spritePikachu, 
-            player.frameX * frameW, player.frameY * frameH, frameW, frameH, 
-            0, 0, player.width, player.height
-          );
-        } else {
-          // Menghadap ke kanan normal
-          ctx.drawImage(
-            spritePikachu, 
-            player.frameX * frameW, player.frameY * frameH, frameW, frameH, 
-            player.x, player.y, player.width, player.height
-          );
-        }
-        
-        ctx.restore();
-      } else {
-        // Fallback (Kotak Merah Muda) jika gambar gagal dimuat atau salah nama
-        ctx.fillStyle = 'pink'; ctx.fillRect(player.x, player.y, player.width, player.height);
+      // 1. Latar Belakang Futuristik (Grid & Pilar Cahaya)
+      ctx.strokeStyle = 'rgba(86, 233, 255, 0.04)';
+      ctx.lineWidth = 1;
+      for (let x = 0; x < canvas.width; x += 40) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, FLOOR_Y); ctx.stroke();
       }
 
-      // Gambar Proyektil (Bola Energi/Listrik)
+      // Partikel Bintang / Debu Kosmik
+      bgParticles.forEach(pt => {
+        ctx.fillStyle = 'rgba(86, 233, 255, 0.3)';
+        ctx.fillRect(pt.x, pt.y, pt.size, pt.size);
+      });
+
+      // 2. Lantai Arena Bergaya Neon Hologram
+      ctx.fillStyle = '#0a1020';
+      ctx.fillRect(0, FLOOR_Y, canvas.width, canvas.height - FLOOR_Y);
+      
+      // Garis Neon Lantai Atas
+      ctx.shadowBlur = 15;
+      ctx.shadowColor = '#56e9ff';
+      ctx.strokeStyle = '#56e9ff';
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(0, FLOOR_Y); ctx.lineTo(canvas.width, FLOOR_Y); ctx.stroke();
+      ctx.shadowBlur = 0; // Reset shadow
+
+      // 3. Render Boss/Target Latihan dengan Efek Hologram
+      ctx.save();
+      ctx.shadowBlur = enemy.flashTimer > 0 ? 25 : 10;
+      ctx.shadowColor = enemy.flashTimer > 0 ? '#ffffff' : '#ff6b81';
+      ctx.fillStyle = enemy.flashTimer > 0 ? '#ffffff' : enemy.color;
+      ctx.beginPath();
+      ctx.roundRect(enemy.x, enemy.y, enemy.width, enemy.height, [8]);
+      ctx.fill();
+      ctx.restore();
+
+      // 4. RENDER SPRITE SHEET KARAKTER DENGAN BERKELAS
+      if (spritePikachu.complete && spritePikachu.naturalHeight !== 0) {
+        const frameW = spritePikachu.width / 6;  
+        const frameH = spritePikachu.height / 3; 
+        
+        ctx.save();
+        ctx.shadowBlur = 12;
+        ctx.shadowColor = 'rgba(86, 233, 255, 0.4)';
+
+        if (!player.facingRight) {
+          ctx.translate(player.x + player.width, player.y);
+          ctx.scale(-1, 1);
+          ctx.drawImage(spritePikachu, player.frameX * frameW, player.frameY * frameH, frameW, frameH, 0, 0, player.width, player.height);
+        } else {
+          ctx.drawImage(spritePikachu, player.frameX * frameW, player.frameY * frameH, frameW, frameH, player.x, player.y, player.width, player.height);
+        }
+        ctx.restore();
+      } else {
+        ctx.fillStyle = '#56e9ff'; 
+        ctx.fillRect(player.x, player.y, player.width, player.height);
+      }
+
+      // 5. Render Proyektil & Partikel Jejak Energi
+      particles.forEach(pt => {
+        ctx.fillStyle = `rgba(86, 233, 255, ${pt.alpha})`;
+        ctx.fillRect(pt.x, pt.y, pt.size, pt.size);
+      });
+
       for (let p of projectiles) {
-        ctx.fillStyle = p.color; ctx.shadowBlur = 10; ctx.shadowColor = p.color;
-        ctx.beginPath(); ctx.arc(p.x + p.width/2, p.y + p.height/2, p.height, 0, Math.PI * 2); ctx.fill();
-        ctx.shadowBlur = 0;
+        ctx.save();
+        ctx.fillStyle = p.color; 
+        ctx.shadowBlur = 18; 
+        ctx.shadowColor = p.color;
+        ctx.beginPath(); 
+        ctx.arc(p.x + p.width/2, p.y + p.height/2, p.height * 0.9, 0, Math.PI * 2); 
+        ctx.fill();
+        ctx.restore();
       }
     }
 
