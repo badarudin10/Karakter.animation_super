@@ -1697,6 +1697,16 @@
             </div>
 
             <div class="actions">
+              <!-- TOMBOL MASUK ARENA -->
+              <button
+                id="arena-button"
+                class="primary-btn"
+                type="button"
+                style="background: linear-gradient(100deg, #ff7b61, #ffc857); box-shadow: 0 0 22px rgba(255, 200, 87, 0.3); color: #06101b;"
+              >
+                ⚔️ MASUK ARENA
+              </button>
+
               <button
                 id="ultimate-button"
                 class="primary-btn"
@@ -2270,7 +2280,7 @@
     });
 
     const state={
-      currentKey:'pichu', // Default karakter pertama yang ter-load sekarang adalah Pichu
+      currentKey:'pichu',
       characterState:'idle',
       soundOn:true,
       player:{
@@ -2387,7 +2397,6 @@
       return characters[state.currentKey]||characters.pichu;
     }
 
-    /* Helper Fungsi untuk Mendapatkan Id & Nama Tahapan Evolusi yang Sedang Aktif */
     function getActiveStageId(c) {
       return (c.currentEvolution || c.name).toLowerCase().replace(/[^a-z0-9]/g, '');
     }
@@ -2447,7 +2456,6 @@
       $('char-image').src=`assets/images/${stageId}.png`;
       $('char-image').alt=stageName;
 
-      // Fallback jika artwork spesifik evolusi belum tersedia, maka pakai image dasar (Base)
       $('char-image').onerror=()=>{
         if ($('char-image').src !== c.image) {
            $('char-image').src = c.image;
@@ -2467,7 +2475,7 @@
     function loadCharacter(key,options={}){
       state.currentKey=characters[key]?key:'pichu';
       const c=getCurrent();
-      c.currentEvolution = null; // Selalu reset ke Wujud Dasar (Base Form) ketika ganti karakter
+      c.currentEvolution = null;
 
       renderCharacterCard(c);
 
@@ -2603,7 +2611,6 @@
       },780);
     }
 
-    /* Markup untuk jalur evolusi interaktif */
     function evolutionMarkup(c){
       const parts=c.evolution.split('→').map(v=>v.trim());
       const activeName = getActiveStageName(c);
@@ -2697,24 +2704,16 @@
           </div>
         </div>`;
 
-      // Event listener khusus untuk mengubah karakter di evolution path
       $('profile-content').querySelectorAll('.evo-node-btn').forEach(btn => {
          btn.addEventListener('click', () => {
             const nodeName = btn.dataset.evoName;
-            
-            // Jika sudah aktif, abaikan
             if (c.currentEvolution === nodeName || (!c.currentEvolution && nodeName === c.name)) return;
-            
             playSound('select');
-            c.currentEvolution = nodeName; // Set karakter evolusi dinamis
-            
-            // Update UI Profil & Kartu Hero
+            c.currentEvolution = nodeName;
             renderCharacterCard(c);
             renderProfile(c);
-            
-            // Buka Preview Animasi!
             openOverlay('video-overlay');
-            playVideoSequence(c, false); // false = animasi ultimate wujud tersebut
+            playVideoSequence(c, false);
             showToast('PREVIEW EVOLUSI', `Pratinjau wujud ${nodeName} ditampilkan.`);
          });
       });
@@ -2963,6 +2962,12 @@
     }
 
     function bindEvents(){
+      // TOMBOL NAVIGASI MENU KE ARENA
+      $('arena-button').addEventListener('click',()=>{
+        playSound('success');
+        window.location.href=`arena.html?char=${state.currentKey}`;
+      });
+
       $('ultimate-button').addEventListener('click',triggerUltimate);$('tap-strike-btn').addEventListener('click',handleQteTap);
       $('scan-button').addEventListener('click',openScanner);$('profile-button').addEventListener('click',openProfile);
       $('sound-toggle').addEventListener('click',toggleSound);$('settings-button').addEventListener('click',openProfile);
@@ -3053,4 +3058,3 @@
   </script>
 </body>
 </html>
-
