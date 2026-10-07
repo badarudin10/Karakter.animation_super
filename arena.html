@@ -121,7 +121,7 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:1}
     <div class="vc p" id="pBox">
       <img id="vi1" alt="">
       <div class="name-box"><b id="vn1"></b></div>
-      <div class="move-tag" id="pm1">THUNDER RUSH</div>
+      <div class="move-tag" id="pm1">ULTIMATE</div>
     </div>
     <div class="vs-center">
       <div class="vsx">VS</div>
@@ -130,7 +130,7 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:1}
     <div class="vc e" id="eBox">
       <img id="vi2" alt="">
       <div class="name-box"><b id="vn2"></b></div>
-      <div class="move-tag" id="em1">PSYSTRIKE</div>
+      <div class="move-tag" id="em1">ULTIMATE</div>
     </div>
   </div>
   <div class="big" id="big">3</div>
@@ -147,7 +147,7 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:1}
 'use strict';
 
 /* ==========================================================
-   BAGIAN 1: DATA KARAKTER & KONFIGURASI SPRITESHEET
+   BAGIAN 1: DATA KARAKTER & KONFIGURASI TIMELINE
    ========================================================== */
 const R={
 pichu:['Pichu','#ffc857',120,85,60,110,'Thunder Impact'],pikachu:['Pikachu','#ffc857',140,105,70,130,'Thunder Rush'],raichu:['Raichu','#ffaa33',180,130,90,140,'Thunder'],
@@ -167,14 +167,59 @@ const ALIAS={vaporeon:'favoreon'};
 const FX={pichu:'elec',pikachu:'elec',raichu:'elec',jolteon:'elec',charmander:'fire',charmeleon:'fire',charizard:'fire',flareon:'fire',froakie:'water',frogadier:'water',greninja:'water',squirtle:'water',wartortle:'water',blastoise:'water',vaporeon:'water',glaceon:'water',bulbasaur:'grass',ivysaur:'grass',venusaur:'grass',leafeon:'grass',mew:'psy',mewtwo:'psy',espeon:'psy',gastly:'ghost',haunter:'ghost',gengar:'ghost',umbreon:'ghost',riolu:'aura',lucario:'aura',rayquaza:'dragon'};
 const FX_COLORS={elec:'#ffe14d',fire:'#ff7b61',water:'#54c9ff',grass:'#7ee69d',psy:'#e08cff',ghost:'#a883ff',aura:'#5fafff',dragon:'#66e29b',normal:'#ffffff'};
 
-// Konfigurasi Spritesheet Utama (6x3 = 18 frame)
-const SHEETS={};['pichu','pikachu','bulbasaur','squirtle','froakie','riolu','gastly','mew','rayquaza','eevee'].forEach(id=>SHEETS[id]={src:`assets/${id}-spritesheet.png`,cols:6,rows:3});
+// KONFIGURASI TIMELINE UNTUK SEMUA KARAKTER
+const ATTACK_TIMELINE = {
+  // --- LISTRIK ---
+  pichu:   { name:'Thunder Impact', anticipation:150, charge:300, action:400, release:550, projectileSpeed:1.2, impact:750, recovery:1100, ultDuration:2500 },
+  pikachu: { name:'Thunder Rush',   anticipation:150, charge:300, action:450, release:600, projectileSpeed:1.5, impact:800, recovery:1200, ultDuration:3000 },
+  raichu:  { name:'Thunder',        anticipation:180, charge:350, action:500, release:650, projectileSpeed:1.3, impact:850, recovery:1300, ultDuration:3200 },
+  jolteon: { name:'Thunder Fang',   anticipation:120, charge:280, action:400, release:550, projectileSpeed:1.8, impact:750, recovery:1100, ultDuration:2800 },
+  
+  // --- API ---
+  charmander: { name:'Inferno Wing',   anticipation:180, charge:350, action:500, release:650, projectileSpeed:1.2, impact:850, recovery:1300, ultDuration:3000 },
+  charmeleon: { name:'Flamethrower',   anticipation:200, charge:400, action:550, release:700, projectileSpeed:1.4, impact:900, recovery:1400, ultDuration:3200 },
+  charizard:  { name:'Blast Burn',     anticipation:250, charge:450, action:600, release:750, projectileSpeed:1.6, impact:950, recovery:1500, ultDuration:3500 },
+  flareon:    { name:'Flare Blitz',    anticipation:180, charge:380, action:520, release:680, projectileSpeed:1.3, impact:880, recovery:1350, ultDuration:3100 },
+  
+  // --- AIR ---
+  froakie:   { name:'Aqua Shuriken', anticipation:120, charge:280, action:400, release:550, projectileSpeed:2.0, impact:750, recovery:1100, ultDuration:2800 },
+  frogadier: { name:'Water Shuriken', anticipation:140, charge:300, action:420, release:580, projectileSpeed:2.2, impact:780, recovery:1150, ultDuration:2900 },
+  greninja:  { name:'Hydro Storm',   anticipation:160, charge:320, action:450, release:600, projectileSpeed:2.5, impact:800, recovery:1200, ultDuration:3000 },
+  squirtle:  { name:'Tidal Shell',   anticipation:200, charge:400, action:550, release:700, projectileSpeed:1.5, impact:900, recovery:1400, ultDuration:3200 },
+  wartortle: { name:'Aqua Tail',     anticipation:180, charge:380, action:520, release:680, projectileSpeed:1.8, impact:880, recovery:1350, ultDuration:3100 },
+  blastoise: { name:'Hydro Cannon',  anticipation:250, charge:450, action:600, release:750, projectileSpeed:2.0, impact:950, recovery:1500, ultDuration:3500 },
+  vaporeon:  { name:'Hydro Pump',    anticipation:200, charge:400, action:550, release:700, projectileSpeed:1.7, impact:900, recovery:1400, ultDuration:3200 },
+  glaceon:   { name:'Glacial Lance', anticipation:180, charge:380, action:520, release:680, projectileSpeed:1.9, impact:880, recovery:1350, ultDuration:3100 },
+  
+  // --- RUMPUT ---
+  bulbasaur: { name:'Solar Vine',   anticipation:200, charge:400, action:550, release:700, projectileSpeed:1.2, impact:900, recovery:1400, ultDuration:3200 },
+  ivysaur:   { name:'Razor Leaf',   anticipation:180, charge:380, action:520, release:680, projectileSpeed:1.5, impact:880, recovery:1350, ultDuration:3100 },
+  venusaur:  { name:'Frenzy Plant', anticipation:250, charge:450, action:600, release:750, projectileSpeed:1.4, impact:950, recovery:1500, ultDuration:3500 },
+  leafeon:   { name:'Leaf Blade',   anticipation:160, charge:350, action:500, release:650, projectileSpeed:1.6, impact:850, recovery:1300, ultDuration:3000 },
+  
+  // --- PSYCHIC ---
+  mew:    { name:'Psystrike Nova', anticipation:200, charge:400, action:550, release:700, projectileSpeed:1.3, impact:900, recovery:1400, ultDuration:3200 },
+  mewtwo: { name:'Psystrike',      anticipation:220, charge:450, action:600, release:750, projectileSpeed:1.5, impact:950, recovery:1500, ultDuration:3500 },
+  espeon: { name:'Psychic Prism',  anticipation:180, charge:380, action:520, release:680, projectileSpeed:1.7, impact:880, recovery:1350, ultDuration:3100 },
+  
+  // --- GHOST ---
+  gastly:  { name:'Shadow Ambush', anticipation:150, charge:320, action:450, release:600, projectileSpeed:1.4, impact:800, recovery:1200, ultDuration:3000 },
+  haunter: { name:'Shadow Punch',  anticipation:160, charge:350, action:500, release:650, projectileSpeed:1.5, impact:850, recovery:1300, ultDuration:3100 },
+  gengar:  { name:'Shadow Ball',   anticipation:180, charge:380, action:520, release:680, projectileSpeed:1.6, impact:880, recovery:1350, ultDuration:3200 },
+  umbreon: { name:'Moonlight Curse', anticipation:200, charge:400, action:550, release:700, projectileSpeed:1.3, impact:900, recovery:1400, ultDuration:3300 },
+  
+  // --- AURA & DRAGON ---
+  riolu:    { name:'Aura Sphere',  anticipation:150, charge:320, action:450, release:600, projectileSpeed:1.6, impact:800, recovery:1200, ultDuration:3000 },
+  lucario:  { name:'Aura Storm',   anticipation:180, charge:380, action:520, release:680, projectileSpeed:1.8, impact:880, recovery:1350, ultDuration:3200 },
+  rayquaza: { name:'Sky Rupture',  anticipation:250, charge:500, action:650, release:800, projectileSpeed:2.0, impact:1000, recovery:1600, ultDuration:3800 },
+  
+  // --- NORMAL ---
+  eevee:    { name:'Genome Shift', anticipation:120, charge:280, action:400, release:550, projectileSpeed:1.5, impact:750, recovery:1100, ultDuration:2800 },
+  sylveon:  { name:'Moonblast',    anticipation:180, charge:380, action:520, release:680, projectileSpeed:1.4, impact:880, recovery:1350, ultDuration:3100 }
+};
 
-// Konfigurasi Spritesheet Ultimate (6x3 = 18 frame)
-const ULT_SHEETS = {};
-Object.keys(R).forEach(id => {
-    ULT_SHEETS[id] = { src: `assets/${id}-ultimate-spritesheet.png`, cols: 6, rows: 3, fps: 12 };
-});
+// Konfigurasi Spritesheet (6x3 = 18 frame)
+const SHEETS={};['pichu','pikachu','bulbasaur','squirtle','froakie','riolu','gastly','mew','rayquaza','eevee'].forEach(id=>SHEETS[id]={src:`assets/${id}-spritesheet.png`,cols:6,rows:3});
 
 const SHEET_CACHE={};
 function loadSheet(id){
@@ -200,9 +245,6 @@ function analyze(sh){
  }catch(e){}
  sh.feet=feet;sh.ax=ax;sh.bh=bh;sh.atkN=atkN;sh.mz=[bw*.55,-bh*.39]}
 
-/* ==========================================================
-   BAGIAN 2: STATE GAME & TIMELINE ATTACK CONFIG
-   ========================================================== */
 const Q=new URLSearchParams(location.search);
 const pid=R[Q.get('char')]?Q.get('char'):'pikachu';
 const arenaN=Q.get('arena')==='2'?'2':'1';
@@ -210,16 +252,8 @@ const ids=Object.keys(R).filter(i=>i!==pid);
 const eid=(R[Q.get('enemy')]&&Q.get('enemy')!==pid)?Q.get('enemy'):ids[Math.floor(Math.random()*ids.length)];
 const $=id=>document.getElementById(id);
 
-// Konfigurasi Timeline Attack (Contoh untuk Pikachu - Thunder Rush)
-// Waktu dalam milidetik (ms)
-const ATTACK_TIMELINE = {
-  pichu:   { name:'Thunder Impact', anticipation:150, charge:300, action:450, release:600, projectileSpeed: 1.2, impact:800, recovery:1200, ultDuration: 3000 },
-  pikachu: { name:'Thunder Rush',   anticipation:150, charge:300, action:450, release:600, projectileSpeed: 1.5, impact:800, recovery:1200, ultDuration: 3000 },
-  // Karakter lain bisa ditambahkan di sini
-};
-
 /* ==========================================================
-   BAGIAN 3: AUDIO MANAGER
+   BAGIAN 2: AUDIO MANAGER
    ========================================================== */
 const AudioManager={cache:new Map(),music:null,
  init(){this.music=new Audio('assets/audio/background.mp3');this.music.loop=true;this.music.volume=.18},
@@ -231,7 +265,7 @@ document.addEventListener('pointerdown',()=>AudioManager.startMusic(),{once:true
 const vib=p=>{try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}};
 
 /* ==========================================================
-   BAGIAN 4: CANVAS, ARENA, & ENTITAS
+   BAGIAN 3: CANVAS & ENTITAS
    ========================================================== */
 const cv=$('c'),ctx=cv.getContext('2d');let W,H,DPR;
 function resize(){DPR=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;cv.width=W*DPR;cv.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0)}
@@ -249,7 +283,6 @@ function mk(id,isP){
     kind:'shot', lunge:null, ph:Math.random()*6, moving:false, ult:0, kx:0, ky:0,
     ai:{t:1.5,dir:1}, img:loadImg(id), size:Math.min(W*.3,165)*(.9+d[2]/1200), an:0,
     atkAnim:-1, pend:false, run:false,
-    // State untuk animasi battle
     state: 'IDLE', stateTime: 0, 
     attackData: null
   };
@@ -263,14 +296,13 @@ let state='intro', timeLeft=90, shake=0, hitstop=0, combo=0, maxCombo=0, dmgDone
 let cameraZoom = 1.0, cameraTargetZoom = 1.0, cameraShake = 0;
 const stick={x:0,y:0},K={};let atkHeld=false;
 
-// Fungsi untuk memicu serangan berdasarkan timeline
 function triggerAttack(entity, attackType) {
   if (entity.state !== 'IDLE' && entity.state !== 'RECOVERY') return;
   
   const timeline = ATTACK_TIMELINE[entity.id] || ATTACK_TIMELINE['pikachu'];
   entity.attackData = {
     name: timeline.name,
-    type: attackType, // 'normal' atau 'ult'
+    type: attackType,
     startTime: performance.now(),
     anticipation: timeline.anticipation,
     charge: timeline.charge,
@@ -285,8 +317,6 @@ function triggerAttack(entity, attackType) {
   
   entity.state = 'ANTICIPATION';
   entity.stateTime = 0;
-  
-  // Efek Camera Zoom saat charge
   cameraTargetZoom = 1.05;
 }
 
@@ -307,7 +337,7 @@ function reset(){
   document.documentElement.style.setProperty('--e-col', eCol);
   
   $('pm1').textContent = ATTACK_TIMELINE[pid]?.name || pl.mv;
-  $('em1').textContent = R[eid] ? R[eid][6] : en.mv;
+  $('em1').textContent = ATTACK_TIMELINE[eid]?.name || en.mv;
   $('pn').textContent=pl.n; $('en').textContent=en.n; $('end').classList.add('h');
   
   const big=$('big'); $('intro').classList.remove('h');
@@ -329,7 +359,7 @@ function reset(){
 }
 
 /* ==========================================================
-   BAGIAN 5: INPUT & KONTROL
+   BAGIAN 4: INPUT
    ========================================================== */
 addEventListener('keydown',e=>{K[e.code]=1;if(e.code==='KeyK')skill();if(e.code==='ShiftLeft'||e.code==='KeyL')dash()});
 addEventListener('keyup',e=>K[e.code]=0);
@@ -345,14 +375,13 @@ press('bAk',()=>atkHeld=true); press('bSk',()=>skill()); press('bDs',()=>dash())
 $('again').onclick=reset;
 
 /* ==========================================================
-   BAGIAN 6: SISTEM SERANGAN & VFX (PARTIKEL)
+   BAGIAN 5: VFX & PROJECTILE
    ========================================================== */
 const dmgOf=(a,d,m=1)=>Math.max(4,a*.2*100/(100+d*.6))*m*(.9+Math.random()*.2);
 const body=e=>({x:e.x,y:e.y-e.size*.4});
 const hasS=e=>!!(e.sheet&&e.sheet.ready);
 const persp=e=>{const A=arena();return .85+.3*Math.min(1,Math.max(0,(e.y-(A.cy-A.ry))/(A.ry*2)))};
 
-// Fungsi untuk menghasilkan partikel berdasarkan tipe elemen
 function spawnParticleVFX(x, y, type, intensity = 1) {
   const count = Math.floor(5 + 5 * intensity);
   for (let i = 0; i < count; i++) {
@@ -384,6 +413,30 @@ function spawnParticleVFX(x, y, type, intensity = 1) {
       vy = Math.sin(angle) * speed * 0.6;
       size = 3 + Math.random() * 5;
       life = 0.5 + Math.random() * 0.5;
+    } else if (type === 'grass') {
+      color = Math.random() > 0.5 ? '#7ee69d' : '#4ade80';
+      vx = Math.cos(angle) * speed * 0.8;
+      vy = Math.sin(angle) * speed * 0.8 - 60;
+      size = 3 + Math.random() * 4;
+      life = 0.4 + Math.random() * 0.4;
+    } else if (type === 'ghost') {
+      color = Math.random() > 0.5 ? '#a883ff' : '#4a1a8a';
+      vx = Math.cos(angle) * speed * 0.5;
+      vy = Math.sin(angle) * speed * 0.5;
+      size = 4 + Math.random() * 6;
+      life = 0.5 + Math.random() * 0.5;
+    } else if (type === 'aura') {
+      color = Math.random() > 0.5 ? '#5fafff' : '#ffffff';
+      vx = Math.cos(angle) * speed * 0.9;
+      vy = Math.sin(angle) * speed * 0.9;
+      size = 2 + Math.random() * 4;
+      life = 0.3 + Math.random() * 0.3;
+    } else if (type === 'dragon') {
+      color = Math.random() > 0.5 ? '#66e29b' : '#ffffff';
+      vx = Math.cos(angle) * speed * 1.2;
+      vy = Math.sin(angle) * speed * 1.2;
+      size = 3 + Math.random() * 5;
+      life = 0.4 + Math.random() * 0.4;
     } else {
       color = '#ffffff';
       vx = Math.cos(angle) * speed;
@@ -396,7 +449,6 @@ function spawnParticleVFX(x, y, type, intensity = 1) {
   }
 }
 
-// Fungsi untuk membuat Projectile
 function fireProjectile(attacker, target, type, speedMult = 1) {
   const b = body(attacker);
   const tb = body(target);
@@ -417,40 +469,33 @@ function fireProjectile(attacker, target, type, speedMult = 1) {
   });
 }
 
-// Fungsi untuk memicu Impact
 function triggerImpact(target, sourceX, sourceY, type, dmg) {
   const b = body(target);
   const dx = target.x - sourceX;
   const dy = target.y - sourceY;
   const dist = Math.hypot(dx, dy) || 1;
   
-  // 1. Flash & Screen Shake
   flashA = 0.4;
   cameraShake = 15;
-  hitstop = 0.08; // Slow motion singkat
+  hitstop = 0.08;
   
-  // 2. Knockback
   target.kx = (dx / dist) * 400;
   target.ky = (dy / dist) * 200;
   target.flash = 0.15;
   target.inv = 0.2;
   target.hp = Math.max(0, target.hp - dmg);
   
-  // 3. VFX Impact (Ring + Partikel)
   rings.push({ x: target.x, y: target.y, r: 10, max: target.size * 2, c: FX_COLORS[type] || '#fff', l: 0.5 });
   rings.push({ x: target.x, y: target.y, r: 5, max: target.size * 1.5, c: '#ffffff', l: 0.4 });
   
   spawnParticleVFX(b.x, b.y, type, 2.5);
   spawnParticleVFX(b.x, b.y, 'normal', 1.5);
   
-  // 4. Text Damage
   texts.push({ x: b.x, y: b.y - target.size * 0.3, t: `-${Math.round(dmg)}`, l: 0.8, c: target.isP ? '#ff7b8f' : '#ffe27a', s: 24 });
   
-  // 5. Audio
   AudioManager.play('scan', 0.6);
   vib(60);
   
-  // 6. Update Camera
   cameraTargetZoom = 1.1;
   
   if (target.isP) {
@@ -468,7 +513,7 @@ function gainUlt(v){
   pl.ult=Math.min(100,pl.ult+v);
   if(pl.ult>=100&&!pl.ultReady){
     pl.ultReady=true;
-    notify(`⚡ ${pl.mv.toUpperCase()} SIAP! TEKAN SKILL`);
+    notify(`⚡ ${ATTACK_TIMELINE[pid]?.name || pl.mv} SIAP! TEKAN SKILL`);
     AudioManager.play('success',.6);
     vib([40,30,40]);
   }
@@ -505,15 +550,14 @@ function burst(x,y,col,n=12,sp=240){
 }
 
 /* ==========================================================
-   BAGIAN 7: UPDATE LOOP (LOGIKA UTAMA)
+   BAGIAN 6: UPDATE LOOP
    ========================================================== */
 function update(dt){
   if(state !== 'play') return;
   timeLeft -= dt;
   
-  // Update Camera
   cameraZoom += (cameraTargetZoom - cameraZoom) * dt * 5;
-  cameraTargetZoom += (1.0 - cameraTargetZoom) * dt * 2; // Kembali ke normal perlahan
+  cameraTargetZoom += (1.0 - cameraTargetZoom) * dt * 2;
   cameraShake = Math.max(0, cameraShake - dt * 50);
 
   // --- UPDATE PLAYER ---
@@ -522,8 +566,7 @@ function update(dt){
   const il=Math.hypot(ix,iy);
   if(il>1){ix/=il;iy/=il}
   
-  // State machine untuk Player
-  pl.stateTime += dt * 1000; // dalam ms
+  pl.stateTime += dt * 1000;
   
   if (pl.state === 'IDLE') {
     pl.moving = il > 0.1;
@@ -535,10 +578,8 @@ function update(dt){
       pl.run = run;
     }
     if (atkHeld || K.Space || K.KeyJ) atk();
-    
   } else if (pl.state === 'ANTICIPATION') {
     pl.moving = false;
-    // Efek visual charge
     if (pl.attackData && pl.stateTime > pl.attackData.anticipation * 0.5) {
       if (Math.random() < 0.3) spawnParticleVFX(pl.x, pl.y - pl.size*0.4, pl.fx, 0.5);
     }
@@ -547,27 +588,19 @@ function update(dt){
       pl.stateTime = 0;
       cameraTargetZoom = 1.08;
     }
-    
   } else if (pl.state === 'CHARGE') {
     pl.moving = false;
-    // Partikel charge lebih banyak
     if (Math.random() < 0.6) spawnParticleVFX(pl.x, pl.y - pl.size*0.4, pl.fx, 1.2);
     if (pl.stateTime > pl.attackData.charge) {
       pl.state = 'ACTION';
       pl.stateTime = 0;
-      pl.atkAnim = 0; // Memicu animasi serang di drawSheet
+      pl.atkAnim = 0;
     }
-    
   } else if (pl.state === 'ACTION') {
-    // Karakter maju sedikit saat menyerang
-    if (pl.stateTime < 150) {
-      pl.x += pl.face * 80 * dt;
-    }
-    
+    if (pl.stateTime < 150) pl.x += pl.face * 80 * dt;
     if (pl.stateTime > pl.attackData.action) {
       pl.state = 'RELEASE';
       pl.stateTime = 0;
-      // Tembakkan projectile!
       if (!pl.attackData.hasFired) {
         pl.attackData.hasFired = true;
         fireProjectile(pl, en, pl.fx, pl.attackData.projectileSpeed);
@@ -576,13 +609,11 @@ function update(dt){
         flashA = 0.2;
       }
     }
-    
   } else if (pl.state === 'RELEASE') {
-    if (pl.stateTime > 200) { // Delay sebelum impact
+    if (pl.stateTime > 200) {
       pl.state = 'RECOVERY';
       pl.stateTime = 0;
     }
-    
   } else if (pl.state === 'RECOVERY') {
     if (pl.stateTime > 300) {
       pl.state = 'IDLE';
@@ -590,37 +621,66 @@ function update(dt){
     }
   }
   
-  // Update Face
   pl.face = en.x >= pl.x ? 1 : -1;
   clampE(pl);
   pl.an += dt;
-  
-  // Update timers
   pl.cd -= dt; pl.dashCd -= dt; pl.inv -= dt; pl.flash -= dt; pl.atkT -= dt;
-  if (pl.atkAnim >= 0) {
-    pl.atkAnim += dt;
-    if (pl.atkAnim >= 0.42) pl.atkAnim = -1;
-  }
+  if (pl.atkAnim >= 0) { pl.atkAnim += dt; if (pl.atkAnim >= 0.42) pl.atkAnim = -1; }
 
-  // --- UPDATE ENEMY AI ---
-  // (Sederhananya, AI tetap seperti sebelumnya, tapi bisa memicu triggerAttack)
+  // --- UPDATE ENEMY AI (SEKARANG BISA MENYERANG DENGAN TIMELINE JUGA) ---
   const a=en.ai, dx=pl.x-en.x, dy=pl.y-en.y, dl=Math.hypot(dx,dy)||1, hard=en.hp<en.max*.5;
   en.face=dx>=0?1:-1; let mx=0,my=0;
   
+  en.stateTime += dt * 1000;
+  
   if (en.state === 'IDLE') {
-    if(en.lunge){const L=en.lunge;L.t-=dt;en.x+=L.vx*dt;en.y+=L.vy*dt*.6;
-     if(!L.hit&&Math.hypot(pl.x-en.x,(pl.y-en.y)*1.6)<en.size*.5){L.hit=triggerImpact(pl, en.x, en.y, en.fx, dmgOf(en.atk,pl.def,1.1));}
-     if(L.t<=0)en.lunge=null}
-    else if(en.wind>0){en.wind-=dt;if(en.wind<=0){
-      if(en.kind==='lunge'){en.lunge={t:.3,vx:dx/dl*W*1.5,vy:dy/dl*W*1.5,hit:false};AudioManager.play('select',.4)}
-      else{fireProjectile(en, pl, en.fx, 0.8); en.atkAnim=0; if(hard){fireProjectile(en, pl, en.fx, 0.8);} AudioManager.play('button',.35);}
-      en.atkT=.2;a.t=(hard?.9:1.3)+Math.random()*1}}
-    else{
-     const want=W*.3,r=dl>want*1.15?1:dl<want*.7?-1:0,nx=dx/dl,ny=dy/dl;
-     mx=nx*r-ny*a.dir*.8;my=ny*r+nx*a.dir*.8;a.t-=dt;
-     if(Math.random()<dt*.4)a.dir*=-1;
-     if(a.t<=0){en.wind=.55;en.kind=Math.random()<.3?'lunge':'shot'}}
+    // AI bergerak
+    const want=W*.3, r=dl>want*1.15?1:dl<want*.7?-1:0, nx=dx/dl, ny=dy/dl;
+    mx=nx*r-ny*a.dir*.8; my=ny*r+nx*a.dir*.8; a.t-=dt;
+    if(Math.random()<dt*.4)a.dir*=-1;
+    
+    // AI memutuskan untuk menyerang
+    if(a.t<=0){
+      if(Math.random() < 0.7) {
+        triggerAttack(en, 'normal'); // AI menyerang dengan sistem timeline yang sama!
+      } else {
+        en.wind = 0.5; en.kind = 'lunge';
+        a.t = 1.5 + Math.random();
+      }
+    }
     en.moving=!!(mx||my);
+  } else if (en.state === 'ANTICIPATION' || en.state === 'CHARGE') {
+    en.moving = false;
+    if (Math.random() < 0.3) spawnParticleVFX(en.x, en.y - en.size*0.4, en.fx, 0.6);
+    if (en.state === 'ANTICIPATION' && en.stateTime > en.attackData.anticipation) {
+      en.state = 'CHARGE'; en.stateTime = 0;
+    } else if (en.state === 'CHARGE' && en.stateTime > en.attackData.charge) {
+      en.state = 'ACTION'; en.stateTime = 0; en.atkAnim = 0;
+    }
+  } else if (en.state === 'ACTION') {
+    if (en.stateTime < 150) en.x -= en.face * 80 * dt; // Mundur sedikit
+    if (en.stateTime > en.attackData.action) {
+      en.state = 'RELEASE'; en.stateTime = 0;
+      if (!en.attackData.hasFired) {
+        en.attackData.hasFired = true;
+        fireProjectile(en, pl, en.fx, en.attackData.projectileSpeed);
+        AudioManager.play('button', 0.5);
+      }
+    }
+  } else if (en.state === 'RELEASE') {
+    if (en.stateTime > 200) { en.state = 'RECOVERY'; en.stateTime = 0; }
+  } else if (en.state === 'RECOVERY') {
+    if (en.stateTime > 300) { en.state = 'IDLE'; en.stateTime = 0; }
+  }
+  
+  // Lunge logic (untuk AI)
+  if (en.lunge) {
+    const L=en.lunge; L.t-=dt; en.x+=L.vx*dt; en.y+=L.vy*dt*.6;
+    if(!L.hit && Math.hypot(pl.x-en.x,(pl.y-en.y)*1.6)<en.size*.5) {
+      L.hit = true;
+      triggerImpact(pl, en.x, en.y, en.fx, dmgOf(en.atk,pl.def,1.1));
+    }
+    if(L.t<=0) en.lunge=null;
   }
   
   const es=spdOf(en)*.75;
@@ -635,18 +695,15 @@ function update(dt){
     const p=proj[i];
     p.x+=p.vx*dt; p.y+=p.vy*dt; p.l-=dt;
     
-    // Trail
     p.trail.push({x:p.x, y:p.y, l:0.2});
     if(p.trail.length > 10) p.trail.shift();
     for(let j=0; j<p.trail.length; j++) p.trail[j].l -= dt;
     
-    // Spawn partikel kecil di sekitar projectile
     if (Math.random() < 0.5) spawnParticleVFX(p.x, p.y, p.fx, 0.3);
     
     const t=p.from?en:pl, b=body(t);
     const hitDist = t.size * 0.4;
     if(Math.hypot(p.x-b.x, p.y-b.y) < hitDist){
-      // IMPACT!
       triggerImpact(t, p.x, p.y, p.fx, p.dmg);
       proj.splice(i,1);
       continue;
@@ -654,7 +711,6 @@ function update(dt){
     if(p.l<=0||p.x<-50||p.x>W+50||p.y<-50||p.y>H+50) proj.splice(i,1);
   }
   
-  // END
   if(en.hp<=0)finish(true); else if(pl.hp<=0)finish(false); else if(timeLeft<=0)finish(pl.hp/pl.max>=en.hp/en.max);
 }
 
@@ -676,7 +732,7 @@ function finish(win){
 const spdOf=e=>W*.32*(.7+e.spd/300);
 
 /* ==========================================================
-   BAGIAN 8: RENDER (VISUAL)
+   BAGIAN 7: RENDER
    ========================================================== */
 function drawBg(){
   if(bg.complete&&bg.naturalWidth){
@@ -691,7 +747,6 @@ function drawBg(){
 function drawSheet(e,sz){
   const sh=e.sheet, s=sz/(sh.bh*1.19);
   let row=0, fr=0;
-  // Mapping state ke baris spritesheet (baris 0: idle/jalan, baris 1: jalan, baris 2: serang)
   if(e.atkAnim>=0 || e.state === 'ACTION' || e.state === 'RELEASE'){
     row=2;
     fr=Math.min(sh.atkN-1,Math.floor((e.atkAnim>=0?e.atkAnim:0.2)/.42*sh.atkN));
@@ -703,7 +758,6 @@ function drawSheet(e,sz){
   else {
     fr=Math.floor(e.an*5)%sh.cols;
   }
-  
   if(e.run&&row===1) ctx.rotate(.11*e.face);
   ctx.scale(e.face,1);
   ctx.drawImage(sh.img, Math.round(fr*sh.img.naturalWidth/sh.cols), Math.round(row*sh.img.naturalHeight/sh.rows), sh.cw, sh.ch, -sh.ax*s, -sh.feet[row]*s, sh.cw*s, sh.ch*s);
@@ -756,7 +810,6 @@ function drawEnt(e){
   ctx.restore();
   ctx.globalAlpha=1;
   
-  // HP Bar di atas karakter musuh
   if(!e.isP){
     const w=sz*.6, x=e.x-w/2, y=e.y-sz-8;
     ctx.fillStyle='rgba(0,0,0,.6)'; ctx.fillRect(x-1,y-1,w+2,7);
@@ -767,9 +820,7 @@ function drawEnt(e){
   }
 }
 
-// Fungsi menggambar VFX
 function drawVFX(){
-  // Particles
   ctx.globalCompositeOperation='lighter';
   for(let i=parts.length-1;i>=0;i--){
     const q=parts[i];
@@ -781,7 +832,6 @@ function drawVFX(){
     ctx.fill();
   }
   
-  // Rings
   for(let i=rings.length-1;i>=0;i--){
     const r=rings[i];
     const alpha = Math.max(0, r.l / 0.6);
@@ -793,9 +843,7 @@ function drawVFX(){
     ctx.stroke();
   }
   
-  // Projectiles
   for(const p of proj){
-    // Trail
     for(let i=0; i<p.trail.length; i++){
       const tr = p.trail[i];
       const alpha = Math.max(0, tr.l / 0.2);
@@ -806,7 +854,6 @@ function drawVFX(){
       ctx.fill();
     }
     
-    // Core projectile
     ctx.globalAlpha = 1;
     if(p.fx === 'elec'){
       ctx.save();
@@ -814,7 +861,6 @@ function drawVFX(){
       ctx.lineWidth = 3;
       ctx.shadowColor = '#ffe14d';
       ctx.shadowBlur = 20;
-      // Gambar petir zigzag
       ctx.beginPath();
       const len = W * 0.15;
       const angle = Math.atan2(p.vy, p.vx);
@@ -847,7 +893,6 @@ function draw(dt){
   ctx.setTransform(DPR,0,0,DPR,0,0);
   ctx.clearRect(0,0,W,H);
   
-  // Camera Transform
   ctx.save();
   const zoom = cameraZoom;
   ctx.translate(W/2, H/2);
@@ -859,14 +904,9 @@ function draw(dt){
   }
   
   drawBg();
-  
-  // Draw Entities (diurutkan berdasarkan Y)
   [pl,en].sort((a,b)=>a.y-b.y).forEach(drawEnt);
-  
-  // Draw VFX
   drawVFX();
   
-  // Draw Texts
   ctx.textAlign='center'; ctx.lineJoin='round';
   for(const t of texts){
     ctx.globalAlpha=Math.min(1,t.l*2);
@@ -880,50 +920,40 @@ function draw(dt){
     const s=`${combo} HIT COMBO`;
     ctx.strokeText(s,W/2,H*.2); ctx.fillText(s,W/2,H*.2);
   }
-  ctx.restore(); // Restore camera
+  ctx.restore();
   
-  // Screen Flash
   if(flashA > 0){
     ctx.fillStyle=`rgba(255,250,200,${flashA})`;
     ctx.fillRect(0,0,W,H);
   }
   
-  // Vignette
   const v=ctx.createRadialGradient(W/2,H/2,H*.3,W/2,H/2,H*.75);
   v.addColorStop(0,'transparent'); v.addColorStop(1,'rgba(0,0,0,.6)');
   ctx.fillStyle=v; ctx.fillRect(0,0,W,H);
 }
 
 /* ==========================================================
-   BAGIAN 9: EFEK UPDATE & LOOP
+   BAGIAN 8: EFEK UPDATE & HUD & LOOP
    ========================================================== */
 function fx(dt){
-  // Particles
   for(let i=parts.length-1;i>=0;i--){
     const q=parts[i];
-    q.x += q.vx * dt;
-    q.y += q.vy * dt;
+    q.x += q.vx * dt; q.y += q.vy * dt;
     q.vx *= 0.94; q.vy *= 0.94;
     q.life -= dt;
     if(q.life <= 0) parts.splice(i,1);
   }
-  
-  // Texts
   for(let i=texts.length-1;i>=0;i--){
     const t=texts[i];
-    t.y -= 50*dt;
-    t.l -= dt;
+    t.y -= 50*dt; t.l -= dt;
     if(t.l <= 0) texts.splice(i,1);
   }
-  
-  // Rings
   for(let i=rings.length-1;i>=0;i--){
     const r=rings[i];
     r.r += (r.max - r.r) * Math.min(1, dt*7);
     r.l -= dt;
     if(r.l <= 0) rings.splice(i,1);
   }
-  
   shake = Math.max(0, shake - dt*40);
   flashA = Math.max(0, flashA - dt*2.2);
 }
