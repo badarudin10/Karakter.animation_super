@@ -158,59 +158,78 @@ const ALIAS={vaporeon:'favoreon'};
 const FX={pichu:'elec',pikachu:'elec',raichu:'elec',jolteon:'elec',charmander:'fire',charmeleon:'fire',charizard:'fire',flareon:'fire',froakie:'water',frogadier:'water',greninja:'water',squirtle:'water',wartortle:'water',blastoise:'water',vaporeon:'water',glaceon:'water',bulbasaur:'grass',ivysaur:'grass',venusaur:'grass',leafeon:'grass',mew:'psy',mewtwo:'psy',espeon:'psy',gastly:'ghost',haunter:'ghost',gengar:'ghost',umbreon:'ghost',riolu:'aura',lucario:'aura',rayquaza:'dragon'};
 const FX_COLORS={elec:'#ffe14d',fire:'#ff7b61',water:'#54c9ff',grass:'#7ee69d',psy:'#e08cff',ghost:'#a883ff',aura:'#5fafff',dragon:'#66e29b',normal:'#ffffff'};
 
-// ============================================================
-// KONFIGURASI SPRITESHEET ULTIMATE
-// ============================================================
-// PENTING: Ubah konfigurasi di bawah ini sesuai spritesheet ultimate Anda.
-// 
-// OPSI A (REKOMENDASI): Spritesheet terpisah 8 kolom x 6 baris = 48 frame
-//   → Setiap baris berisi 8 frame untuk 1 fase animasi
-//   → Baris 0: Idle, Baris 1: Charge, Baris 2: Wind-up,
-//     Baris 3: Lunge, Baris 4: Release, Baris 5: Recovery
-//
-// OPSI B: Spritesheet sekarang 6 kolom x 3 baris = 18 frame
-//   → Terlalu sedikit untuk ultimate sinematik, tapi tetap bisa dipakai
-// ============================================================
+/* ============================================================
+   KONFIGURASI SPRITESHEET
+   ============================================================
+   SEMUA karakter yang punya file di assets/ didaftarkan di sini.
+   Battle spritesheet: 6 kolom × 4 baris = 24 frame
+     - Baris 0: Idle
+     - Baris 1: Walk
+     - Baris 2: Run
+     - Baris 3: Attack
+   
+   Ultimate spritesheet: 8 kolom × 6 baris = 48 frame
+     - Baris 0: Anticipation
+     - Baris 1: Charge
+     - Baris 2: Wind-up
+     - Baris 3: Lunge
+     - Baris 4: Release
+     - Baris 5: Recovery
+   ============================================================ */
+
+// Daftar semua karakter yang punya spritesheet battle di folder assets/
+const ALL_CHARS = [
+  'pichu','pikachu','charmander','froakie','bulbasaur','squirtle',
+  'riolu','gastly','mew','rayquaza','eevee'
+];
+
+// Battle spritesheet: 6×4 = 24 frame
+const SHEETS = {};
+ALL_CHARS.forEach(id => {
+  SHEETS[id] = { src: `assets/${id}-spritesheet.png`, cols: 6, rows: 4 };
+});
+
+// Ultimate spritesheet: 8×6 = 48 frame
 const ULT_SHEETS = {};
 Object.keys(R).forEach(id => {
   ULT_SHEETS[id] = {
     src: `assets/${id}-ultimate-spritesheet.png`,
-    cols: 8,        // <-- GANTI ke 8 jika punya 8 kolom, atau 6 jika masih 6
-    rows: 6,        // <-- GANTI ke 6 jika punya 6 baris, atau 3 jika masih 3
+    cols: 8,
+    rows: 6,
     fps: 14,
-    // Mapping baris untuk setiap fase animasi ultimate
-    // Format: [rowIndex, startFrame, endFrame]
     phases: {
-      anticipation: { row: 0, start: 0, end: 7 },  // Idle/persiapan
-      charge:       { row: 1, start: 0, end: 7 },  // Aura naik
-      windup:       { row: 2, start: 0, end: 7 },  // Badan mundur
-      lunge:        { row: 3, start: 0, end: 7 },  // Lari ke depan
-      release:      { row: 4, start: 0, end: 7 },  // Serangan keluar
-      recovery:     { row: 5, start: 0, end: 7 }   // Kembali
+      anticipation: { row: 0, start: 0, end: 7 },
+      charge:       { row: 1, start: 0, end: 7 },
+      windup:       { row: 2, start: 0, end: 7 },
+      lunge:        { row: 3, start: 0, end: 7 },
+      release:      { row: 4, start: 0, end: 7 },
+      recovery:     { row: 5, start: 0, end: 7 }
     }
   };
-});
-
-// Spritesheet utama untuk battle normal (6x3 = 18 frame)
-const SHEETS={};
-['pichu','pikachu','bulbasaur','squirtle','froakie','riolu','gastly','mew','rayquaza','eevee'].forEach(id=>{
-  SHEETS[id]={src:`assets/${id}-spritesheet.png`,cols:6,rows:3};
 });
 
 const SHEET_CACHE={};
 function loadSheet(id){
   if(SHEET_CACHE[id]) return SHEET_CACHE[id];
   const cfg=SHEETS[id];
+  if(!cfg) return null;
   const sh=SHEET_CACHE[id]={cols:cfg.cols,rows:cfg.rows,ready:false,img:new Image()};
   sh.img.onload=()=>{analyze(sh);sh.ready=true};
   sh.img.src=cfg.src;
   return sh;
 }
 
+// ANALYZE — sudah support 4 baris
 function analyze(sh){
   const im=sh.img, cw=im.naturalWidth/sh.cols, ch=im.naturalHeight/sh.rows;
   sh.cw=Math.floor(cw); sh.ch=Math.floor(ch);
-  let feet=[ch*.85,ch*.85,ch*.85], ax=cw*.43, bw=cw*.58, bh=ch*.67, atkN=Math.max(2,sh.cols-1);
+  
+  // Default values untuk semua baris
+  let feet=[], ax=cw*.43, bw=cw*.58, bh=ch*.67, atkN=Math.max(2,sh.cols-1);
+  
+  // Deteksi sampai 4 baris
+  for(let r=0; r<sh.rows; r++) feet.push(ch*.85);
+  
   try{
     const c=document.createElement('canvas'); c.width=im.naturalWidth; c.height=im.naturalHeight;
     const x=c.getContext('2d'); x.drawImage(im,0,0);
@@ -225,16 +244,30 @@ function analyze(sh){
       return x1<0?null:{x0,x1,y0,y1,h:y1-y0,w:x1-x0};
     };
     const med=a=>a.slice().sort((p,q)=>p-q)[a.length>>1];
-    const B=[0,1,2].map(r=>Array.from({length:sh.cols},(_,k)=>box(r,k)));
-    const ok=B.map(b=>b.filter(Boolean));
-    feet=ok.map(b=>b.length?med(b.map(f=>f.y1)):ch*.85);
-    if(ok[0].length){ax=med(ok[0].map(f=>(f.x0+f.x1)/2)); bw=med(ok[0].map(f=>f.w)); bh=med(ok[0].map(f=>f.h))}
-    if(ok[2].length){
-      const mh=med(ok[2].map(f=>f.h)); let n=0;
-      for(const f of B[2]){ if(f&&f.h>=mh*.7)n++; else break; }
+    
+    // Analisis baris 0 (idle), baris 3 (attack) untuk anchor point
+    const B=[0,3].map(r => Array.from({length:sh.cols},(_,k)=>box(r,k)));
+    const ok = B.map(b => b.filter(Boolean));
+    
+    // Untuk feet, hitung dari baris 0
+    if(ok[0] && ok[0].length){
+      // Baris 0 = idle
+      feet[0] = med(ok[0].map(f=>f.y1));
+      ax = med(ok[0].map(f=>(f.x0+f.x1)/2));
+      bw = med(ok[0].map(f=>f.w));
+      bh = med(ok[0].map(f=>f.h));
+    }
+    // Baris lain pakai default yang sama
+    for(let r=1; r<sh.rows; r++) feet[r] = feet[0];
+    
+    // Attack frame count dari baris 3
+    if(ok[1] && ok[1].length){
+      const mh=med(ok[1].map(f=>f.h)); let n=0;
+      for(const f of B[1]){ if(f&&f.h>=mh*.7)n++; else break; }
       atkN=Math.max(2,n);
     }
   }catch(e){}
+  
   sh.feet=feet; sh.ax=ax; sh.bh=bh; sh.atkN=atkN; sh.mz=[bw*.55,-bh*.39];
 }
 
@@ -281,9 +314,7 @@ function mk(id,isP){
     atkAnim:-1, pend:false, run:false,
     state:'IDLE', stateTime:0,
     vx:0, vy:0,
-    hitScaleX:1, hitScaleY:1, hitRotation:0,
-    // Untuk ultimate
-    ultState: null, ultStartTime: 0
+    hitScaleX:1, hitScaleY:1, hitRotation:0
   };
   if(SHEETS[id]) e.sheet=loadSheet(id);
   e.fx=FX[id]||'normal';
@@ -348,7 +379,6 @@ press('bAk',()=>atkHeld=true); press('bSk',()=>skill()); press('bDs',()=>dash())
 ['pointerup','pointercancel','pointerleave'].forEach(t=>$('bAk').addEventListener(t,()=>atkHeld=false));
 $('again').onclick=reset;
 
-// Klik pada canvas untuk skip animasi ultimate
 cv.addEventListener('pointerdown', (e) => {
   if (state === 'ult' && ultAnim) {
     e.preventDefault();
@@ -470,7 +500,7 @@ function dash(){
 }
 
 /* ==========================================================
-   ANIMASI ULTIMATE (PROCEDURAL + SPRITESHEET)
+   ANIMASI ULTIMATE
    ========================================================== */
 function startUltAnimation(e){
   const cfg = ULT_SHEETS[e.id];
@@ -478,7 +508,6 @@ function startUltAnimation(e){
   img.crossOrigin = "Anonymous";
   
   img.onload = () => {
-    // Hapus latar belakang putih
     const tempCanvas = document.createElement('canvas');
     tempCanvas.width = img.naturalWidth;
     tempCanvas.height = img.naturalHeight;
@@ -567,7 +596,6 @@ function update(dt){
   pl.face=en.x>=pl.x?1:-1; clampE(pl);
   pl.an+=dt;
   
-  // Attack animation
   if(pl.atkAnim>=0){
     pl.atkAnim+=dt;
     if(pl.pend&&pl.atkAnim>=.15){pl.pend=false;fireProjectile(pl,en,pl.fx,1);AudioManager.play('ultimate',.3)}
@@ -575,7 +603,6 @@ function update(dt){
     if(pl.atkAnim>=.42){pl.atkAnim=-1;pl.pend=false}
   }
   
-  // Hit reaction recovery
   if(pl.hitScaleX!==1){ pl.hitScaleX += (1-pl.hitScaleX)*dt*8; }
   if(pl.hitScaleY!==1){ pl.hitScaleY += (1-pl.hitScaleY)*dt*8; }
   if(pl.hitRotation!==0){ pl.hitRotation *= (1-dt*8); }
@@ -583,7 +610,7 @@ function update(dt){
   pl.cd-=dt; pl.dashCd-=dt; pl.inv-=dt; pl.flash-=dt; pl.atkT-=dt;
   if(atkHeld||K.Space||K.KeyJ)atk();
   
-  // ENEMY AI (sederhana, tidak pakai ultimate)
+  // ENEMY AI
   const a=en.ai,dx=pl.x-en.x,dy=pl.y-en.y,dl=Math.hypot(dx,dy)||1,hard=en.hp<en.max*.5;
   en.face=dx>=0?1:-1;let mx=0,my=0;
   if(en.lunge){const L=en.lunge;L.t-=dt;en.x+=L.vx*dt;en.y+=L.vy*dt*.6;
@@ -604,7 +631,6 @@ function update(dt){
   if(en.atkAnim>=0){en.atkAnim+=dt;if(en.atkAnim>=.42)en.atkAnim=-1}
   en.inv-=dt;en.flash-=dt;en.atkT-=dt;
   
-  // Hit reaction recovery
   if(en.hitScaleX!==1){ en.hitScaleX += (1-en.hitScaleX)*dt*8; }
   if(en.hitScaleY!==1){ en.hitScaleY += (1-en.hitScaleY)*dt*8; }
   if(en.hitRotation!==0){ en.hitRotation *= (1-dt*8); }
@@ -656,15 +682,59 @@ function drawBg(){
   } else { ctx.fillStyle='#07150e'; ctx.fillRect(0,0,W,H); }
 }
 
+// DRAW SHEET — diperbaiki untuk 4 baris (Idle, Walk, Run, Attack)
 function drawSheet(e,sz){
-  const sh=e.sheet, s=sz/(sh.bh*1.19);
+  const sh=e.sheet;
+  if(!sh || !sh.ready) return;
+  
+  const s=sz/(sh.bh*1.19);
+  
+  // Mapping baris:
+  // Baris 0: Idle
+  // Baris 1: Walk
+  // Baris 2: Run
+  // Baris 3: Attack
   let row=0, fr=0;
-  if(e.atkAnim>=0){ row=2; fr=Math.min(sh.atkN-1,Math.floor(e.atkAnim/.42*sh.atkN)); }
-  else if(e.moving||e.dashT>0||e.lunge){ row=1; fr=Math.floor(e.an*(e.run?14:8))%sh.cols; }
-  else fr=Math.floor(e.an*5)%sh.cols;
-  if(e.run&&row===1) ctx.rotate(.11*e.face);
+  
+  if(e.atkAnim>=0){
+    // Attack sedang berjalan
+    row = 3;
+    fr = Math.min(sh.atkN-1, Math.floor(e.atkAnim/.42*sh.atkN));
+  }
+  else if(e.moving || e.dashT>0 || e.lunge){
+    if(e.run){
+      // Run (baris 2)
+      row = 2;
+      fr = Math.floor(e.an*14) % sh.cols;
+    } else {
+      // Walk (baris 1)
+      row = 1;
+      fr = Math.floor(e.an*8) % sh.cols;
+    }
+  }
+  else {
+    // Idle (baris 0)
+    row = 0;
+    fr = Math.floor(e.an*5) % sh.cols;
+  }
+  
+  // Pastikan row tidak melebihi jumlah baris
+  if(row >= sh.rows) row = sh.rows - 1;
+  
+  if(e.run && row===2) ctx.rotate(.11*e.face);
   ctx.scale(e.face,1);
-  ctx.drawImage(sh.img, Math.round(fr*sh.img.naturalWidth/sh.cols), Math.round(row*sh.img.naturalHeight/sh.rows), sh.cw, sh.ch, -sh.ax*s, -sh.feet[row]*s, sh.cw*s, sh.ch*s);
+  
+  // Ambil feet untuk row ini (jika tidak ada, pakai feet[0])
+  const feetY = sh.feet[row] !== undefined ? sh.feet[row] : sh.feet[0];
+  
+  ctx.drawImage(
+    sh.img,
+    Math.round(fr*sh.img.naturalWidth/sh.cols),
+    Math.round(row*sh.img.naturalHeight/sh.rows),
+    sh.cw, sh.ch,
+    -sh.ax*s, -feetY*s,
+    sh.cw*s, sh.ch*s
+  );
 }
 
 function drawEnt(e){
@@ -693,9 +763,16 @@ function drawEnt(e){
   else if(e.inv>0&&e.isP)ctx.globalAlpha=.7;
   ctx.shadowColor=fxColor;ctx.shadowBlur=20;
   
-  if(useS){ drawSheet(e,sz); }
-  else if(im.complete&&im.naturalWidth){const s=sz/Math.max(im.naturalWidth,im.naturalHeight),w=im.naturalWidth*s,h=im.naturalHeight*s;ctx.scale(e.face*(e.hitScaleX||1),(e.hitScaleY||1));ctx.drawImage(im,-w/2,-h,w,h)}
-  else{ctx.fillStyle=e.col;ctx.beginPath();ctx.arc(0,-sz*.4,sz*.3,0,6.283);ctx.fill()}
+  if(useS){ 
+    drawSheet(e,sz); 
+  } else if(im.complete&&im.naturalWidth){
+    const s=sz/Math.max(im.naturalWidth,im.naturalHeight);
+    const w=im.naturalWidth*s,h=im.naturalHeight*s;
+    ctx.scale(e.face*(e.hitScaleX||1),(e.hitScaleY||1));
+    ctx.drawImage(im,-w/2,-h,w,h);
+  } else {
+    ctx.fillStyle=e.col;ctx.beginPath();ctx.arc(0,-sz*.4,sz*.3,0,6.283);ctx.fill();
+  }
   ctx.restore();
   ctx.globalAlpha=1;
   
@@ -703,8 +780,6 @@ function drawEnt(e){
   else{ctx.fillStyle='#4ade80';ctx.beginPath();ctx.moveTo(e.x,e.y+14);ctx.lineTo(e.x-6,e.y+24);ctx.lineTo(e.x+6,e.y+24);ctx.fill()}
 }
 
-// === FUNGSI BARU: Gambar Ultimate dengan Procedural Motion ===
-// Ini yang membuat animasi ultimate terasa lebih hidup meskipun frame terbatas
 function drawUltAnimation(){
   if(!ultAnim) return;
   const now = performance.now();
@@ -720,9 +795,6 @@ function drawUltAnimation(){
   
   if(!ultAnim.img.complete || !ultAnim.img.naturalWidth) return;
   
-  // Tentukan fase saat ini berdasarkan progress (0-1)
-  // 6 fase: anticipation (0-0.15), charge (0.15-0.35), windup (0.35-0.5),
-  //         lunge (0.5-0.7), release (0.7-0.85), recovery (0.85-1.0)
   let phaseName = 'anticipation';
   let phaseProgress = 0;
   if (progress < 0.15) { phaseName = 'anticipation'; phaseProgress = progress / 0.15; }
@@ -738,12 +810,10 @@ function drawUltAnimation(){
   
   let col, row;
   if (phase) {
-    // Jika ada mapping fase, gunakan itu
     const frameInPhase = Math.floor(phaseProgress * (phase.end - phase.start + 1));
     col = Math.min(ultAnim.cols - 1, phase.start + frameInPhase);
     row = Math.min(ultAnim.rows - 1, phase.row);
   } else {
-    // Fallback: urutan normal
     col = frameIndex % ultAnim.cols;
     row = Math.floor(frameIndex / ultAnim.cols);
   }
@@ -751,44 +821,35 @@ function drawUltAnimation(){
   const cw = ultAnim.img.naturalWidth / ultAnim.cols;
   const ch = ultAnim.img.naturalHeight / ultAnim.rows;
   
-  // === PROCEDURAL MOTION ===
-  // Tambahkan gerakan dari kode untuk membuat animasi lebih hidup
-  let offsetX = 0, offsetY = 0, scaleX = 1, scaleY = 1, rotation = 0;
+  let offsetX = 0, offsetY = 0, scaleX = 1, scaleY = 1;
   
   if (phaseName === 'anticipation') {
-    // Badan turun, sedikit mundur
     offsetY = phaseProgress * 15;
     scaleY = 1 - phaseProgress * 0.1;
     scaleX = 1 + phaseProgress * 0.05;
   } else if (phaseName === 'charge') {
-    // Getaran, aura naik
     offsetY = 15 - phaseProgress * 10;
     scaleY = 0.9 + phaseProgress * 0.1;
     scaleX = 1.05 - phaseProgress * 0.05;
     offsetX = Math.sin(phaseProgress * 30) * 2;
   } else if (phaseName === 'windup') {
-    // Badan mundur
     offsetX = -phaseProgress * 30 * pl.face;
     scaleX = 1 + phaseProgress * 0.1;
     scaleY = 1 - phaseProgress * 0.05;
   } else if (phaseName === 'lunge') {
-    // Lari ke depan
     offsetX = 30 * pl.face - phaseProgress * 80 * pl.face;
     scaleX = 1.1 - phaseProgress * 0.1;
     scaleY = 0.95 + phaseProgress * 0.05;
   } else if (phaseName === 'release') {
-    // Serangan
     offsetX = -50 * pl.face + phaseProgress * 20 * pl.face;
     scaleX = 1 + phaseProgress * 0.15;
     scaleY = 1 - phaseProgress * 0.1;
   } else if (phaseName === 'recovery') {
-    // Kembali ke posisi
     offsetX = -30 * pl.face * (1 - phaseProgress);
     scaleX = 1 + (1 - phaseProgress) * 0.1;
     scaleY = 0.9 + phaseProgress * 0.1;
   }
   
-  // Ukuran di arena
   const A = arena();
   const k = .85 + .3 * Math.min(1, Math.max(0, (pl.y - (A.cy - A.ry)) / (A.ry * 2)));
   const sz = pl.size * k * 1.4;
@@ -799,7 +860,6 @@ function drawUltAnimation(){
   const dx = pl.x - dw/2 + offsetX;
   const dy = pl.y - dh + offsetY;
   
-  // Aura di belakang
   const fxColor = FX_COLORS[pl.fx] || pl.col;
   ctx.save();
   ctx.globalCompositeOperation = 'lighter';
@@ -811,22 +871,18 @@ function drawUltAnimation(){
   ctx.beginPath(); ctx.arc(pl.x, pl.y - sz/2, sz*1.8, 0, 6.283); ctx.fill();
   ctx.restore();
   
-  // Partikel per fase
   if (Math.random() < 0.7) {
     spawnVFX(pl.x + offsetX, pl.y - sz*0.5 + offsetY, pl.fx, phaseName === 'charge' ? 1.2 : 0.6);
   }
   
-  // Sprite ultimate dengan transformasi procedural
   ctx.save();
   ctx.translate(dx + dw/2, dy + dh);
   ctx.scale(scaleX, scaleY);
-  ctx.rotate(rotation);
   ctx.shadowColor = fxColor;
   ctx.shadowBlur = 30;
   ctx.drawImage(ultAnim.img, col*cw, row*ch, cw, ch, -dw/2, -dh, dw, dh);
   ctx.restore();
   
-  // Nama jurus
   ctx.fillStyle = 'rgba(255,255,255,0.95)';
   ctx.font = '900 28px Inter, sans-serif';
   ctx.textAlign = 'center';
@@ -835,12 +891,10 @@ function drawUltAnimation(){
   ctx.fillText(pl.mv.toUpperCase(), W/2, H * 0.25);
   ctx.shadowBlur = 0;
   
-  // Fase indicator
   ctx.fillStyle = 'rgba(255,255,255,0.4)';
   ctx.font = '700 11px Inter, sans-serif';
   ctx.fillText(phaseName.toUpperCase(), W/2, H * 0.30);
   
-  // Teks SKIP
   ctx.fillStyle = 'rgba(255,255,255,0.5)';
   ctx.font = '800 12px Inter, sans-serif';
   ctx.textAlign = 'right';
@@ -851,7 +905,6 @@ function drawUltAnimation(){
 function drawProjectile(p) {
   const fx = p.fx;
   
-  // Trail
   if (p.trail.length > 1) {
     ctx.save();
     ctx.globalCompositeOperation = 'lighter';
@@ -993,13 +1046,11 @@ function draw(dt){
   ctx.scale(zoom * punchZoom, zoom * punchZoom);
   ctx.translate(-W/2, -H/2);
   
-  // Background
   if (state === 'ult' && ultAnim) {
     ctx.fillStyle = 'rgba(2,6,12,0.7)'; ctx.fillRect(0,0,W,H);
   }
   drawBg();
   
-  // Entities
   if (state === 'ult' && ultAnim) {
     const list = [en, pl].sort((a,b)=>a.y-b.y);
     list.forEach(e => {
@@ -1010,13 +1061,10 @@ function draw(dt){
     [pl,en].sort((a,b)=>a.y-b.y).forEach(drawEnt);
   }
   
-  // Projectiles
   for(const p of proj) drawProjectile(p);
   
-  // VFX
   drawVFX();
   
-  // Texts
   ctx.textAlign='center'; ctx.lineJoin='round';
   for(const t of texts){
     ctx.globalAlpha=Math.min(1,t.l*2);
