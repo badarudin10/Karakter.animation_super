@@ -173,13 +173,26 @@ const ALIAS={vaporeon:'favoreon'};
 const FX={pichu:'elec',pikachu:'elec',raichu:'elec',jolteon:'elec',charmander:'fire',charmeleon:'fire',charizard:'fire',flareon:'fire',froakie:'water',frogadier:'water',greninja:'water',squirtle:'water',wartortle:'water',blastoise:'water',vaporeon:'water',glaceon:'water',bulbasaur:'grass',ivysaur:'grass',venusaur:'grass',leafeon:'grass',mew:'psy',mewtwo:'psy',espeon:'psy',gastly:'ghost',haunter:'ghost',gengar:'ghost',umbreon:'ghost',riolu:'aura',lucario:'aura',rayquaza:'dragon'};
 const FX_COLORS={elec:'#ffe14d',fire:'#ff7b61',water:'#54c9ff',grass:'#7ee69d',psy:'#e08cff',ghost:'#a883ff',aura:'#5fafff',dragon:'#66e29b',normal:'#ffffff'};
 
-// --- KONFIGURASI SPRITESHEET ULTIMATE ---
-// Sesuaikan 'cols' dan 'rows' jika bentuk spritesheet ultimate Anda berbeda.
-// Misal: jika 1 baris 8 gambar -> cols: 8, rows: 1
+// ==========================================================
+// --- KONFIGURASI SPRITESHEET ULTIMATE (PENTING!) ---
+// ==========================================================
+// Sesuai instruksi: Format standar adalah 6 Kolom x 3 Baris (18 frame).
+// Jika ada karakter yang formatnya berbeda (misal Charmander 6x4),
+// Anda bisa mengubah nilai 'cols' dan 'rows' khusus untuk ID karakter tersebut.
 const ULT_SHEETS = {};
 Object.keys(R).forEach(id => {
-    ULT_SHEETS[id] = { src: `assets/${id}-ultimate-spritesheet.png`, cols: 6, rows: 1, fps: 12 };
+    ULT_SHEETS[id] = { 
+        src: `assets/${id}-ultimate-spritesheet.png`, 
+        cols: 6,  // <--- 6 Kolom (Standar)
+        rows: 3,  // <--- 3 Baris (Standar) -> Total 18 Frame
+        fps: 12   // Kecepatan animasi
+    };
 });
+
+// CONTOH KUSTOMISASI (Jika ada karakter yang jumlah barisnya beda):
+// ULT_SHEETS['charmander'] = { src: 'assets/charmander-ultimate-spritesheet.png', cols: 6, rows: 4, fps: 12 };
+// ULT_SHEETS['gastly'] = { src: 'assets/gastly-ultimate-spritesheet.png', cols: 6, rows: 5, fps: 12 };
+// ==========================================================
 
 const SHEETS={};['pichu','pikachu','bulbasaur','squirtle','froakie','riolu','gastly','mew','rayquaza','eevee'].forEach(id=>SHEETS[id]={src:`assets/${id}-spritesheet.png`,cols:6,rows:3});
 const SHEET_CACHE={};
@@ -235,7 +248,7 @@ function loadImg(id){const i=new Image();i.onerror=()=>{i.onerror=null;i.src=`as
 function mk(id,isP){const d=R[id];const e={id,isP,n:d[0].toUpperCase(),col:d[1],max:d[2],hp:d[2],atk:d[3],def:d[4],spd:d[5],mv:d[6],x:0,y:0,face:1,cd:0,dashT:0,dashCd:0,dvx:0,dvy:0,inv:0,flash:0,atkT:0,wind:0,kind:'shot',lunge:null,ph:Math.random()*6,moving:false,ult:0,kx:0,ky:0,ai:{t:1.5,dir:1},img:loadImg(id),size:Math.min(W*.3,165)*(.9+d[2]/1200),an:0,atkAnim:-1,pend:false,run:false};
  if(SHEETS[id])e.sheet=loadSheet(id);e.fx=FX[id]||'normal';return e}
 let flashA=0,strikes=[],pl,en,proj,parts,texts,rings,state,timeLeft,shake,hitstop,combo,maxCombo,dmgDone,perf=0;
-let ultAnim = null; // State untuk animasi Ultimate
+let ultAnim = null; 
 const stick={x:0,y:0},K={};let atkHeld=false;
 
 function reset(){
@@ -318,16 +331,21 @@ function notify(t){const n=$('note');n.innerHTML=t;n.classList.add('show');clear
 function gainUlt(v){pl.ult=Math.min(100,pl.ult+v);
  if(pl.ult>=100&&!pl.ultReady){pl.ultReady=true;notify(`⚡ ${pl.mv.toUpperCase()} SIAP! TEKAN SKILL`);AudioManager.play('success',.6);vib([40,30,40])}}
 
-// --- FUNGSI ANIMASI ULTIMATE (MENGGANTIKAN VIDEO) ---
+// --- FUNGSI ANIMASI ULTIMATE ---
 function startUltAnimation(e){
-  const cfg = ULT_SHEETS[e.id] || { src: `assets/${e.id}-ultimate-spritesheet.png`, cols: 6, rows: 1, fps: 12 };
+  const cfg = ULT_SHEETS[e.id];
   const img = new Image();
   img.src = cfg.src;
+  
+  // Total frame = cols * rows. Jika 6x3, berarti 18 frame.
+  // Durasi 1500ms (1.5 detik) untuk 18 frame @ 12fps.
+  const totalFrames = cfg.cols * cfg.rows;
+  const duration = (totalFrames / cfg.fps) * 1000;
   
   ultAnim = {
     img: img,
     startTime: performance.now(),
-    duration: 2500, // Durasi animasi (ms), sesuaikan jika perlu
+    duration: duration,
     cols: cfg.cols,
     rows: cfg.rows,
     fps: cfg.fps,
@@ -339,6 +357,7 @@ function startUltAnimation(e){
     img.onerror = null; 
     img.src = `assets/images/${e.id}.png`; 
     ultAnim.cols = 1; ultAnim.rows = 1; 
+    ultAnim.duration = 1500;
   };
   
   if(AudioManager.music) AudioManager.music.pause();
@@ -351,11 +370,10 @@ function startUltAnimation(e){
       ultAnim = null; 
       koEnemy(); 
     }
-  }, 6000);
+  }, duration + 2000); // Beri waktu ekstra 2 detik
 }
 
 function koEnemy(){
-  // state='play'; dihapus karena finish() akan menangani state 'over'
   en.hp=0;en.inv=0;const b=body(en);
   burst(b.x,b.y,'#ffffff',50,480);burst(b.x,b.y,pl.col,40,420);rings.push({x:en.x,y:en.y,r:10,max:W*.8,c:pl.col,l:.6});
   texts.push({x:b.x,y:b.y-en.size*.4,t:'K.O.!',l:1.2,c:'#ffe27a',s:44});
@@ -464,13 +482,15 @@ function drawUltAnimation(){
   ctx.fillRect(0,0,W,H);
   
   if(ultAnim.img.complete && ultAnim.img.naturalWidth){
-    const totalFrames = ultAnim.cols * ultAnim.rows;
-    // Kecepatan animasi berdasarkan fps, dipetakan ke progress keseluruhan
-    const frameIndex = Math.min(totalFrames - 1, Math.floor(progress * totalFrames));
+    const totalFrames = ultAnim.cols * ultAnim.rows; // 6 * 3 = 18
+    
+    // Hitung frame saat ini berdasarkan waktu dan fps
+    const currentFrame = Math.min(totalFrames - 1, Math.floor((elapsed / 1000) * ultAnim.fps));
+    
     const cw = ultAnim.img.naturalWidth / ultAnim.cols;
     const ch = ultAnim.img.naturalHeight / ultAnim.rows;
-    const col = frameIndex % ultAnim.cols;
-    const row = Math.floor(frameIndex / ultAnim.cols);
+    const col = currentFrame % ultAnim.cols;
+    const row = Math.floor(currentFrame / ultAnim.cols);
     
     // Skala gambar agar memenuhi layar
     const scale = Math.min(W / cw, H / ch) * 0.9;
@@ -480,21 +500,22 @@ function drawUltAnimation(){
     const dy = (H - dh) / 2;
     
     // Efek getaran/shake untuk ultimate
-    const shakeX = (Math.random() - 0.5) * 10 * (1 - progress);
-    const shakeY = (Math.random() - 0.5) * 10 * (1 - progress);
+    const shakeX = (Math.random() - 0.5) * 15 * (1 - progress);
+    const shakeY = (Math.random() - 0.5) * 15 * (1 - progress);
     
     ctx.save();
     ctx.translate(shakeX, shakeY);
+    // Menggambar HANYA frame yang sedang aktif
     ctx.drawImage(ultAnim.img, col * cw, row * ch, cw, ch, dx, dy, dw, dh);
     ctx.restore();
     
     // Teks Nama Jurus
-    ctx.fillStyle = 'rgba(255,255,255,0.8)';
-    ctx.font = '900 24px Inter, sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    ctx.font = '900 28px Inter, sans-serif';
     ctx.textAlign = 'center';
     ctx.shadowColor = '#000';
-    ctx.shadowBlur = 10;
-    ctx.fillText(pl.mv.toUpperCase(), W/2, H - 60);
+    ctx.shadowBlur = 15;
+    ctx.fillText(pl.mv.toUpperCase(), W/2, H - 70);
     ctx.shadowBlur = 0;
     
   } else {
@@ -506,7 +527,7 @@ function drawUltAnimation(){
   }
   
   // Teks SKIP
-  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.fillStyle = 'rgba(255,255,255,0.6)';
   ctx.font = '800 12px Inter, sans-serif';
   ctx.textAlign = 'right';
   ctx.fillText('KETUK UNTUK SKIP', W - 20, H - 30);
