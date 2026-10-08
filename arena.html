@@ -155,18 +155,19 @@ const ALIAS={vaporeon:'favoreon'};
 const FX={pichu:'elec',pikachu:'elec',raichu:'elec',jolteon:'elec',charmander:'fire',charmeleon:'fire',charizard:'fire',flareon:'fire',froakie:'water',frogadier:'water',greninja:'water',squirtle:'water',wartortle:'water',blastoise:'water',vaporeon:'water',glaceon:'water',bulbasaur:'grass',ivysaur:'grass',venusaur:'grass',leafeon:'grass',mew:'psy',mewtwo:'psy',espeon:'psy',gastly:'ghost',haunter:'ghost',gengar:'ghost',umbreon:'ghost',riolu:'aura',lucario:'aura',rayquaza:'dragon'};
 const FX_COLORS={elec:'#ffe14d',fire:'#ff7b61',water:'#54c9ff',grass:'#7ee69d',psy:'#e08cff',ghost:'#a883ff',aura:'#5fafff',dragon:'#66e29b',normal:'#ffffff'};
 
-// Karakter dengan file di assets/
 const ALL_CHARS = [
   'pichu','pikachu','bulbasaur','squirtle','froakie',
   'riolu','gastly','mew','rayquaza','eevee',
   'charmander','raichu'
 ];
 
+// Pengaturan GRID Spritesheet Biasa (Normal = 6 Kolom x 4 Baris)
 const SHEETS = {};
 ALL_CHARS.forEach(id => {
   SHEETS[id] = { src: `assets/${id}-spritesheet.png`, cols: 6, rows: 4 };
 });
 
+// Pengaturan GRID Spritesheet Ultimate (Ultimate = 8 Kolom x 6 Baris)
 const ULT_SHEETS = {};
 Object.keys(R).forEach(id => {
   ULT_SHEETS[id] = {
@@ -184,13 +185,46 @@ Object.keys(R).forEach(id => {
 });
 
 const SHEET_CACHE={};
+
+// Fungsi ini memuat gambar dan menghapus Latar Belakang Hitam yang menghalangi Bounding Box Sprite
 function loadSheet(id){
   if(SHEET_CACHE[id]) return SHEET_CACHE[id];
   const cfg=SHEETS[id];
   if(!cfg) return null;
   const sh=SHEET_CACHE[id]={cols:cfg.cols,rows:cfg.rows,ready:false,img:new Image()};
-  sh.img.onload=()=>{analyze(sh);sh.ready=true};
-  sh.img.src=cfg.src;
+  
+  const rawImg = new Image();
+  rawImg.crossOrigin = "Anonymous";
+  rawImg.onload = () => {
+    const c = document.createElement('canvas');
+    c.width = rawImg.naturalWidth;
+    c.height = rawImg.naturalHeight;
+    const x = c.getContext('2d');
+    x.drawImage(rawImg, 0, 0);
+    
+    try {
+      const imgData = x.getImageData(0, 0, c.width, c.height);
+      const data = imgData.data;
+      // Proses penghapusan Background Hitam (Chroma Key Black)
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i], g = data[i+1], b = data[i+2];
+        if (r < 25 && g < 25 && b < 25) {
+          data[i+3] = 0; // Buat transparan total
+        } else if (r < 45 && g < 45 && b < 45) {
+          data[i+3] = Math.min(data[i+3], 100); // Semi-transparan untuk antialias tepian
+        }
+      }
+      x.putImageData(imgData, 0, 0);
+      
+      sh.img.onload = () => { analyze(sh); sh.ready = true; };
+      sh.img.src = c.toDataURL();
+    } catch(e) {
+      // Fallback jika terkena pembatasan server/CORS
+      sh.img.onload = () => { analyze(sh); sh.ready = true; };
+      sh.img.src = cfg.src;
+    }
+  };
+  rawImg.src = cfg.src;
   return sh;
 }
 
@@ -266,7 +300,6 @@ function mk(id,isP){
     state:'IDLE', stateTime:0,
     vx:0, vy:0,
     hitScaleX:1, hitScaleY:1, hitRotation:0,
-    // Ultimate — state yang berjalan DI DALAM arena
     ultData: null
   };
   if(SHEETS[id]) e.sheet=loadSheet(id);
@@ -419,21 +452,16 @@ function atk(){
   pl.cd=.34;pl.atkT=.2;fireProjectile(pl,en,pl.fx,1);AudioManager.play('button',.35);
 }
 
-/* ==========================================================
-   ULTIMATE — Terjadi DI DALAM ARENA
-   ========================================================== */
 function skill(){
   if(state!=='play'||pl.ult<100||pl.state!=='IDLE')return;
   pl.ult=0;pl.ultReady=false;
   
-  // Muat spritesheet ultimate, lalu mulai animasi sebagai state karakter
   const cfg = ULT_SHEETS[pl.id];
   if(!cfg){ notify('❌ Ultimate tidak tersedia'); return; }
   
   const img = new Image();
   img.crossOrigin = "Anonymous";
   img.onload = () => {
-    // Hapus background putih + auto-crop menggunakan Canvas
     const tempCanvas = document.createElement('canvas');
     tempCanvas.width = img.naturalWidth;
     tempCanvas.height = img.naturalHeight;
@@ -443,44 +471,41 @@ function skill(){
     try {
       const imgData = tCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
       const data = imgData.data;
-      // Hapus putih dengan threshold lebih agresif
+      // Hapus Latar Belakang Hitam (Solid Black Background)
       for (let i = 0; i < data.length; i += 4) {
         const r = data[i], g = data[i+1], b = data[i+2];
-        // Threshold: kalau R, G, B semua > 220 → transparan
-        if (r > 220 && g > 220 && b > 220) {
+        if (r < 25 && g < 25 && b < 25) {
           data[i+3] = 0;
-        } else if (r > 200 && g > 200 && b > 200) {
-          // Semi-transparan untuk anti-alias
-          data[i+3] = Math.min(data[i+3], 128);
+        } else if (r < 45 && g < 45 && b < 45) {
+          data[i+3] = Math.min(data[i+3], 100);
         }
       }
       tCtx.putImageData(imgData, 0, 0);
     } catch(e) {
-      // Kalau CORS error, biarkan saja (gambar tetap punya background)
       console.warn('CORS error - background tidak dihapus:', e);
     }
     
     const cleanImg = new Image();
-    cleanImg.src = tempCanvas.toDataURL();
-    
-    // Set up state ultimate
-    pl.ultData = {
-      img: cleanImg,
-      startTime: performance.now(),
-      duration: 3500,
-      cols: cfg.cols,
-      rows: cfg.rows,
-      fps: cfg.fps,
-      phases: cfg.phases,
-      timer: null,
-      hasFired: false,
-      impactDone: false
+    cleanImg.onload = () => {
+      pl.ultData = {
+        img: cleanImg,
+        startTime: performance.now(),
+        duration: 3500,
+        cols: cfg.cols,
+        rows: cfg.rows,
+        fps: cfg.fps,
+        phases: cfg.phases,
+        timer: null,
+        hasFired: false,
+        impactDone: false
+      };
+      pl.state = 'ULTIMATE';
+      pl.stateTime = 0;
+      
+      AudioManager.play('ultimate', .8);
+      vib([40,30,40]);
     };
-    pl.state = 'ULTIMATE';
-    pl.stateTime = 0;
-    
-    AudioManager.play('ultimate', .8);
-    vib([40,30,40]);
+    cleanImg.src = tempCanvas.toDataURL();
   };
   img.onerror = () => {
     notify('❌ Gagal memuat ultimate');
@@ -499,16 +524,6 @@ function dash(){
   AudioManager.play('select',.4);
 }
 
-function koEnemy(){
-  en.hp=0;en.inv=0;const b=body(en);
-  for(let i=0;i<50;i++){const a=Math.random()*6.283,s=300+Math.random()*300;parts.push({x:b.x,y:b.y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-50,l:.6+Math.random()*.4,m:1,c:'#ffffff',s:3+Math.random()*5,shape:'circle',gravity:300})}
-  rings.push({x:en.x,y:en.y,r:10,max:W*.8,c:pl.col,l:.6,w:12});
-  texts.push({x:b.x,y:b.y-en.size*.4,t:'K.O.!',l:1.2,c:'#ffe27a',s:44});
-  flashA=.9;shake=18;hitstop=.12;AudioManager.play('ultimate',.8);vib([60,40,120]);
-  state='play';
-  finish(true);
-}
-
 function update(dt){
   if(state !== 'play') return;
   timeLeft -= dt;
@@ -518,7 +533,6 @@ function update(dt){
   cameraShake = Math.max(0, cameraShake - dt * 50);
   cameraPunch = Math.max(0, cameraPunch - dt * 3);
   
-  // PLAYER
   let ix=0, iy=0;
   if (pl.state === 'IDLE' || pl.state === 'RECOVERY') {
     ix = stick.x+((K.KeyD||K.ArrowRight)?1:0)-((K.KeyA||K.ArrowLeft)?1:0);
@@ -531,7 +545,6 @@ function update(dt){
   
   pl.stateTime += dt * 1000;
   
-  // === STATE MACHINE PLAYER ===
   if (pl.state === 'IDLE') {
     if(pl.dashT>0){
       pl.dashT-=dt; pl.run=true;
@@ -545,36 +558,26 @@ function update(dt){
       if(pl.run&&Math.random()<dt*14) spawnVFX(pl.x-pl.face*8, pl.y, 'normal', 0.2, true);
     }
   } else if (pl.state === 'ULTIMATE') {
-    // Karakter bergerak maju sedikit saat ultimate (lunge)
     const ud = pl.ultData;
     if (ud) {
       const progress = (performance.now() - ud.startTime) / ud.duration;
-      
-      // Fase lunge: karakter bergerak maju
       if (progress > 0.5 && progress < 0.7) {
         pl.x += pl.face * 100 * dt;
       }
-      
-      // Fase release: tembak projectile
       if (progress > 0.7 && !ud.hasFired) {
         ud.hasFired = true;
-        fireProjectile(pl, en, pl.fx, 2.0); // Projectile ultimate lebih cepat
+        fireProjectile(pl, en, pl.fx, 2.0);
         cameraTargetZoom = 1.15;
         flashA = 0.4;
         AudioManager.play('ultimate', 0.9);
       }
-      
-      // Fase impact: setelah projectile menabrak
       if (progress > 0.85 && !ud.impactDone) {
         ud.impactDone = true;
-        // Trigger damage besar ke musuh
         const dmg = Math.round(dmgOf(pl.atk, en.def, 3.0));
         triggerImpact(en, pl.x, pl.y, pl.fx, dmg);
         cameraShake = 25;
         cameraPunch = 1.5;
       }
-      
-      // Selesai
       if (progress >= 1) {
         pl.ultData = null;
         pl.state = 'RECOVERY';
@@ -609,7 +612,6 @@ function update(dt){
   pl.cd-=dt; pl.dashCd-=dt; pl.inv-=dt; pl.flash-=dt; pl.atkT-=dt;
   if(atkHeld||K.Space||K.KeyJ)atk();
   
-  // ENEMY AI
   const a=en.ai,dx=pl.x-en.x,dy=pl.y-en.y,dl=Math.hypot(dx,dy)||1,hard=en.hp<en.max*.5;
   en.face=dx>=0?1:-1;let mx=0,my=0;
   if(en.lunge){const L=en.lunge;L.t-=dt;en.x+=L.vx*dt;en.y+=L.vy*dt*.6;
@@ -634,7 +636,6 @@ function update(dt){
   if(en.hitScaleY!==1){ en.hitScaleY += (1-en.hitScaleY)*dt*8; }
   if(en.hitRotation!==0){ en.hitRotation *= (1-dt*8); }
   
-  // Projectile
   for(let i=proj.length-1;i>=0;i--){
     const p=proj[i];
     p.trail.push({x:p.x,y:p.y,l:0.25});
@@ -695,7 +696,6 @@ function drawSheet(e,sz){
   ctx.drawImage(sh.img, Math.round(fr*sh.img.naturalWidth/sh.cols), Math.round(row*sh.img.naturalHeight/sh.rows), sh.cw, sh.ch, -sh.ax*s, -feetY*s, sh.cw*s, sh.ch*s);
 }
 
-// === GAMBAR KARAKTER ULTIMATE DI DALAM ARENA ===
 function drawUltFrame(e, sz) {
   const ud = e.ultData;
   if (!ud || !ud.img.complete || !ud.img.naturalWidth) return;
@@ -706,7 +706,6 @@ function drawUltFrame(e, sz) {
   
   if (progress >= 1) return;
   
-  // Tentukan fase
   let phaseName = 'anticipation';
   let phaseProgress = 0;
   if (progress < 0.15) { phaseName = 'anticipation'; phaseProgress = progress / 0.15; }
@@ -732,21 +731,17 @@ function drawUltFrame(e, sz) {
   const cw = ud.img.naturalWidth / ud.cols;
   const ch = ud.img.naturalHeight / ud.rows;
   
-  // Hitung scale berdasarkan ukuran karakter
   const scale = sz / Math.max(cw, ch) * 1.3;
   const dw = cw * scale;
   const dh = ch * scale;
   
-  // Posisi sprite: di bawah karakter, rata tengah
+  // Posisi sprite disejajarkan dengan posisi pijakan kaki (85% tinggi seperti normal)
   const dx = -dw/2;
-  const dy = -dh;
+  const dy = -dh * 0.85;
   
-  // Efek visual tambahan berdasarkan fase
   const fxColor = FX_COLORS[e.fx] || e.col;
   
   ctx.save();
-  
-  // Aura glow di belakang sprite
   if (phaseName === 'charge' || phaseName === 'release') {
     ctx.globalCompositeOperation = 'lighter';
     const auraGrd = ctx.createRadialGradient(0, -sz*0.5, 0, 0, -sz*0.5, sz*1.5);
@@ -758,12 +753,9 @@ function drawUltFrame(e, sz) {
     ctx.globalCompositeOperation = 'source-over';
   }
   
-  // Gambar sprite ultimate (TANPA shadowBlur, TANPA kotak)
   ctx.drawImage(ud.img, col*cw, row*ch, cw, ch, dx, dy, dw, dh);
-  
   ctx.restore();
   
-  // Partikel VFX
   if (Math.random() < 0.8) {
     spawnVFX(e.x, e.y - sz*0.5, e.fx, phaseName === 'charge' ? 1.5 : 0.8);
   }
@@ -791,7 +783,6 @@ function drawEnt(e){
   ctx.save();
   ctx.translate(e.x,e.y-3-(useS?0:Math.abs(bob)));
   
-  // Kalau state ULTIMATE, gambar sprite ultimate DI POSISI KARAKTER
   if (e.state === 'ULTIMATE' && e.ultData) {
     drawUltFrame(e, sz);
   } else if(useS){ 
@@ -1001,10 +992,9 @@ function fx(dt){
 
 function hud(){
   const pp=Math.round(pl.hp/pl.max*100),ep=Math.round(en.hp/en.max*100),col=p=>p>50?'#22c55e':p>25?'#eab308':'#ef4444';
-  $('pf').style.width=$('pl').style.width=pp+'%';$('pf').style.background=col(pp);$('pt').textContent=pp+'%';
-  $('ef').style.width=$('el').style.width=ep+'%';$('et').textContent=ep+'%';
-  $('pu').style.width=pl.ult+'%';$('bSk').classList.toggle('rdy',pl.ult>=100);
-  $('dsc').style.height=Math.max(0,pl.dashCd/1.1)*100+'%';$('tm').textContent=Math.max(0,Math.ceil(timeLeft));
+  $('pf').style.width=$('pl').style.width=pp+'\%';$('pf').style.background=col(pp);$('pt').textContent=pp+'\%';$('ef').style.width=$('el').style.width=ep+'\%';$('et').textContent=ep+'%';
+  $('pu').style.width=pl.ult+'\%';$('bSk').classList.toggle('rdy',pl.ult>=100);
+  $('dsc').style.height=Math.max(0,pl.dashCd/1.1)*100+'\%';$('tm').textContent=Math.max(0,Math.ceil(timeLeft));
 }
 
 let last=performance.now();
@@ -1019,3 +1009,4 @@ requestAnimationFrame(loop);
 </script>
 </body>
 </html>
+
