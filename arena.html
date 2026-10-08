@@ -155,43 +155,13 @@ const ALIAS={vaporeon:'favoreon'};
 const FX={pichu:'elec',pikachu:'elec',raichu:'elec',jolteon:'elec',charmander:'fire',charmeleon:'fire',charizard:'fire',flareon:'fire',froakie:'water',frogadier:'water',greninja:'water',squirtle:'water',wartortle:'water',blastoise:'water',vaporeon:'water',glaceon:'water',bulbasaur:'grass',ivysaur:'grass',venusaur:'grass',leafeon:'grass',mew:'psy',mewtwo:'psy',espeon:'psy',gastly:'ghost',haunter:'ghost',gengar:'ghost',umbreon:'ghost',riolu:'aura',lucario:'aura',rayquaza:'dragon'};
 const FX_COLORS={elec:'#ffe14d',fire:'#ff7b61',water:'#54c9ff',grass:'#7ee69d',psy:'#e08cff',ghost:'#a883ff',aura:'#5fafff',dragon:'#66e29b',normal:'#ffffff'};
 
-const ALL_CHARS = [
-  'pichu','pikachu','bulbasaur','squirtle','froakie',
-  'riolu','gastly','mew','rayquaza','eevee',
-  'charmander','raichu'
-];
-
-// Pengaturan GRID Spritesheet Biasa (Normal = 6 Kolom x 4 Baris)
-const SHEETS = {};
-ALL_CHARS.forEach(id => {
-  SHEETS[id] = { src: `assets/${id}-spritesheet.png`, cols: 6, rows: 4 };
-});
-
-// Pengaturan GRID Spritesheet Ultimate (Ultimate = 8 Kolom x 6 Baris)
-const ULT_SHEETS = {};
-Object.keys(R).forEach(id => {
-  ULT_SHEETS[id] = {
-    src: `assets/${id}-ultimate-spritesheet.png`,
-    cols: 8, rows: 6, fps: 14,
-    phases: {
-      anticipation: { row: 0, start: 0, end: 7 },
-      charge:       { row: 1, start: 0, end: 7 },
-      windup:       { row: 2, start: 0, end: 7 },
-      lunge:        { row: 3, start: 0, end: 7 },
-      release:      { row: 4, start: 0, end: 7 },
-      recovery:     { row: 5, start: 0, end: 7 }
-    }
-  };
-});
-
+// Cache gambar untuk mempercepat load
 const SHEET_CACHE={};
 
-// Fungsi ini memuat gambar dan menghapus Latar Belakang Hitam yang menghalangi Bounding Box Sprite
+// Pembacaan Spritesheet Normal Cerdas & Otomatis
 function loadSheet(id){
   if(SHEET_CACHE[id]) return SHEET_CACHE[id];
-  const cfg=SHEETS[id];
-  if(!cfg) return null;
-  const sh=SHEET_CACHE[id]={cols:cfg.cols,rows:cfg.rows,ready:false,img:new Image()};
+  const sh = SHEET_CACHE[id] = { cols: 7, rows: 4, ready: false, img: new Image() }; // Standar 7 Kolom
   
   const rawImg = new Image();
   rawImg.crossOrigin = "Anonymous";
@@ -205,26 +175,36 @@ function loadSheet(id){
     try {
       const imgData = x.getImageData(0, 0, c.width, c.height);
       const data = imgData.data;
-      // Proses penghapusan Background Hitam (Chroma Key Black)
       for (let i = 0; i < data.length; i += 4) {
         const r = data[i], g = data[i+1], b = data[i+2];
         if (r < 25 && g < 25 && b < 25) {
-          data[i+3] = 0; // Buat transparan total
+          data[i+3] = 0; 
         } else if (r < 45 && g < 45 && b < 45) {
-          data[i+3] = Math.min(data[i+3], 100); // Semi-transparan untuk antialias tepian
+          data[i+3] = Math.min(data[i+3], 100); 
         }
       }
       x.putImageData(imgData, 0, 0);
       
-      sh.img.onload = () => { analyze(sh); sh.ready = true; };
+      sh.img.onload = () => {
+        // Kalkulasi dinamis mencari jumlah baris (row) yang asli dari rasio gambar
+        sh.cols = 7; 
+        sh.rows = Math.max(1, Math.round(sh.img.naturalHeight / (sh.img.naturalWidth / 7)));
+        analyze(sh); 
+        sh.ready = true; 
+      };
       sh.img.src = c.toDataURL();
     } catch(e) {
-      // Fallback jika terkena pembatasan server/CORS
-      sh.img.onload = () => { analyze(sh); sh.ready = true; };
-      sh.img.src = cfg.src;
+      // Fallback
+      sh.img.onload = () => {
+        sh.cols = 7;
+        sh.rows = Math.max(1, Math.round(sh.img.naturalHeight / (sh.img.naturalWidth / 7)));
+        analyze(sh);
+        sh.ready = true;
+      };
+      sh.img.src = `assets/${id}-spritesheet.png`;
     }
   };
-  rawImg.src = cfg.src;
+  rawImg.src = `assets/${id}-spritesheet.png`;
   return sh;
 }
 
@@ -247,7 +227,8 @@ function analyze(sh){
       return x1<0?null:{x0,x1,y0,y1,h:y1-y0,w:x1-x0};
     };
     const med=a=>a.slice().sort((p,q)=>p-q)[a.length>>1];
-    const B=[0,3].map(r => Array.from({length:sh.cols},(_,k)=>box(r,k)));
+    
+    const B=[0, sh.rows - 1].map(r => Array.from({length:sh.cols},(_,k)=>box(r,k)));
     const ok = B.map(b => b.filter(Boolean));
     if(ok[0] && ok[0].length){
       feet[0] = med(ok[0].map(f=>f.y1));
@@ -302,7 +283,8 @@ function mk(id,isP){
     hitScaleX:1, hitScaleY:1, hitRotation:0,
     ultData: null
   };
-  if(SHEETS[id]) e.sheet=loadSheet(id);
+  // Pre-load sheet if it exists
+  e.sheet=loadSheet(id);
   e.fx=FX[id]||'normal';
   return e;
 }
@@ -452,12 +434,10 @@ function atk(){
   pl.cd=.34;pl.atkT=.2;fireProjectile(pl,en,pl.fx,1);AudioManager.play('button',.35);
 }
 
+// Pembacaan Spritesheet Ultimate Cerdas & Otomatis (Hapus BG Hitam)
 function skill(){
   if(state!=='play'||pl.ult<100||pl.state!=='IDLE')return;
   pl.ult=0;pl.ultReady=false;
-  
-  const cfg = ULT_SHEETS[pl.id];
-  if(!cfg){ notify('❌ Ultimate tidak tersedia'); return; }
   
   const img = new Image();
   img.crossOrigin = "Anonymous";
@@ -468,34 +448,33 @@ function skill(){
     const tCtx = tempCanvas.getContext('2d');
     tCtx.drawImage(img, 0, 0);
     
+    let srcURL = img.src;
     try {
       const imgData = tCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
       const data = imgData.data;
-      // Hapus Latar Belakang Hitam (Solid Black Background)
       for (let i = 0; i < data.length; i += 4) {
         const r = data[i], g = data[i+1], b = data[i+2];
-        if (r < 25 && g < 25 && b < 25) {
-          data[i+3] = 0;
-        } else if (r < 45 && g < 45 && b < 45) {
-          data[i+3] = Math.min(data[i+3], 100);
-        }
+        if (r < 25 && g < 25 && b < 25) data[i+3] = 0;
+        else if (r < 45 && g < 45 && b < 45) data[i+3] = Math.min(data[i+3], 100);
       }
       tCtx.putImageData(imgData, 0, 0);
+      srcURL = tempCanvas.toDataURL();
     } catch(e) {
-      console.warn('CORS error - background tidak dihapus:', e);
+      console.warn('CORS error - fallback ke ori:', e);
     }
     
     const cleanImg = new Image();
     cleanImg.onload = () => {
+      // Kalkulasi dinamis grid Ultimate (Selalu 8 kolom)
+      const uCols = 8;
+      const uRows = Math.max(1, Math.round(cleanImg.naturalHeight / (cleanImg.naturalWidth / uCols)));
+      
       pl.ultData = {
         img: cleanImg,
         startTime: performance.now(),
         duration: 3500,
-        cols: cfg.cols,
-        rows: cfg.rows,
-        fps: cfg.fps,
-        phases: cfg.phases,
-        timer: null,
+        cols: uCols,
+        rows: uRows,
         hasFired: false,
         impactDone: false
       };
@@ -505,12 +484,10 @@ function skill(){
       AudioManager.play('ultimate', .8);
       vib([40,30,40]);
     };
-    cleanImg.src = tempCanvas.toDataURL();
+    cleanImg.src = srcURL;
   };
-  img.onerror = () => {
-    notify('❌ Gagal memuat ultimate');
-  };
-  img.src = cfg.src;
+  img.onerror = () => { notify('❌ Gagal memuat ultimate'); };
+  img.src = `assets/${pl.id}-ultimate-spritesheet.png`;
 }
 
 function dash(){
@@ -661,11 +638,8 @@ function finish(win){
   AudioManager.play(win?'success':'error',.7);
   setTimeout(()=>{
     $('rt').textContent=win?'VICTORY':'DEFEAT';
-    $('rt').style.color=win?'var(--gn)':'var(--rd)';
-    $('rs').textContent=win?'★'.repeat(stars)+'☆'.repeat(3-stars):'☆☆☆';
-    $('rx').textContent='+'+exp; $('rh').textContent=Math.round(ratio*100)+'%';
-    $('rc').textContent=maxCombo; $('rd').textContent=Math.round(dmgDone);
-    $('menu').href=`index.html?char=${pid}`; $('end').classList.remove('h');
+    $('rt').style.color=win?'var(--gn)':'var(--rd)';$('rs').textContent=win?'★'.repeat(stars)+'☆'.repeat(3-stars):'☆☆☆';
+    $('rx').textContent='+'+exp; $('rh').textContent=Math.round(ratio*100)+'\%';$('rc').textContent=maxCombo; $('rd').textContent=Math.round(dmgDone);$('menu').href=`index.html?char=${pid}`; $('end').classList.remove('h');
   }, win?900:500);
 }
 
@@ -684,13 +658,18 @@ function drawSheet(e,sz){
   if(!sh || !sh.ready) return;
   const s=sz/(sh.bh*1.19);
   let row=0, fr=0;
-  if(e.atkAnim>=0){ row = 3; fr = Math.min(sh.atkN-1, Math.floor(e.atkAnim/.42*sh.atkN)); }
+  
+  if(e.atkAnim>=0){ 
+    row = sh.rows - 1; 
+    fr = Math.min(sh.atkN-1, Math.floor(e.atkAnim/.42*sh.atkN)); 
+  }
   else if(e.moving || e.dashT>0 || e.lunge){
-    if(e.run){ row = 2; fr = Math.floor(e.an*14) % sh.cols; }
-    else { row = 1; fr = Math.floor(e.an*8) % sh.cols; }
-  } else { row = 0; fr = Math.floor(e.an*5) % sh.cols; }
-  if(row >= sh.rows) row = sh.rows - 1;
-  if(e.run && row===2) ctx.rotate(.11*e.face);
+    if(e.run){ row = Math.min(2, sh.rows-1); fr = Math.floor(e.an*14) % sh.cols; }
+    else { row = Math.min(1, sh.rows-1); fr = Math.floor(e.an*8) % sh.cols; }
+  } else { 
+    row = 0; fr = Math.floor(e.an*5) % sh.cols; 
+  }
+  
   ctx.scale(e.face,1);
   const feetY = sh.feet[row] !== undefined ? sh.feet[row] : sh.feet[0];
   ctx.drawImage(sh.img, Math.round(fr*sh.img.naturalWidth/sh.cols), Math.round(row*sh.img.naturalHeight/sh.rows), sh.cw, sh.ch, -sh.ax*s, -feetY*s, sh.cw*s, sh.ch*s);
@@ -702,7 +681,7 @@ function drawUltFrame(e, sz) {
   
   const now = performance.now();
   const elapsed = now - ud.startTime;
-  const progress = elapsed / ud.duration;
+  const progress = Math.min(1, Math.max(0, elapsed / ud.duration));
   
   if (progress >= 1) return;
   
@@ -715,18 +694,11 @@ function drawUltFrame(e, sz) {
   else if (progress < 0.85) { phaseName = 'release'; phaseProgress = (progress - 0.70) / 0.15; }
   else { phaseName = 'recovery'; phaseProgress = (progress - 0.85) / 0.15; }
   
-  const phase = ud.phases ? ud.phases[phaseName] : null;
-  let col, row;
-  if (phase) {
-    const frameInPhase = Math.floor(phaseProgress * (phase.end - phase.start + 1));
-    col = Math.min(ud.cols - 1, phase.start + frameInPhase);
-    row = Math.min(ud.rows - 1, phase.row);
-  } else {
-    const totalFrames = ud.cols * ud.rows;
-    const frameIndex = Math.floor(progress * totalFrames);
-    col = frameIndex % ud.cols;
-    row = Math.floor(frameIndex / ud.cols);
-  }
+  // Perhitungan urutan index linear yang aman dari error jumlah baris
+  const totalFrames = ud.cols * ud.rows;
+  const frameIndex = Math.min(totalFrames - 1, Math.floor(progress * totalFrames));
+  const col = frameIndex % ud.cols;
+  const row = Math.floor(frameIndex / ud.cols);
   
   const cw = ud.img.naturalWidth / ud.cols;
   const ch = ud.img.naturalHeight / ud.rows;
@@ -735,13 +707,13 @@ function drawUltFrame(e, sz) {
   const dw = cw * scale;
   const dh = ch * scale;
   
-  // Posisi sprite disejajarkan dengan posisi pijakan kaki (85% tinggi seperti normal)
   const dx = -dw/2;
   const dy = -dh * 0.85;
   
   const fxColor = FX_COLORS[e.fx] || e.col;
   
   ctx.save();
+  ctx.scale(e.face, 1);
   if (phaseName === 'charge' || phaseName === 'release') {
     ctx.globalCompositeOperation = 'lighter';
     const auraGrd = ctx.createRadialGradient(0, -sz*0.5, 0, 0, -sz*0.5, sz*1.5);
