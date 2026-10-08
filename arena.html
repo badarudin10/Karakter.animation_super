@@ -137,6 +137,9 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:1}
 <script>
 'use strict';
 
+/* =====================================================================
+   DATA KARAKTER  [nama, warna, HP, ATK, DEF, SPD, nama skill]
+===================================================================== */
 const R={
 pichu:['Pichu','#ffc857',120,85,60,110,'Thunder Impact'],pikachu:['Pikachu','#ffc857',140,105,70,130,'Thunderbolt'],raichu:['Raichu','#ffaa33',180,130,90,140,'Thunder'],
 charmander:['Charmander','#ff7b61',180,125,95,100,'Inferno Wing'],charmeleon:['Charmeleon','#ff7b61',200,140,105,115,'Flamethrower'],charizard:['Charizard','#ff5533',240,160,120,135,'Blast Burn'],
@@ -155,97 +158,117 @@ const ALIAS={vaporeon:'favoreon'};
 const FX={pichu:'elec',pikachu:'elec',raichu:'elec',jolteon:'elec',charmander:'fire',charmeleon:'fire',charizard:'fire',flareon:'fire',froakie:'water',frogadier:'water',greninja:'water',squirtle:'water',wartortle:'water',blastoise:'water',vaporeon:'water',glaceon:'water',bulbasaur:'grass',ivysaur:'grass',venusaur:'grass',leafeon:'grass',mew:'psy',mewtwo:'psy',espeon:'psy',gastly:'ghost',haunter:'ghost',gengar:'ghost',umbreon:'ghost',riolu:'aura',lucario:'aura',rayquaza:'dragon'};
 const FX_COLORS={elec:'#ffe14d',fire:'#ff7b61',water:'#54c9ff',grass:'#7ee69d',psy:'#e08cff',ghost:'#a883ff',aura:'#5fafff',dragon:'#66e29b',normal:'#ffffff'};
 
-// Cache gambar untuk mempercepat load
-const SHEET_CACHE={};
+/* =====================================================================
+   KONFIGURASI SPRITESHEET  (ubah di sini kalau ukuran grid aset berubah)
 
-// Pembacaan Spritesheet Normal Cerdas & Otomatis
-function loadSheet(id){
-  if(SHEET_CACHE[id]) return SHEET_CACHE[id];
-  const sh = SHEET_CACHE[id] = { cols: 7, rows: 4, ready: false, img: new Image() }; // Standar 7 Kolom
-  
-  const rawImg = new Image();
-  rawImg.crossOrigin = "Anonymous";
-  rawImg.onload = () => {
-    const c = document.createElement('canvas');
-    c.width = rawImg.naturalWidth;
-    c.height = rawImg.naturalHeight;
-    const x = c.getContext('2d');
-    x.drawImage(rawImg, 0, 0);
-    
-    try {
-      const imgData = x.getImageData(0, 0, c.width, c.height);
-      const data = imgData.data;
-      for (let i = 0; i < data.length; i += 4) {
-        const r = data[i], g = data[i+1], b = data[i+2];
-        if (r < 25 && g < 25 && b < 25) {
-          data[i+3] = 0; 
-        } else if (r < 45 && g < 45 && b < 45) {
-          data[i+3] = Math.min(data[i+3], 100); 
-        }
-      }
-      x.putImageData(imgData, 0, 0);
-      
-      sh.img.onload = () => {
-        // Kalkulasi dinamis mencari jumlah baris (row) yang asli dari rasio gambar
-        sh.cols = 7; 
-        sh.rows = Math.max(1, Math.round(sh.img.naturalHeight / (sh.img.naturalWidth / 7)));
-        analyze(sh); 
-        sh.ready = true; 
-      };
-      sh.img.src = c.toDataURL();
-    } catch(e) {
-      // Fallback
-      sh.img.onload = () => {
-        sh.cols = 7;
-        sh.rows = Math.max(1, Math.round(sh.img.naturalHeight / (sh.img.naturalWidth / 7)));
-        analyze(sh);
-        sh.ready = true;
-      };
-      sh.img.src = `assets/${id}-spritesheet.png`;
-    }
-  };
-  rawImg.src = `assets/${id}-spritesheet.png`;
+   NORMAL  : 6 kolom x 4 baris
+             baris 0 = idle, 1 = jalan, 2 = lari, 3 = serangan biasa
+   ULTIMATE: 8 kolom x 6 baris (48 frame)
+             baris 0 = antisipasi, 1 = charge, 2 = windup,
+             baris 3 = dash maju,  4 = lepas serangan, 5 = recovery
+===================================================================== */
+const NORMAL_GRID={cols:6,rows:4};
+const ULT_GRID={cols:8,rows:6,fadeRow:4};   // fadeRow = baris beam (sisi kanan dipudarkan agar tidak terpotong kotak)
+const ATK_DUR=.45, ATK_FIRE=.22;            // durasi animasi serangan biasa & saat proyektil keluar (detik)
+const ULT_DUR=3800;                         // durasi total ultimate (ms)
+
+/* ---------- Loader spritesheet: hapus background per-sel, cari titik pijakan ---------- */
+const SHEETS={};
+function loadSheet(url,cols,rows,fadeRow){
+  if(SHEETS[url])return SHEETS[url];
+  const sh=SHEETS[url]={url,cols,rows,fadeRow:fadeRow===undefined?-1:fadeRow,ready:false,failed:false,canvas:null,cw:0,ch:0,ax:0,feet:0,h:0};
+  const im=new Image();
+  im.onload=()=>{try{processSheet(sh,im)}catch(e){console.warn('sheet',url,e);sh.failed=true}};
+  im.onerror=()=>{sh.failed=true};
+  im.src=url;
   return sh;
 }
+const median=a=>a.slice().sort((p,q)=>p-q)[a.length>>1];
 
-function analyze(sh){
-  const im=sh.img, cw=im.naturalWidth/sh.cols, ch=im.naturalHeight/sh.rows;
-  sh.cw=Math.floor(cw); sh.ch=Math.floor(ch);
-  let feet=[], ax=cw*.43, bw=cw*.58, bh=ch*.67, atkN=Math.max(2,sh.cols-1);
-  for(let r=0; r<sh.rows; r++) feet.push(ch*.85);
-  try{
-    const c=document.createElement('canvas'); c.width=im.naturalWidth; c.height=im.naturalHeight;
-    const x=c.getContext('2d'); x.drawImage(im,0,0);
-    const box=(r,k)=>{
-      const d=x.getImageData(Math.round(k*cw),Math.round(r*ch),sh.cw,sh.ch).data;
+function processSheet(sh,im){
+  const IW=im.naturalWidth,IH=im.naturalHeight;
+  const c=document.createElement('canvas');c.width=IW;c.height=IH;
+  const x=c.getContext('2d',{willReadFrequently:true});
+  x.drawImage(im,0,0);
+  sh.cw=IW/sh.cols;sh.ch=IH/sh.rows;sh.canvas=c;
+  let id=null;
+  try{id=x.getImageData(0,0,IW,IH)}catch(e){console.warn('canvas tainted, background tidak dibersihkan')}
+  let fs=[],cx=[],hs=[];
+  if(id){
+    const d=id.data;
+    for(let r=0;r<sh.rows;r++)for(let k=0;k<sh.cols;k++){
+      keyCell(d,IW,Math.round(k*sh.cw),Math.round(r*sh.ch),Math.round((k+1)*sh.cw),Math.round((r+1)*sh.ch),sh.fadeRow===r);
+    }
+    // titik pijakan & tinggi karakter dari baris idle (baris 0)
+    for(let k=0;k<sh.cols;k++){
+      const X0=Math.round(k*sh.cw),X1=Math.round((k+1)*sh.cw),Y1=Math.round(sh.ch);
       let x0=1e9,x1=-1,y0=1e9,y1=-1;
-      for(let yy=0;yy<sh.ch;yy++) for(let xx=0;xx<sh.cw;xx++){
-        if(d[(yy*sh.cw+xx)*4+3]>40){
-          if(xx<x0)x0=xx; if(xx>x1)x1=xx; if(yy<y0)y0=yy; if(yy>y1)y1=yy;
-        }
+      for(let yy=0;yy<Y1;yy++)for(let xx=X0;xx<X1;xx++){
+        if(d[(yy*IW+xx)*4+3]>128){if(xx<x0)x0=xx;if(xx>x1)x1=xx;if(yy<y0)y0=yy;if(yy>y1)y1=yy}
       }
-      return x1<0?null:{x0,x1,y0,y1,h:y1-y0,w:x1-x0};
-    };
-    const med=a=>a.slice().sort((p,q)=>p-q)[a.length>>1];
-    
-    const B=[0, sh.rows - 1].map(r => Array.from({length:sh.cols},(_,k)=>box(r,k)));
-    const ok = B.map(b => b.filter(Boolean));
-    if(ok[0] && ok[0].length){
-      feet[0] = med(ok[0].map(f=>f.y1));
-      ax = med(ok[0].map(f=>(f.x0+f.x1)/2));
-      bw = med(ok[0].map(f=>f.w));
-      bh = med(ok[0].map(f=>f.h));
+      if(x1>=0){fs.push(y1);cx.push((x0+x1)/2-X0);hs.push(y1-y0)}
     }
-    for(let r=1; r<sh.rows; r++) feet[r] = feet[0];
-    if(ok[1] && ok[1].length){
-      const mh=med(ok[1].map(f=>f.h)); let n=0;
-      for(const f of B[1]){ if(f&&f.h>=mh*.7)n++; else break; }
-      atkN=Math.max(2,n);
-    }
-  }catch(e){}
-  sh.feet=feet; sh.ax=ax; sh.bh=bh; sh.atkN=atkN; sh.mz=[bw*.55,-bh*.39];
+    x.putImageData(id,0,0);
+  }
+  sh.feet=fs.length?median(fs):sh.ch*.9;
+  sh.ax=cx.length?median(cx):sh.cw/2;
+  sh.h=hs.length?median(hs):sh.ch*.7;
+  sh.ready=true;
 }
 
+/* Bersihkan background satu sel:
+   - sel terang (putih/transparan) : flood-fill dari tepi sel -> outline hitam karakter AMAN
+   - sel gelap (frame beam berlatar gelap) : alpha berdasarkan kecerahan + pudar di tepi */
+function keyCell(d,W,x0,y0,x1,y1,fadeR){
+  const w=x1-x0,h=y1-y0;
+  const lum=(xx,yy)=>{const i=((y0+yy)*W+x0+xx)*4;return d[i+3]<20?255:d[i]*.3+d[i+1]*.59+d[i+2]*.11};
+  let sum=0,n=0;
+  for(let xx=0;xx<w;xx+=4){sum+=lum(xx,0)+lum(xx,h-1);n+=2}
+  for(let yy=0;yy<h;yy+=4){sum+=lum(0,yy)+lum(w-1,yy);n+=2}
+  if(sum/n<95){
+    const m0=Math.min(w,h)*.14;
+    for(let yy=0;yy<h;yy++)for(let xx=0;xx<w;xx++){
+      const i=((y0+yy)*W+x0+xx)*4;
+      const m=Math.max(d[i],d[i+1],d[i+2]);
+      let a=Math.max(0,Math.min(255,(m-70)*2.4));
+      a*=Math.max(0,Math.min(1,Math.min(xx,w-1-xx,yy,h-1-yy)/m0));
+      d[i+3]=Math.min(d[i+3],a);
+    }
+  }else{
+    const seen=new Uint8Array(w*h),st=[];
+    const push=(xx,yy)=>{
+      const p=yy*w+xx;if(seen[p])return;
+      const i=((y0+yy)*W+x0+xx)*4;
+      if(!(d[i+3]<20||(d[i]>=232&&d[i+1]>=232&&d[i+2]>=232)))return;
+      seen[p]=1;st.push(p);
+    };
+    for(let xx=0;xx<w;xx++){push(xx,0);push(xx,h-1)}
+    for(let yy=0;yy<h;yy++){push(0,yy);push(w-1,yy)}
+    while(st.length){
+      const p=st.pop(),xx=p%w,yy=(p/w)|0;
+      d[((y0+yy)*W+x0+xx)*4+3]=0;
+      if(xx>0)push(xx-1,yy);if(xx<w-1)push(xx+1,yy);
+      if(yy>0)push(xx,yy-1);if(yy<h-1)push(xx,yy+1);
+    }
+    // haluskan pinggiran putih yang tersisa (halo)
+    for(let yy=0;yy<h;yy++)for(let xx=0;xx<w;xx++){
+      const p=yy*w+xx;if(seen[p])continue;
+      const i=((y0+yy)*W+x0+xx)*4;if(d[i+3]===0)continue;
+      const nb=(xx>0&&seen[p-1])||(xx<w-1&&seen[p+1])||(yy>0&&seen[p-w])||(yy<h-1&&seen[p+w]);
+      if(nb){const l=d[i]*.3+d[i+1]*.59+d[i+2]*.11;if(l>190)d[i+3]=Math.round(d[i+3]*Math.max(0,(235-l)/45))}
+    }
+  }
+  if(fadeR){
+    const f0=w*.9;
+    for(let yy=0;yy<h;yy++)for(let xx=Math.floor(f0);xx<w;xx++){
+      const i=((y0+yy)*W+x0+xx)*4;d[i+3]=Math.round(d[i+3]*(w-xx)/(w-f0));
+    }
+  }
+}
+
+/* =====================================================================
+   SETUP
+===================================================================== */
 const Q=new URLSearchParams(location.search);
 const pid=R[Q.get('char')]?Q.get('char'):'pikachu';
 const arenaN=Q.get('arena')==='2'?'2':'1';
@@ -277,20 +300,21 @@ function mk(id,isP){
     x:0, y:0, face:1, cd:0, dashT:0, dashCd:0, dvx:0, dvy:0, inv:0, flash:0, atkT:0, wind:0,
     kind:'shot', lunge:null, ph:Math.random()*6, moving:false, ult:0, kx:0, ky:0,
     ai:{t:1.5,dir:1}, img:loadImg(id), size:Math.min(W*.3,165)*(.9+d[2]/1200), an:0,
-    atkAnim:-1, pend:false, run:false,
+    atkAnim:-1, pend:false, run:false, shotDone:false,
     state:'IDLE', stateTime:0,
-    vx:0, vy:0,
     hitScaleX:1, hitScaleY:1, hitRotation:0,
-    ultData: null
+    ultData:null, ultReady:false
   };
-  // Pre-load sheet if it exists
-  e.sheet=loadSheet(id);
+  // spritesheet NORMAL (idle/jalan/lari/serang)
+  e.sheet=loadSheet(`assets/${id}-spritesheet.png`,NORMAL_GRID.cols,NORMAL_GRID.rows);
+  // spritesheet ULTIMATE (terpisah) - hanya dipakai pemain
+  e.usheet=isP?loadSheet(`assets/${id}-ultimate-spritesheet.png`,ULT_GRID.cols,ULT_GRID.rows,ULT_GRID.fadeRow):null;
   e.fx=FX[id]||'normal';
   return e;
 }
 
 let flashA=0, pl, en, proj=[], parts=[], texts=[], rings=[];
-let state='intro', timeLeft=90, shake=0, hitstop=0, combo=0, maxCombo=0, dmgDone=0, perf=0;
+let state='intro', timeLeft=90, shake=0, hitstop=0, combo=0, maxCombo=0, dmgDone=0, perf=0, ultFx=0;
 let cameraZoom=1.0, cameraTargetZoom=1.0, cameraShake=0, cameraPunch=0;
 const stick={x:0,y:0},K={};let atkHeld=false;
 
@@ -301,16 +325,14 @@ function reset(){
   pl.x=A.cx-A.rx*.45; pl.y=A.cy+A.ry*.45;
   en.x=A.cx+A.rx*.45; en.y=A.cy-A.ry*.25;
   proj=[]; flashA=0; parts=[]; texts=[]; rings=[];
-  timeLeft=90; shake=0; hitstop=0; combo=0; maxCombo=0; dmgDone=0; state='intro';
+  timeLeft=90; shake=0; hitstop=0; combo=0; maxCombo=0; dmgDone=0; state='intro'; ultFx=0;
   cameraZoom=1.0; cameraTargetZoom=1.0; cameraShake=0; cameraPunch=0;
-  
-  const pCol = FX_COLORS[pl.fx] || pl.col;
-  const eCol = FX_COLORS[en.fx] || en.col;
-  document.documentElement.style.setProperty('--p-col', pCol);
-  document.documentElement.style.setProperty('--e-col', eCol);
-  
-  $('pm1').textContent = pl.mv;
-  $('em1').textContent = en.mv;
+
+  const pCol=FX_COLORS[pl.fx]||pl.col, eCol=FX_COLORS[en.fx]||en.col;
+  document.documentElement.style.setProperty('--p-col',pCol);
+  document.documentElement.style.setProperty('--e-col',eCol);
+
+  $('pm1').textContent=pl.mv; $('em1').textContent=en.mv;
   $('pn').textContent=pl.n; $('en').textContent=en.n; $('end').classList.add('h');
   const big=$('big'); $('intro').classList.remove('h');
   ['vi1','vi2'].forEach((k,j)=>{
@@ -329,6 +351,9 @@ function reset(){
   })();
 }
 
+/* =====================================================================
+   INPUT
+===================================================================== */
 addEventListener('keydown',e=>{K[e.code]=1;if(e.code==='KeyK')skill();if(e.code==='ShiftLeft'||e.code==='KeyL')dash()});
 addEventListener('keyup',e=>K[e.code]=0);
 const zone=$('zone'),base=$('base'),knob=$('knob');let sid=null,ox=0,oy=0;
@@ -342,11 +367,13 @@ press('bAk',()=>atkHeld=true); press('bSk',()=>skill()); press('bDs',()=>dash())
 ['pointerup','pointercancel','pointerleave'].forEach(t=>$('bAk').addEventListener(t,()=>atkHeld=false));
 $('again').onclick=reset;
 
+/* =====================================================================
+   COMBAT
+===================================================================== */
 const dmgOf=(a,d,m=1)=>Math.max(4,a*.2*100/(100+d*.6))*m*(.9+Math.random()*.2);
 const body=e=>({x:e.x,y:e.y-e.size*.4});
 const hasS=e=>!!(e.sheet&&e.sheet.ready);
-const persp=e=>{const A=arena();return .85+.3*Math.min(1,Math.max(0,(e.y-(A.cy-A.ry))/(A.ry*2)))};
-function muzzle(e){const sc=e.size*persp(e)/(e.sheet.bh*1.19);return{x:e.x+e.face*e.sheet.mz[0]*sc,y:e.y-3+e.sheet.mz[1]*sc}}
+const hasU=e=>!!(e.usheet&&e.usheet.ready);
 
 function spawnVFX(x, y, type, intensity = 1, isGround = false) {
   const count = Math.floor(3 + 5 * intensity);
@@ -368,12 +395,13 @@ function spawnVFX(x, y, type, intensity = 1, isGround = false) {
   }
 }
 
-function fireProjectile(attacker, target, type, speedMult = 1) {
+function fireProjectile(attacker, target, type, speedMult = 1, spread = 0) {
   const b = body(attacker), tb = body(target);
-  const angle = Math.atan2(tb.y - b.y, tb.x - b.x);
+  const sx = b.x + attacker.face * attacker.size * .3;
+  const angle = Math.atan2(tb.y - b.y, tb.x - sx) + spread;
   const speed = W * 0.8 * speedMult;
   proj.push({
-    x: b.x, y: b.y, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
+    x: sx, y: b.y, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
     r: Math.max(12, attacker.size * 0.15),
     from: attacker.isP, fx: type, col: FX_COLORS[type] || attacker.col,
     dmg: dmgOf(attacker.atk, target.def, attacker.isP ? 1.5 : 1),
@@ -385,38 +413,32 @@ function triggerImpact(target, sourceX, sourceY, type, dmg) {
   const b = body(target);
   const dx = target.x - sourceX, dy = target.y - sourceY;
   const dist = Math.hypot(dx, dy) || 1;
-  
-  flashA = 0.45;
-  cameraShake = 15;
-  cameraPunch = 0.8;
-  hitstop = 0.07;
-  
-  target.kx = (dx / dist) * 400;
-  target.ky = (dy / dist) * 220;
-  target.flash = 0.15;
-  target.inv = 0.2;
+
+  flashA = 0.45; cameraShake = 15; cameraPunch = 0.8; hitstop = 0.07;
+
+  target.kx = (dx / dist) * 400; target.ky = (dy / dist) * 220;
+  target.flash = 0.15; target.inv = 0.2;
   target.hp = Math.max(0, target.hp - dmg);
-  target.hitScaleX = 1.15;
-  target.hitScaleY = 0.85;
-  target.hitRotation = (Math.random() - 0.5) * 0.3;
-  
+  target.hitScaleX = 1.15; target.hitScaleY = 0.85; target.hitRotation = (Math.random() - 0.5) * 0.3;
+
   rings.push({ x: target.x, y: target.y, r: 10, max: target.size * 2, c: FX_COLORS[type] || '#fff', l: 0.5, w: 8 });
   rings.push({ x: target.x, y: target.y, r: 5, max: target.size * 1.5, c: '#ffffff', l: 0.4, w: 5 });
-  
+
   spawnVFX(b.x, b.y, type, 2.5);
   spawnVFX(b.x, b.y, 'normal', 1.5);
-  
+
   texts.push({ x: b.x, y: b.y - target.size * 0.3, t: `-${Math.round(dmg)}`, l: 0.8, c: target.isP ? '#ff7b8f' : '#ffe27a', s: 24 });
-  
+
   AudioManager.play('scan', 0.6);
   vib(60);
   cameraTargetZoom = 1.1;
-  
+
   if (target.isP) { combo = 0; gainUlt(7); }
   else { combo++; maxCombo = Math.max(maxCombo, combo); dmgDone += dmg; gainUlt(9); }
 }
 
 function gainUlt(v){
+  if(pl.state==='ULTIMATE')return;           // tidak mengisi meter saat ultimate berjalan
   pl.ult=Math.min(100,pl.ult+v);
   if(pl.ult>=100&&!pl.ultReady){
     pl.ultReady=true;
@@ -428,66 +450,27 @@ function gainUlt(v){
 let noteT=null;
 function notify(t){const n=$('note');n.innerHTML=t;n.classList.add('show');clearTimeout(noteT);noteT=setTimeout(()=>n.classList.remove('show'),2600)}
 
+/* ---------- SERANGAN BIASA (pakai spritesheet normal baris 3) ---------- */
 function atk(){
   if(pl.cd>0||state!=='play'||pl.state!=='IDLE')return;
   if(hasS(pl)){pl.cd=.5;pl.atkAnim=0;pl.pend=true;return}
   pl.cd=.34;pl.atkT=.2;fireProjectile(pl,en,pl.fx,1);AudioManager.play('button',.35);
 }
 
-// Pembacaan Spritesheet Ultimate Cerdas & Otomatis (Hapus BG Hitam)
+/* ---------- ULTIMATE (pakai spritesheet ultimate, 48 frame, 6 fase) ----------
+   0.00-0.17 antisipasi | 0.17-0.33 charge | 0.33-0.50 windup
+   0.50-0.67 dash maju  | 0.67-0.83 lepas serangan (beam + damage) | 0.83-1.00 recovery */
 function skill(){
   if(state!=='play'||pl.ult<100||pl.state!=='IDLE')return;
   pl.ult=0;pl.ultReady=false;
-  
-  const img = new Image();
-  img.crossOrigin = "Anonymous";
-  img.onload = () => {
-    const tempCanvas = document.createElement('canvas');
-    tempCanvas.width = img.naturalWidth;
-    tempCanvas.height = img.naturalHeight;
-    const tCtx = tempCanvas.getContext('2d');
-    tCtx.drawImage(img, 0, 0);
-    
-    let srcURL = img.src;
-    try {
-      const imgData = tCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
-      const data = imgData.data;
-      for (let i = 0; i < data.length; i += 4) {
-        const r = data[i], g = data[i+1], b = data[i+2];
-        if (r < 25 && g < 25 && b < 25) data[i+3] = 0;
-        else if (r < 45 && g < 45 && b < 45) data[i+3] = Math.min(data[i+3], 100);
-      }
-      tCtx.putImageData(imgData, 0, 0);
-      srcURL = tempCanvas.toDataURL();
-    } catch(e) {
-      console.warn('CORS error - fallback ke ori:', e);
-    }
-    
-    const cleanImg = new Image();
-    cleanImg.onload = () => {
-      // Kalkulasi dinamis grid Ultimate (Selalu 8 kolom)
-      const uCols = 8;
-      const uRows = Math.max(1, Math.round(cleanImg.naturalHeight / (cleanImg.naturalWidth / uCols)));
-      
-      pl.ultData = {
-        img: cleanImg,
-        startTime: performance.now(),
-        duration: 3500,
-        cols: uCols,
-        rows: uRows,
-        hasFired: false,
-        impactDone: false
-      };
-      pl.state = 'ULTIMATE';
-      pl.stateTime = 0;
-      
-      AudioManager.play('ultimate', .8);
-      vib([40,30,40]);
-    };
-    cleanImg.src = srcURL;
-  };
-  img.onerror = () => { notify('❌ Gagal memuat ultimate'); };
-  img.src = `assets/${pl.id}-ultimate-spritesheet.png`;
+  const sheet=hasU(pl);
+  pl.ultData=sheet
+    ?{sheet:true, dur:ULT_DUR, dashA:.5,  dashB:.667, beamAt:.69, hitAt:.75, beamEnd:.84, fired:false, hit:false, ringed:false}
+    :{sheet:false,dur:1500,    dashA:.15, dashB:.35,  beamAt:.45, hitAt:.52, beamEnd:.72, fired:false, hit:false, ringed:false};
+  pl.state='ULTIMATE';pl.stateTime=0;
+  pl.atkAnim=-1;pl.pend=false;pl.dashT=0;pl.inv=Math.max(pl.inv,.2);
+  AudioManager.play('ultimate',.8);
+  vib([40,30,40]);
 }
 
 function dash(){
@@ -501,27 +484,63 @@ function dash(){
   AudioManager.play('select',.4);
 }
 
+const spdOf=e=>W*.32*(.7+e.spd/300);
+
+function updateUltimate(dt){
+  const ud=pl.ultData;
+  if(!ud){pl.state='RECOVERY';pl.stateTime=0;return}
+  const pr=pl.stateTime/ud.dur;
+  pl.inv=Math.max(pl.inv,.15);                 // kebal selama ultimate
+  const body0=body(pl);
+
+  // fase charge: partikel energi
+  if(pr>=ud.dashA*.33&&pr<ud.dashA*.9&&Math.random()<dt*30)spawnVFX(body0.x,body0.y,pl.fx,1.1);
+  // fase windup: tanah bergetar + ring sekali
+  if(pr>=ud.dashA*.66&&pr<ud.dashA){
+    cameraShake=Math.max(cameraShake,4);cameraTargetZoom=Math.max(cameraTargetZoom,1.12);
+    if(!ud.ringed){ud.ringed=true;rings.push({x:pl.x,y:pl.y,r:10,max:pl.size*1.8,c:FX_COLORS[pl.fx]||'#fff',l:.6,w:7})}
+  }
+  // fase dash: maju mendekati musuh
+  if(pr>=ud.dashA&&pr<ud.dashB){
+    const dx=en.x-pl.x,dy=en.y-pl.y,dist=Math.hypot(dx,dy),gap=W*.2;
+    if(dist>gap){const m=Math.min(W*1.4*dt,dist-gap);pl.x+=dx/dist*m;pl.y+=dy/dist*m*.6}
+    if(Math.random()<dt*40)spawnVFX(pl.x-pl.face*10,pl.y,'normal',.4,true);
+  }
+  // lepas serangan
+  if(pr>=ud.beamAt&&!ud.fired){
+    ud.fired=true;flashA=.4;cameraTargetZoom=1.15;
+    AudioManager.play('ultimate',.9);
+  }
+  // damage besar (satu kali)
+  if(pr>=ud.hitAt&&!ud.hit){
+    ud.hit=true;
+    triggerImpact(en,pl.x,pl.y,pl.fx,Math.round(dmgOf(pl.atk,en.def,5)));
+    cameraShake=28;cameraPunch=1.5;
+  }
+  if(pr>=ud.beamAt&&pr<ud.beamEnd&&Math.random()<dt*50)spawnVFX(en.x,en.y-en.size*.4,pl.fx,1.2);
+  if(pr>=1){pl.ultData=null;pl.state='RECOVERY';pl.stateTime=0}
+}
+
 function update(dt){
   if(state !== 'play') return;
   timeLeft -= dt;
-  
+
   cameraZoom += (cameraTargetZoom - cameraZoom) * dt * 6;
   cameraTargetZoom += (1.0 - cameraTargetZoom) * dt * 2;
   cameraShake = Math.max(0, cameraShake - dt * 50);
   cameraPunch = Math.max(0, cameraPunch - dt * 3);
-  
+  ultFx += ((pl.state==='ULTIMATE'?1:0) - ultFx) * Math.min(1,dt*6);
+
   let ix=0, iy=0;
-  if (pl.state === 'IDLE' || pl.state === 'RECOVERY') {
+  if (pl.state === 'IDLE') {
     ix = stick.x+((K.KeyD||K.ArrowRight)?1:0)-((K.KeyA||K.ArrowLeft)?1:0);
     iy = stick.y+((K.KeyS||K.ArrowDown)?1:0)-((K.KeyW||K.ArrowUp)?1:0);
     const il=Math.hypot(ix,iy); if(il>1){ix/=il;iy/=il}
     pl.moving=il>.1;
-  } else {
-    pl.moving = false;
-  }
-  
+  } else { pl.moving = false; }
+
   pl.stateTime += dt * 1000;
-  
+
   if (pl.state === 'IDLE') {
     if(pl.dashT>0){
       pl.dashT-=dt; pl.run=true;
@@ -535,84 +554,73 @@ function update(dt){
       if(pl.run&&Math.random()<dt*14) spawnVFX(pl.x-pl.face*8, pl.y, 'normal', 0.2, true);
     }
   } else if (pl.state === 'ULTIMATE') {
-    const ud = pl.ultData;
-    if (ud) {
-      const progress = (performance.now() - ud.startTime) / ud.duration;
-      if (progress > 0.5 && progress < 0.7) {
-        pl.x += pl.face * 100 * dt;
-      }
-      if (progress > 0.7 && !ud.hasFired) {
-        ud.hasFired = true;
-        fireProjectile(pl, en, pl.fx, 2.0);
-        cameraTargetZoom = 1.15;
-        flashA = 0.4;
-        AudioManager.play('ultimate', 0.9);
-      }
-      if (progress > 0.85 && !ud.impactDone) {
-        ud.impactDone = true;
-        const dmg = Math.round(dmgOf(pl.atk, en.def, 3.0));
-        triggerImpact(en, pl.x, pl.y, pl.fx, dmg);
-        cameraShake = 25;
-        cameraPunch = 1.5;
-      }
-      if (progress >= 1) {
-        pl.ultData = null;
-        pl.state = 'RECOVERY';
-        pl.stateTime = 0;
-      }
-    } else {
-      pl.state = 'RECOVERY';
-      pl.stateTime = 0;
-    }
+    updateUltimate(dt);
   } else if (pl.state === 'RECOVERY') {
-    if (pl.stateTime > 400) {
-      pl.state = 'IDLE';
-      pl.stateTime = 0;
-    }
+    pl.run=false;
+    if (pl.stateTime > 400) { pl.state = 'IDLE'; pl.stateTime = 0; }
   }
-  
+
   pl.x+=pl.kx*dt; pl.y+=pl.ky*dt; pl.kx*=.88; pl.ky*=.88;
   pl.face=en.x>=pl.x?1:-1; clampE(pl);
   pl.an+=dt;
-  
+
   if(pl.atkAnim>=0){
     pl.atkAnim+=dt;
-    if(pl.pend&&pl.atkAnim>=.15){pl.pend=false;fireProjectile(pl,en,pl.fx,1);AudioManager.play('ultimate',.3)}
-    if(pl.sheet&&Math.random()<.6){const b=body(pl);spawnVFX(b.x,b.y,pl.fx,0.3)}
-    if(pl.atkAnim>=.42){pl.atkAnim=-1;pl.pend=false}
+    if(pl.pend&&pl.atkAnim>=ATK_FIRE){pl.pend=false;fireProjectile(pl,en,pl.fx,1);AudioManager.play('button',.35)}
+    if(Math.random()<.5){const b=body(pl);spawnVFX(b.x,b.y,pl.fx,0.3)}
+    if(pl.atkAnim>=ATK_DUR){pl.atkAnim=-1;pl.pend=false}
   }
-  
+
   if(pl.hitScaleX!==1){ pl.hitScaleX += (1-pl.hitScaleX)*dt*8; }
   if(pl.hitScaleY!==1){ pl.hitScaleY += (1-pl.hitScaleY)*dt*8; }
   if(pl.hitRotation!==0){ pl.hitRotation *= (1-dt*8); }
-  
+
   pl.cd-=dt; pl.dashCd-=dt; pl.inv-=dt; pl.flash-=dt; pl.atkT-=dt;
   if(atkHeld||K.Space||K.KeyJ)atk();
-  
+
+  /* ---------- AI musuh ---------- */
   const a=en.ai,dx=pl.x-en.x,dy=pl.y-en.y,dl=Math.hypot(dx,dy)||1,hard=en.hp<en.max*.5;
   en.face=dx>=0?1:-1;let mx=0,my=0;
-  if(en.lunge){const L=en.lunge;L.t-=dt;en.x+=L.vx*dt;en.y+=L.vy*dt*.6;
-    if(!L.hit&&Math.hypot(pl.x-en.x,(pl.y-en.y)*1.6)<en.size*.5){L.hit=triggerImpact(pl,en.x,en.y,en.fx,dmgOf(en.atk,pl.def,1.1))}
-    if(L.t<=0)en.lunge=null}
-  else if(en.wind>0){en.wind-=dt;if(en.wind<=0){
-    if(en.kind==='lunge'){en.lunge={t:.3,vx:dx/dl*W*1.5,vy:dy/dl*W*1.5,hit:false};AudioManager.play('select',.4)}
-    else{fireProjectile(en,pl,en.fx,0.8);en.atkAnim=0;if(hard){fireProjectile(en,pl,en.fx,0.8)}AudioManager.play('button',.35)}
-    en.atkT=.2;a.t=(hard?.9:1.3)+Math.random()*1}}
+  if(en.lunge){
+    const L=en.lunge;L.t-=dt;en.x+=L.vx*dt;en.y+=L.vy*dt*.6;
+    if(!L.hit&&pl.inv<=0&&Math.hypot(pl.x-en.x,(pl.y-en.y)*1.6)<en.size*.5){
+      triggerImpact(pl,en.x,en.y,en.fx,dmgOf(en.atk,pl.def,1.1));L.hit=true;
+    }
+    if(L.t<=0)en.lunge=null;
+  }
+  else if(en.wind>0){
+    en.wind-=dt;
+    if(en.kind==='shot'&&!en.shotDone&&en.atkAnim>=ATK_FIRE){
+      en.shotDone=true;
+      fireProjectile(en,pl,en.fx,0.8);
+      if(hard)fireProjectile(en,pl,en.fx,0.8,.2);
+      AudioManager.play('button',.35);
+    }
+    if(en.wind<=0){
+      if(en.kind==='lunge'){en.lunge={t:.3,vx:dx/dl*W*1.5,vy:dy/dl*W*1.5,hit:false};AudioManager.play('select',.4)}
+      en.atkT=.2;a.t=(hard?.9:1.3)+Math.random()*1;
+    }
+  }
   else{
     const want=W*.3,r=dl>want*1.15?1:dl<want*.7?-1:0,nx=dx/dl,ny=dy/dl;
     mx=nx*r-ny*a.dir*.8;my=ny*r+nx*a.dir*.8;a.t-=dt;
     if(Math.random()<dt*.4)a.dir*=-1;
-    if(a.t<=0){en.wind=.55;en.kind=Math.random()<.3?'lunge':'shot'}}
+    if(a.t<=0){
+      en.wind=.5;en.kind=Math.random()<.3?'lunge':'shot';en.shotDone=false;
+      if(en.kind==='shot')en.atkAnim=0;
+    }
+  }
   en.moving=!!(mx||my);
   const es=spdOf(en)*.75;en.x+=mx*es*dt+en.kx*dt;en.y+=my*es*dt*.6+en.ky*dt;en.kx*=.88;en.ky*=.88;clampE(en);
   en.an+=dt;
-  if(en.atkAnim>=0){en.atkAnim+=dt;if(en.atkAnim>=.42)en.atkAnim=-1}
+  if(en.atkAnim>=0){en.atkAnim+=dt;if(en.atkAnim>=ATK_DUR)en.atkAnim=-1}
   en.inv-=dt;en.flash-=dt;en.atkT-=dt;
-  
+
   if(en.hitScaleX!==1){ en.hitScaleX += (1-en.hitScaleX)*dt*8; }
   if(en.hitScaleY!==1){ en.hitScaleY += (1-en.hitScaleY)*dt*8; }
   if(en.hitRotation!==0){ en.hitRotation *= (1-dt*8); }
-  
+
+  /* ---------- proyektil ---------- */
   for(let i=proj.length-1;i>=0;i--){
     const p=proj[i];
     p.trail.push({x:p.x,y:p.y,l:0.25});
@@ -622,13 +630,13 @@ function update(dt){
     p.rotation+=p.rotSpeed*dt;
     if(Math.random()<0.5)spawnVFX(p.x,p.y,p.fx,0.3);
     const t=p.from?en:pl,b=body(t);
-    if(Math.hypot(p.x-b.x,p.y-b.y)<t.size*0.4){
+    if(t.inv<=0&&Math.hypot(p.x-b.x,p.y-b.y)<t.size*0.4){
       triggerImpact(t,p.x,p.y,p.fx,p.dmg);
       proj.splice(i,1); continue;
     }
     if(p.l<=0||p.x<-50||p.x>W+50||p.y<-50||p.y>H+50)proj.splice(i,1);
   }
-  
+
   if(en.hp<=0)finish(true);else if(pl.hp<=0)finish(false);else if(timeLeft<=0)finish(pl.hp/pl.max>=en.hp/en.max);
 }
 
@@ -639,12 +647,13 @@ function finish(win){
   setTimeout(()=>{
     $('rt').textContent=win?'VICTORY':'DEFEAT';
     $('rt').style.color=win?'var(--gn)':'var(--rd)';$('rs').textContent=win?'★'.repeat(stars)+'☆'.repeat(3-stars):'☆☆☆';
-    $('rx').textContent='+'+exp; $('rh').textContent=Math.round(ratio*100)+'\%';$('rc').textContent=maxCombo; $('rd').textContent=Math.round(dmgDone);$('menu').href=`index.html?char=${pid}`; $('end').classList.remove('h');
+    $('rx').textContent='+'+exp; $('rh').textContent=Math.round(ratio*100)+'%';$('rc').textContent=maxCombo; $('rd').textContent=Math.round(dmgDone);$('menu').href=`index.html?char=${pid}`; $('end').classList.remove('h');
   }, win?900:500);
 }
 
-const spdOf=e=>W*.32*(.7+e.spd/300);
-
+/* =====================================================================
+   RENDER
+===================================================================== */
 function drawBg(){
   if(bg.complete&&bg.naturalWidth){
     const s=Math.max(W/bg.naturalWidth,H/bg.naturalHeight);
@@ -653,130 +662,115 @@ function drawBg(){
   } else { ctx.fillStyle='#07150e'; ctx.fillRect(0,0,W,H); }
 }
 
-function drawSheet(e,sz){
-  const sh=e.sheet;
-  if(!sh || !sh.ready) return;
-  const s=sz/(sh.bh*1.19);
-  let row=0, fr=0;
-  
-  if(e.atkAnim>=0){ 
-    row = sh.rows - 1; 
-    fr = Math.min(sh.atkN-1, Math.floor(e.atkAnim/.42*sh.atkN)); 
-  }
-  else if(e.moving || e.dashT>0 || e.lunge){
-    if(e.run){ row = Math.min(2, sh.rows-1); fr = Math.floor(e.an*14) % sh.cols; }
-    else { row = Math.min(1, sh.rows-1); fr = Math.floor(e.an*8) % sh.cols; }
-  } else { 
-    row = 0; fr = Math.floor(e.an*5) % sh.cols; 
-  }
-  
-  ctx.scale(e.face,1);
-  const feetY = sh.feet[row] !== undefined ? sh.feet[row] : sh.feet[0];
-  ctx.drawImage(sh.img, Math.round(fr*sh.img.naturalWidth/sh.cols), Math.round(row*sh.img.naturalHeight/sh.rows), sh.cw, sh.ch, -sh.ax*s, -feetY*s, sh.cw*s, sh.ch*s);
+/* Gambar 1 frame dari sheet: titik pijakan (kaki) = (0,0). Skala disamakan
+   lewat tinggi karakter idle, jadi sheet normal & ultimate tampil sama besar. */
+function drawFrame(sh,col,row,sz){
+  if(!sh||!sh.ready||!sh.canvas)return;
+  const s=sz*.9/sh.h;
+  const X0=Math.round(col*sh.cw),X1=Math.round((col+1)*sh.cw);
+  const Y0=Math.round(row*sh.ch),Y1=Math.round((row+1)*sh.ch);
+  const sw=X1-X0-2,shh=Y1-Y0-2;                 // inset 1px agar tidak bocor ke frame tetangga
+  ctx.drawImage(sh.canvas,X0+1,Y0+1,sw,shh,-(sh.ax-1)*s,-(sh.feet-1)*s,sw*s,shh*s);
 }
 
-function drawUltFrame(e, sz) {
-  const ud = e.ultData;
-  if (!ud || !ud.img.complete || !ud.img.naturalWidth) return;
-  
-  const now = performance.now();
-  const elapsed = now - ud.startTime;
-  const progress = Math.min(1, Math.max(0, elapsed / ud.duration));
-  
-  if (progress >= 1) return;
-  
-  let phaseName = 'anticipation';
-  let phaseProgress = 0;
-  if (progress < 0.15) { phaseName = 'anticipation'; phaseProgress = progress / 0.15; }
-  else if (progress < 0.35) { phaseName = 'charge'; phaseProgress = (progress - 0.15) / 0.20; }
-  else if (progress < 0.50) { phaseName = 'windup'; phaseProgress = (progress - 0.35) / 0.15; }
-  else if (progress < 0.70) { phaseName = 'lunge'; phaseProgress = (progress - 0.50) / 0.20; }
-  else if (progress < 0.85) { phaseName = 'release'; phaseProgress = (progress - 0.70) / 0.15; }
-  else { phaseName = 'recovery'; phaseProgress = (progress - 0.85) / 0.15; }
-  
-  // Perhitungan urutan index linear yang aman dari error jumlah baris
-  const totalFrames = ud.cols * ud.rows;
-  const frameIndex = Math.min(totalFrames - 1, Math.floor(progress * totalFrames));
-  const col = frameIndex % ud.cols;
-  const row = Math.floor(frameIndex / ud.cols);
-  
-  const cw = ud.img.naturalWidth / ud.cols;
-  const ch = ud.img.naturalHeight / ud.rows;
-  
-  const scale = sz / Math.max(cw, ch) * 1.3;
-  const dw = cw * scale;
-  const dh = ch * scale;
-  
-  const dx = -dw/2;
-  const dy = -dh * 0.85;
-  
-  const fxColor = FX_COLORS[e.fx] || e.col;
-  
+/* Pilih frame spritesheet NORMAL */
+function drawNormal(e,sz){
+  const sh=e.sheet;let row=0,fr=0;
+  if(e.atkAnim>=0){row=sh.rows-1;fr=Math.min(sh.cols-1,Math.floor(e.atkAnim/ATK_DUR*sh.cols))}
+  else if(e.moving||e.dashT>0||e.lunge){
+    if(e.run||e.dashT>0||e.lunge){row=Math.min(2,sh.rows-1);fr=Math.floor(e.an*14)%sh.cols}
+    else{row=Math.min(1,sh.rows-1);fr=Math.floor(e.an*9)%sh.cols}
+  }else{row=0;fr=Math.floor(e.an*6)%sh.cols}
   ctx.save();
-  ctx.scale(e.face, 1);
-  if (phaseName === 'charge' || phaseName === 'release') {
-    ctx.globalCompositeOperation = 'lighter';
-    const auraGrd = ctx.createRadialGradient(0, -sz*0.5, 0, 0, -sz*0.5, sz*1.5);
-    const intensity = phaseName === 'charge' ? 0.4 + phaseProgress * 0.4 : 0.6;
-    auraGrd.addColorStop(0, fxColor + Math.floor(intensity * 200).toString(16).padStart(2, '0'));
-    auraGrd.addColorStop(1, 'transparent');
-    ctx.fillStyle = auraGrd;
-    ctx.beginPath(); ctx.arc(0, -sz*0.5, sz*1.5, 0, 6.283); ctx.fill();
-    ctx.globalCompositeOperation = 'source-over';
-  }
-  
-  ctx.drawImage(ud.img, col*cw, row*ch, cw, ch, dx, dy, dw, dh);
+  ctx.scale(e.face*(e.hitScaleX||1),e.hitScaleY||1);
+  ctx.rotate((e.hitRotation||0)*e.face);
+  drawFrame(sh,fr,row,sz);
+  if(e.flash>0){ctx.globalCompositeOperation='lighter';ctx.globalAlpha=.55;drawFrame(sh,fr,row,sz)}
   ctx.restore();
-  
-  if (Math.random() < 0.8) {
-    spawnVFX(e.x, e.y - sz*0.5, e.fx, phaseName === 'charge' ? 1.5 : 0.8);
-  }
+}
+
+function drawStatic(e,sz){
+  const im=e.img,bob=Math.abs(Math.sin(perf/1000*(e.moving?11:3.5)+e.ph))*(e.moving?4:2.5);
+  if(im.complete&&im.naturalWidth){
+    const s=sz/Math.max(im.naturalWidth,im.naturalHeight),w=im.naturalWidth*s,h=im.naturalHeight*s;
+    ctx.save();ctx.scale(e.face*(e.hitScaleX||1),(e.hitScaleY||1));ctx.drawImage(im,-w/2,-h-bob,w,h);ctx.restore();
+  }else{ctx.fillStyle=e.col;ctx.beginPath();ctx.arc(0,-sz*.4,sz*.3,0,6.283);ctx.fill()}
+}
+
+/* Pemain mengeluarkan ULTIMATE: frame dipilih dari progres waktu (48 frame berurutan) */
+function drawUlt(e,sz){
+  const ud=e.ultData,pr=Math.min(.999,Math.max(0,e.stateTime/ud.dur));
+  const fxc=FX_COLORS[e.fx]||e.col;
+
+  // aura energi di belakang karakter (charge -> dash -> lepas)
+  const glow=Math.sin(Math.min(1,pr*1.15)*Math.PI);
+  ctx.save();
+  ctx.globalCompositeOperation='lighter';ctx.globalAlpha=.55*glow;
+  const g=ctx.createRadialGradient(0,-sz*.45,0,0,-sz*.45,sz*1.3);
+  g.addColorStop(0,fxc);g.addColorStop(1,'transparent');
+  ctx.fillStyle=g;ctx.beginPath();ctx.arc(0,-sz*.45,sz*1.3,0,6.283);ctx.fill();
+  ctx.restore();
+
+  ctx.save();
+  ctx.scale(e.face,1);
+  if(ud.sheet&&hasU(e)){
+    const sh=e.usheet,n=sh.cols*sh.rows,idx=Math.min(n-1,Math.floor(pr*n));
+    drawFrame(sh,idx%sh.cols,(idx/sh.cols)|0,sz);
+  }else if(hasS(e)){
+    const sh=e.sheet;                                   // cadangan: pakai baris serangan sheet normal
+    drawFrame(sh,Math.min(sh.cols-1,Math.floor(pr*sh.cols)),sh.rows-1,sz);
+  }else{ctx.restore();drawStatic(e,sz);return}
+  ctx.restore();
 }
 
 function drawEnt(e){
-  const A=arena(),k=.85+.3*Math.min(1,Math.max(0,(e.y-(A.cy-A.ry))/(A.ry*2))),sz=e.size*k,t=perf/1000;
-  const bob=Math.sin(t*(e.moving?11:3.5)+e.ph)*(e.moving?4:2.5)*k;
-  
+  const A=arena(),k=.85+.3*Math.min(1,Math.max(0,(e.y-(A.cy-A.ry))/(A.ry*2))),sz=e.size*k;
+  const inUlt=e.state==='ULTIMATE'&&e.ultData;
+
   ctx.fillStyle='rgba(0,0,0,.4)';
   ctx.beginPath(); ctx.ellipse(e.x,e.y,sz*.32,sz*.09,0,0,6.283); ctx.fill();
-  
-  const fxColor = FX_COLORS[e.fx] || e.col;
-  const auraGrd = ctx.createRadialGradient(e.x, e.y-sz*.4, 0, e.x, e.y-sz*.4, sz*1.2);
-  auraGrd.addColorStop(0, fxColor + '40');
-  auraGrd.addColorStop(1, 'transparent');
-  ctx.fillStyle = auraGrd;
-  ctx.beginPath(); ctx.arc(e.x, e.y-sz*.4, sz*1.2, 0, 6.283); ctx.fill();
-  
-  if(e.wind>0){const p=1-e.wind/.55;ctx.strokeStyle=`rgba(255,84,112,${.3+.5*p})`;ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(e.x,e.y,sz*(.5-.2*p),sz*(.14-.05*p),0,0,6.283);ctx.stroke()}
+
+  if(!inUlt){
+    const fxColor=FX_COLORS[e.fx]||e.col;
+    const auraGrd=ctx.createRadialGradient(e.x,e.y-sz*.4,0,e.x,e.y-sz*.4,sz*1.2);
+    auraGrd.addColorStop(0,fxColor+'40');auraGrd.addColorStop(1,'transparent');
+    ctx.fillStyle=auraGrd;ctx.beginPath();ctx.arc(e.x,e.y-sz*.4,sz*1.2,0,6.283);ctx.fill();
+  }
+
+  if(e.wind>0){const p=1-e.wind/.5;ctx.strokeStyle=`rgba(255,84,112,${.3+.5*p})`;ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(e.x,e.y,sz*(.5-.2*p),sz*(.14-.05*p),0,0,6.283);ctx.stroke()}
   if(e.dashT>0)ctx.globalAlpha=.55;
   if(e.hp<=0)ctx.globalAlpha=.35+.25*Math.sin(perf/40);
-  
-  const im=e.img,useS=hasS(e);
+
   ctx.save();
-  ctx.translate(e.x,e.y-3-(useS?0:Math.abs(bob)));
-  
-  if (e.state === 'ULTIMATE' && e.ultData) {
-    drawUltFrame(e, sz);
-  } else if(useS){ 
-    drawSheet(e,sz); 
-  } else if(im.complete&&im.naturalWidth){
-    const s=sz/Math.max(im.naturalWidth,im.naturalHeight);
-    const w=im.naturalWidth*s,h=im.naturalHeight*s;
-    ctx.scale(e.face*(e.hitScaleX||1),(e.hitScaleY||1));
-    ctx.drawImage(im,-w/2,-h,w,h);
-  } else {
-    ctx.fillStyle=e.col;ctx.beginPath();ctx.arc(0,-sz*.4,sz*.3,0,6.283);ctx.fill();
-  }
+  ctx.translate(e.x,e.y-3);
+  if(inUlt)drawUlt(e,sz);
+  else if(hasS(e))drawNormal(e,sz);
+  else drawStatic(e,sz);
   ctx.restore();
   ctx.globalAlpha=1;
-  
+
   if(!e.isP){const w=sz*.6,x=e.x-w/2,y=e.y-sz-8;ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(x-1,y-1,w+2,7);ctx.fillStyle='#ff5470';ctx.fillRect(x,y,w*e.hp/e.max,5)}
   else{ctx.fillStyle='#4ade80';ctx.beginPath();ctx.moveTo(e.x,e.y+14);ctx.lineTo(e.x-6,e.y+24);ctx.lineTo(e.x+6,e.y+24);ctx.fill()}
 }
 
+/* Beam ultimate yang menyambung dari karakter ke musuh (menutupi potongan antar-sel sheet) */
+function drawBeam(){
+  const ud=pl.ultData;if(!ud||pl.state!=='ULTIMATE')return;
+  const pr=pl.stateTime/ud.dur;if(pr<ud.beamAt||pr>ud.beamEnd)return;
+  const q=(pr-ud.beamAt)/(ud.beamEnd-ud.beamAt),al=Math.sin(Math.min(1,q)*Math.PI);
+  const b=body(pl),t=body(en),sx=pl.x+pl.face*pl.size*.3,col=FX_COLORS[pl.fx]||pl.col,wd=pl.size*(.2+.3*al);
+  ctx.save();
+  ctx.globalCompositeOperation='lighter';ctx.lineCap='round';
+  ctx.globalAlpha=.5*al+.1;ctx.strokeStyle=col;ctx.lineWidth=wd;ctx.shadowColor=col;ctx.shadowBlur=30;
+  ctx.beginPath();ctx.moveTo(sx,b.y);ctx.lineTo(t.x,t.y);ctx.stroke();
+  ctx.globalAlpha=.85*al;ctx.strokeStyle='#fff';ctx.lineWidth=wd*.35;ctx.shadowBlur=10;
+  ctx.beginPath();ctx.moveTo(sx,b.y);ctx.lineTo(t.x,t.y);ctx.stroke();
+  ctx.restore();
+}
+
 function drawProjectile(p) {
   const fx = p.fx;
-  
+
   if (p.trail.length > 1) {
     ctx.save();
     ctx.globalCompositeOperation = 'lighter';
@@ -801,10 +795,10 @@ function drawProjectile(p) {
     }
     ctx.restore();
   }
-  
+
   ctx.save();
   ctx.globalCompositeOperation = 'lighter';
-  
+
   if (fx === 'elec') {
     ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 3;
     ctx.shadowColor = '#ffe14d'; ctx.shadowBlur = 25;
@@ -908,24 +902,24 @@ function drawVFX(){
 
 function draw(dt){
   ctx.setTransform(DPR,0,0,DPR,0,0); ctx.clearRect(0,0,W,H);
-  
+  ctx.imageSmoothingEnabled=true; ctx.imageSmoothingQuality='high';
+
   ctx.save();
-  const zoom = cameraZoom;
-  const shakeX = (Math.random()-0.5) * cameraShake;
-  const shakeY = (Math.random()-0.5) * cameraShake;
-  const punchZoom = 1 + cameraPunch * 0.04;
-  ctx.translate(W/2 + shakeX, H/2 + shakeY);
-  ctx.scale(zoom * punchZoom, zoom * punchZoom);
-  ctx.translate(-W/2, -H/2);
-  
+  const shakeX=(Math.random()-0.5)*cameraShake, shakeY=(Math.random()-0.5)*cameraShake;
+  const punchZoom=1+cameraPunch*0.04, zoom=cameraZoom*punchZoom;
+  ctx.translate(W/2+shakeX,H/2+shakeY);
+  ctx.scale(zoom,zoom);
+  ctx.translate(-W/2,-H/2);
+
   drawBg();
-  
+  if(ultFx>.01){ctx.fillStyle=`rgba(0,0,12,${ultFx*.45})`;ctx.fillRect(-W,-H,W*3,H*3)}   // redup arena saat ultimate
+
   [pl,en].sort((a,b)=>a.y-b.y).forEach(drawEnt);
-  
+  drawBeam();
+
   for(const p of proj) drawProjectile(p);
-  
   drawVFX();
-  
+
   ctx.textAlign='center'; ctx.lineJoin='round';
   for(const t of texts){
     ctx.globalAlpha=Math.min(1,t.l*2);
@@ -940,12 +934,16 @@ function draw(dt){
     ctx.strokeText(s,W/2,H*.2); ctx.fillText(s,W/2,H*.2);
   }
   ctx.restore();
-  
+  ctx.globalAlpha=1;
+
   if(flashA>0){ctx.fillStyle=`rgba(255,250,200,${flashA})`;ctx.fillRect(0,0,W,H)}
-  
+
   const v=ctx.createRadialGradient(W/2,H/2,H*.3,W/2,H/2,H*.75);
   v.addColorStop(0,'transparent'); v.addColorStop(1,'rgba(0,0,0,.6)');
   ctx.fillStyle=v; ctx.fillRect(0,0,W,H);
+
+  // bar sinematik atas/bawah saat ultimate
+  if(ultFx>.01){const bh=H*.07*ultFx;ctx.fillStyle='#000';ctx.fillRect(0,0,W,bh);ctx.fillRect(0,H-bh,W,bh)}
 }
 
 function fx(dt){
@@ -964,9 +962,9 @@ function fx(dt){
 
 function hud(){
   const pp=Math.round(pl.hp/pl.max*100),ep=Math.round(en.hp/en.max*100),col=p=>p>50?'#22c55e':p>25?'#eab308':'#ef4444';
-  $('pf').style.width=$('pl').style.width=pp+'\%';$('pf').style.background=col(pp);$('pt').textContent=pp+'\%';$('ef').style.width=$('el').style.width=ep+'\%';$('et').textContent=ep+'%';
-  $('pu').style.width=pl.ult+'\%';$('bSk').classList.toggle('rdy',pl.ult>=100);
-  $('dsc').style.height=Math.max(0,pl.dashCd/1.1)*100+'\%';$('tm').textContent=Math.max(0,Math.ceil(timeLeft));
+  $('pf').style.width=$('pl').style.width=pp+'%';$('pf').style.background=col(pp);$('pt').textContent=pp+'%';$('ef').style.width=$('el').style.width=ep+'%';$('et').textContent=ep+'%';
+  $('pu').style.width=pl.ult+'%';$('bSk').classList.toggle('rdy',pl.ult>=100);
+  $('dsc').style.height=Math.max(0,pl.dashCd/1.1)*100+'%';$('tm').textContent=Math.max(0,Math.ceil(timeLeft));
 }
 
 let last=performance.now();
@@ -981,4 +979,3 @@ requestAnimationFrame(loop);
 </script>
 </body>
 </html>
-
